@@ -1,25 +1,49 @@
 import React from 'react';
-import logo from './logo.svg';
+import { useAuth0 } from '@auth0/auth0-react';
+import { ForecastTable } from './ForecastTable';
+import { NotificationsRoot } from './Notifications';
+import { Actions, useForecast } from './store';
+import { useDispatchedRender } from './useDispatchedRender';
 import './App.css';
 
 function App() {
+  const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
+  const renderForecast = useDispatchedRender(useForecast, Actions.loadWeatherForecast);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <NotificationsRoot />
+      <div className="App">
+        <>
+          {isAuthenticated ? (
+            <p>
+              <span style={{ marginRight: '10px' }}>Hi, {user?.name}!</span>
+              <a
+                className="App-link"
+                href="/"
+                rel="noopener noreferrer"
+                onClick={() => logout({ returnTo: window.location.origin, federated: true })}>
+                Log Out
+              </a>
+            </p>
+          ) : (
+            <p>
+              <span style={{ marginRight: '10px' }}>Hi. Please login.</span>
+              <a
+                className="App-link"
+                href="/"
+                rel="noopener noreferrer"
+                onClick={() => loginWithRedirect({ prompt: 'login' })}>
+                Log In
+              </a>
+            </p>
+          )}
+        </>
+        {renderForecast((forecast) => (
+          <ForecastTable forecast={forecast} />
+        ))}
+      </div>
+    </>
   );
 }
 

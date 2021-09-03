@@ -1,32 +1,22 @@
 {
-  "name": "minfin",
+  "name": "min-fin",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^12.0.0",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
-    "typescript": "^4.1.2",
-    "web-vitals": "^1.0.1"
+  "engines": {
+    "node": "16.x",
+    "yarn": "1.x"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "node dist",
+    "build": "run-p build:client build:server",
+    "build:client": "INLINE_RUNTIME_CHUNK=false react-scripts build",
+    "build:server": "rm -rf dist && tsc --build tsconfig.server.json",
+    "dev": "run-p server client",
+    "client": "react-scripts start",
+    "server": "nodemon server/index.ts 3010",
+    "server:self": "nodemon server/index.ts 3000",
+    "clean": "rm -rf build dist",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -39,5 +29,44 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "proxy": "http://localhost:3010",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-jwt": "^6.1.0",
+    "helmet": "^4.6.0",
+    "jwks-rsa": "^2.0.4",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@auth0/auth0-react": "^1.6.0",
+    "@types/compression": "^1.7.1",
+    "@types/cors": "^2.8.12",
+    "@types/dateformat": "^3.0.1",
+    "@types/morgan": "^1.9.3",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "dateformat": "^4.5.1",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-react": "^7.25.1",
+    "nodemon": "^2.0.12",
+    "npm-run-all": "^4.1.5",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "react-scripts": "4.0.3",
+    "redux": "^4.1.1",
+    "redux-saga": "^1.1.3",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.1.2",
+    "web-vitals": "^1.0.1"
   }
 }
