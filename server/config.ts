@@ -19,6 +19,9 @@ export type Configuration = {
   bodyParser: {
     json: { [x: string]: any };
   };
+  pg: {
+    database: string;
+  };
 };
 
 const createConfig = (): Configuration => {
@@ -35,8 +38,8 @@ const createConfig = (): Configuration => {
   const morganFormat = isProd ? 'tiny' : 'dev';
 
   // Auth configuration
-  const authDomain = process.env.AUTH0_DOMAIN || 'https://agear.auth0.com/';
-  const authAudience = process.env.AUTH0_AUDIENCE || 'https://recurrent-p/';
+  const authDomain = process.env.AUTH0_DOMAIN || '';
+  const authAudience = process.env.AUTH0_AUDIENCE || '';
 
   // web client root
   const clientRoot = '../build';
@@ -53,6 +56,9 @@ const createConfig = (): Configuration => {
     type: ['application/*+json', 'application/csp-report'],
   };
 
+  // postgres
+  const pgDatabase = process.env.DATABASE_URL || '';
+
   return {
     isProd,
     auth: { audience: authAudience, domain: authDomain },
@@ -61,6 +67,7 @@ const createConfig = (): Configuration => {
     morgan: { format: morganFormat },
     helmet: { cspDirectives: helmetCspDirectives },
     bodyParser: { json: bodyParserJson },
+    pg: { database: pgDatabase },
   };
 };
 
