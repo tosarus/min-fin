@@ -22,6 +22,9 @@ export type Configuration = {
   pg: {
     database: string;
   };
+  delay: {
+    ms: number | undefined;
+  };
 };
 
 const createConfig = (): Configuration => {
@@ -33,6 +36,7 @@ const createConfig = (): Configuration => {
   // server
   const args = process.argv.slice(2);
   const port = Number.parseInt(process.env.PORT || (args.length > 0 ? args[0] : '3000'));
+  const delayMs = args.length > 1 ? +args[1] : undefined;
 
   // express morgan
   const morganFormat = isProd ? 'tiny' : 'dev';
@@ -68,6 +72,7 @@ const createConfig = (): Configuration => {
     helmet: { cspDirectives: helmetCspDirectives },
     bodyParser: { json: bodyParserJson },
     pg: { database: pgDatabase },
+    delay: { ms: delayMs },
   };
 };
 

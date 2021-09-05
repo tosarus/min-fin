@@ -1,6 +1,7 @@
 import React from 'react';
 import dateFormat from 'dateformat';
 import { WeatherForecast } from './store/types';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 
 function formatDate(date: string, format = 'mmm dd', gmt = true) {
   return dateFormat(new Date(date), format, gmt);
@@ -12,25 +13,25 @@ interface Props {
 
 export const ForecastTable = ({ forecast }: Props) => {
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Temp. (C)</th>
-          <th>Temp. (F)</th>
-          <th>Summary</th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Date</TableCell>
+          <TableCell>Temp. (C)</TableCell>
+          <TableCell>Temp. (F)</TableCell>
+          <TableCell>Summary</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
         {forecast.map((wf) => (
-          <tr key={wf.date}>
-            <td>{formatDate(wf.date, 'default', false)}</td>
-            <td>{wf.temperatureC}</td>
-            <td>{wf.temperatureF}</td>
-            <td>{wf.summary}</td>
-          </tr>
+          <TableRow key={wf.date}>
+            <TableCell>{formatDate(wf.date, 'default', false)}</TableCell>
+            <TableCell>{wf.temperatureC}</TableCell>
+            <TableCell>{wf.temperatureF}</TableCell>
+            <TableCell>{wf.summary}</TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 };

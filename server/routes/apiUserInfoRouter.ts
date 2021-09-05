@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { tools } from '../auth';
 import { Configuration } from '../config';
 import { Users } from '../dao';
@@ -6,7 +6,7 @@ import { Users } from '../dao';
 const makeRouter = (config: Configuration) => {
   const router = express.Router();
 
-  router.get('/userinfo', tools.checkToken, async (req, res) => {
+  router.get('/userinfo', tools.checkToken, async (req: Request, res: Response) => {
     const email = tools.getEmailFromRequest(config.auth, req);
     let user = await Users.findByEmail(email);
     if (!user) {
@@ -28,14 +28,14 @@ const makeRouter = (config: Configuration) => {
     }
   });
 
-  router.put('/userinfo', tools.checkToken, async (req, res) => {
+  router.put('/userinfo', tools.checkToken, async (req: Request, res: Response) => {
     const email = tools.getEmailFromRequest(config.auth, req);
     const newUser = req.body as Users.Type;
     if (!newUser.email) {
       newUser.email = email;
     }
 
-    if (newUser.email !== email && !(await Users.findByEmail(email)).is_admin) {
+    if (newUser.email !== email && !(await Users.findByEmail(email))?.is_admin) {
       throw new Error('Can`t update info for other user');
     }
 

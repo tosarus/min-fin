@@ -16,7 +16,7 @@ function getEmailFromRequest(config: AuthConfig, req: Request) {
 
 async function fetchAuthUser(config: AuthConfig, req: Request) {
   const res = await fetch(`${config.domain}userinfo`, {
-    headers: { Authorization: req.headers.authorization },
+    headers: { Authorization: req.headers.authorization || '' },
     method: 'get',
   });
   return (await res.json()) as AuthUser;

@@ -4,7 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { configureStore } from './configureStore';
 import { rootSaga } from './sagas';
 
-function StoreApp({ children }: { children: React.ReactNode }) {
+const StoreApp = ({ children }: { children: React.ReactNode }) => {
   const auth = useAuth0();
   const store = configureStore({
     auth,
@@ -15,12 +15,6 @@ function StoreApp({ children }: { children: React.ReactNode }) {
   store.runSaga(rootSaga);
 
   return <Provider store={store}>{children}</Provider>;
-}
+};
 
-export function withStore(App: React.ComponentType) {
-  return (
-    <StoreApp>
-      <App />
-    </StoreApp>
-  );
-}
+export const withStore = (node: React.ReactNode): React.ReactNode => <StoreApp>{node}</StoreApp>;
