@@ -1,1 +1,1 @@
-export { ForecastClient } from './ForecastClient';
+export { DemoClient } from './DemoClient';

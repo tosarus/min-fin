@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
-import { useReports, Actions } from './store';
+import { useReports, Actions } from '../../store';
 
 const useStyles = makeStyles((theme) => ({
   container: {

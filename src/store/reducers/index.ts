@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
 import ajaxStatus from './ajaxStatusReducer';
 import auth from './authReducer';
-import forecast from './forecastReducer';
+import demo from './demoReducer';
 import reports from './reportReducer';
 
 export const rootReducer = combineReducers({
   ajaxStatus,
   auth,
-  forecast,
+  demo,
   reports,
 });
 

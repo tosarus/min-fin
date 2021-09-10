@@ -9,7 +9,7 @@ const StoreApp = ({ children }: { children: React.ReactNode }) => {
   const store = configureStore({
     auth,
     ajaxStatus: { count: 0, messages: [] },
-    forecast: null,
+    demo: { forecast: null, trans: null },
     reports: [],
   });
   store.runSaga(rootSaga);

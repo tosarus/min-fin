@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
-import App from './App';
+import App from './components/App';
 import { withStore } from './store';
-import { withStyle } from './styling';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -12,7 +11,7 @@ ReactDOM.render(
       clientId="gwQ3yUKWexa7fsvhFzz8Qf3jtAWOcXrY"
       redirectUri={window.location.origin}
       audience="https://recurrent-p/">
-      {withStore(withStyle(<App />))}
+      {withStore(<App />)}
     </Auth0Provider>
   </React.StrictMode>,
   document.getElementById('root')

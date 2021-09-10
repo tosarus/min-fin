@@ -1,10 +1,11 @@
 import { useSelector } from 'react-redux';
-import * as Actions from './actions';
-import * as Selectors from './selectors';
-import { withStore } from './withStore';
+import { RootStore } from './reducers';
 
-export { Actions, withStore };
+export * as Actions from './actions';
+export { withStore } from './withStore';
+export * from './types';
 
-export const useAuth = () => useSelector(Selectors.getAuth);
-export const useForecast = () => useSelector(Selectors.getForecast);
-export const useReports = () => useSelector(Selectors.getReports);
+export const useAuth = () => useSelector((state: RootStore) => state.auth);
+export const useForecast = () => useSelector((state: RootStore) => state.demo.forecast);
+export const useTransactions = () => useSelector((state: RootStore) => state.demo.trans);
+export const useReports = () => useSelector((state: RootStore) => state.reports);

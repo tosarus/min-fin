@@ -1,3 +1,3 @@
 export * from './ajaxStateActions';
-export * from './forecastActions';
+export * from './demoActions';
 export * from './reportActions';

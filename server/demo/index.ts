@@ -1,2 +1,4 @@
 import * as Forecasts from './forecasts';
-export { Forecasts };
+import * as Trans from './transactions';
+
+export { Forecasts, Trans };

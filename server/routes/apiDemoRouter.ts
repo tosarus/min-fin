@@ -1,14 +1,19 @@
 import express from 'express';
 import { Configuration } from '../config';
-import { Forecasts } from '../demo';
+import { Forecasts, Trans } from '../demo';
 
 const makeRouter = (config: Configuration) => {
   const router = express.Router();
   config;
 
-  router.get('/forecast', (req, res) => {
+  router.get('/demo/forecast', (req, res) => {
     const forecast = Forecasts.getForecast();
     res.json(forecast);
+  });
+
+  router.get('/demo/trans', (req, res) => {
+    const trans = Trans.getTransactions();
+    res.json(trans);
   });
 
   return router;

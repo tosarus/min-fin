@@ -4,3 +4,14 @@ export interface WeatherForecast {
   temperatureF: number;
   summary: string;
 }
+
+type TransactionType = 'debit' | 'credit';
+
+export interface CsvTrans {
+  date: string;
+  descr: string;
+  amount: number;
+  type: TransactionType;
+  category: string;
+  account: string;
+}

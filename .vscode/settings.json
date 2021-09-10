@@ -1,4 +1,9 @@
 {
   "editor.formatOnSave": true,
-  "editor.tabSize": 2
+  "files.exclude": {
+    // "**/node_modules": false
+  },
+  "[svg]": {
+    "editor.formatOnSave": false
+  }
 }

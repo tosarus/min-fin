@@ -1,7 +1,8 @@
 import React from 'react';
 import dateFormat from 'dateformat';
-import { WeatherForecast } from './store/types';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import { Title, useDispatchedRender } from '../common';
+import { Actions, WeatherForecast, useForecast } from '../../store';
 
 function formatDate(date: string, format = 'mmm dd', gmt = true) {
   return dateFormat(new Date(date), format, gmt);
@@ -11,7 +12,7 @@ interface Props {
   forecast: WeatherForecast[];
 }
 
-export const ForecastTable = ({ forecast }: Props) => {
+const ForecastTable = ({ forecast }: Props) => {
   return (
     <Table>
       <TableHead>
@@ -33,5 +34,18 @@ export const ForecastTable = ({ forecast }: Props) => {
         ))}
       </TableBody>
     </Table>
+  );
+};
+
+export const Forecast = () => {
+  const renderForecast = useDispatchedRender(useForecast, Actions.loadForecast);
+
+  return (
+    <>
+      <Title>Forecast</Title>
+      {renderForecast((forecast) => (
+        <ForecastTable forecast={forecast} />
+      ))}
+    </>
   );
 };
