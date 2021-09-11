@@ -1,4 +1,4 @@
-import { Forecast, NotFound, Orders, Profile, PublicApp, Settings, Transactions } from './views';
+import { Forecast, NotFound, Orders, Overview, Profile, Settings, Transactions } from './views';
 import { createRoutablePage } from './common';
 
 const _systemPages = [
@@ -7,7 +7,7 @@ const _systemPages = [
 ];
 
 const _viewPages = [
-  createRoutablePage('/', PublicApp, 'Overview'),
+  createRoutablePage('/', Overview, 'Overview'),
   createRoutablePage('/trans', Transactions, 'Transactions'),
   createRoutablePage('/orders', Orders, 'Orders'),
   createRoutablePage('/forecast', Forecast, 'Forecast'),

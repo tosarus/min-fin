@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export const LoginLogout = ({ ...props }: ButtonProps) => {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const handleLogin = () => loginWithRedirect({ prompt: 'login' });
-  const handleLogout = () => logout({ returnTo: window.location.origin, federated: true });
+  const handleLogout = () => logout({ returnTo: window.location.origin });
   const classes = useStyles();
 
   return (

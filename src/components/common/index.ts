@@ -1,5 +1,4 @@
 export * from './Brand';
-export * from './Deposits';
 export * from './Footer';
 export * from './listItems';
 export * from './LoginLogout';

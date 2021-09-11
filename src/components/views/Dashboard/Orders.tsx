@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Title } from '../common';
+import { Title } from '../../common';
 
 // Generate Order Data
 function createData(id: number, date: string, name: string, shipTo: string, paymentMethod: string, amount: number) {

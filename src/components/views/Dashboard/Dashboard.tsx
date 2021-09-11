@@ -7,7 +7,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { Orders } from './Orders';
-import { Deposits, mainListItems, secondaryListItems } from '../common';
+import { Deposits } from './Deposits';
+import { mainListItems, secondaryListItems } from '../../common';
 
 const Copyright = () => (
   <Typography variant="body2" color="textSecondary" align="center">
@@ -104,8 +105,8 @@ const useStyles = makeStyles((theme) =>
 );
 
 export const Dashboard = () => {
-  const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const classes = useStyles();
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -117,7 +118,7 @@ export const Dashboard = () => {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+      <AppBar className={clsx(classes.appBar, open && classes.appBarShift)}>
         <Toolbar className={classes.toolbar}>
           <IconButton
             edge="start"

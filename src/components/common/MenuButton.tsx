@@ -7,7 +7,7 @@ import { LinkProps, useRoute, Link } from 'wouter';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     menuButton: {
-      marginLeft: theme.spacing(3),
+      margin: theme.spacing(0, 1),
     },
     menuButtonActive: {
       fontWeight: 'bold',
