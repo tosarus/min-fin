@@ -1,4 +1,4 @@
-import { Forecast, NotFound, Orders, Overview, Profile, Settings, Transactions } from './views';
+import { Forecast, NotFound, Orders, Overview, Profile, Settings, Transactions, WelcomeScreen } from './views';
 import { createRoutablePage } from './common';
 
 const _systemPages = [
@@ -6,12 +6,14 @@ const _systemPages = [
   createRoutablePage('/profile', Profile, 'Profile'),
 ];
 
-const _viewPages = [
+const _privatePages = [
   createRoutablePage('/', Overview, 'Overview'),
   createRoutablePage('/trans', Transactions, 'Transactions'),
   createRoutablePage('/orders', Orders, 'Orders'),
   createRoutablePage('/forecast', Forecast, 'Forecast'),
 ];
+
+const _publicPages = [createRoutablePage('/', WelcomeScreen, 'Home')];
 
 const _notFound = createRoutablePage('/:rest', NotFound, '404');
 
@@ -20,8 +22,7 @@ export const listSystemPages = (isAuthenticated: boolean) => {
 };
 
 export const listViewPages = (isAuthenticated: boolean) => {
-  isAuthenticated;
-  return _viewPages;
+  return isAuthenticated ? _privatePages : _publicPages;
 };
 
 export const listNotFoundPage = () => {

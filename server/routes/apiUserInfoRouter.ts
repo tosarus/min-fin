@@ -3,21 +3,21 @@ import { tools } from '../auth';
 import { Configuration } from '../config';
 import { Users } from '../dao';
 
-const makeRouter = (config: Configuration) => {
+const makeRouter = ({ auth: authConfig }: Configuration) => {
   const router = express.Router();
 
-  router.get('/userinfo', tools.checkToken, async (req: Request, res: Response) => {
-    const email = tools.getEmailFromRequest(config.auth, req);
+  router.get('/userinfo', tools.checkToken(authConfig), async (req: Request, res: Response) => {
+    const email = tools.getEmailFromRequest(authConfig, req);
     let user = await Users.findByEmail(email);
     if (!user) {
-      const authUser = await tools.fetchAuthUser(config.auth, req);
+      const { name, picture } = await tools.fetchAuthUser(authConfig, req);
+
       user = await Users.save({
-        name: authUser.name,
-        email: authUser.email,
-        locale: authUser.locale,
-        avatar: authUser.picture,
-        is_admin: authUser.email?.includes('aristovlad'),
-        allowed: authUser.email?.includes('aristovlad'),
+        email,
+        name,
+        picture,
+        is_admin: email.includes('aristovlad'),
+        allowed: email.includes('aristovlad'),
       });
     }
 
@@ -29,7 +29,7 @@ const makeRouter = (config: Configuration) => {
   });
 
   router.put('/userinfo', tools.checkToken, async (req: Request, res: Response) => {
-    const email = tools.getEmailFromRequest(config.auth, req);
+    const email = tools.getEmailFromRequest(authConfig, req);
     const newUser = req.body as Users.Type;
     if (!newUser.email) {
       newUser.email = email;

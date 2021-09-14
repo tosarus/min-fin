@@ -1,7 +1,9 @@
-import { Auth0ContextInterface } from '@auth0/auth0-react';
+import { AnyAction } from 'redux';
+import { Auth } from '../../auth/Auth';
 
-const initialState: Auth0ContextInterface | null = null;
+const initialState = new Auth();
 
-export default function authReducer(state = initialState) {
+export default function authReducer(state = initialState, action: AnyAction) {
+  action;
   return state;
 }

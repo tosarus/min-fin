@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import { Avatar, Paper, Typography } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { useAuth } from '../../../auth';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -17,27 +17,31 @@ const useStyles = makeStyles((theme) =>
       width: theme.spacing(20),
       height: theme.spacing(20),
     },
+    wrap: {
+      whiteSpace: 'pre-wrap',
+      '&:hover': {
+        whiteSpace: 'pre',
+      },
+    },
   })
 );
 
 export const Profile = () => {
-  const { user } = useAuth0();
   const classes = useStyles();
+  const { user } = useAuth();
 
   return (
     <div className={classes.root}>
       <Paper>
         <Typography variant="h6">Details</Typography>
-        <Typography variant="body1">Name: {user?.name}</Typography>
-        <Typography variant="body1">Email: {user?.email}</Typography>
+        <Typography variant="body1">Name: {user!.name}</Typography>
+        <Typography variant="body1">Email: {user!.email}</Typography>
+        <Typography variant="body1">Allowed: {user!.allowed ? 'yes' : 'no'}</Typography>
+        <Typography variant="body1">Admin: {user!.is_admin ? 'yes' : 'no'}</Typography>
       </Paper>
       <Paper>
         <Typography variant="h6">Picture</Typography>
-        <Avatar className={classes.large} src={user?.picture} />
-      </Paper>
-      <Paper>
-        <Typography variant="h6">User JSON</Typography>
-        <pre>{JSON.stringify(user, null, 2)}</pre>
+        <Avatar className={classes.large} src={user!.picture} />
       </Paper>
     </div>
   );

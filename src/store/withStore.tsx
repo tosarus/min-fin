@@ -1,11 +1,11 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { useAuth0 } from '@auth0/auth0-react';
 import { configureStore } from './configureStore';
 import { rootSaga } from './sagas';
+import { useAuth } from '../auth';
 
 const StoreApp = ({ children }: { children: React.ReactNode }) => {
-  const auth = useAuth0();
+  const { auth } = useAuth();
   const store = configureStore({
     auth,
     ajaxStatus: { count: 0, messages: [] },

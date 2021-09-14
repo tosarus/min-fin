@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Request } from 'express';
 import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
@@ -15,11 +16,10 @@ function getEmailFromRequest(config: AuthConfig, req: Request) {
 }
 
 async function fetchAuthUser(config: AuthConfig, req: Request) {
-  const res = await fetch(`${config.domain}userinfo`, {
-    headers: { Authorization: req.headers.authorization || '' },
-    method: 'get',
+  const res = await axios.get<AuthUser>(`${config.domain}userinfo`, {
+    headers: { Authorization: req.headers.authorization },
   });
-  return (await res.json()) as AuthUser;
+  return res.data;
 }
 
 function checkToken(config: AuthConfig) {

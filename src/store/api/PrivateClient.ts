@@ -1,12 +1,9 @@
-import { Auth0ContextInterface } from '@auth0/auth0-react';
 import { BaseClient } from './BaseClient';
+import { Auth } from '../../auth/Auth';
 
 export class PrivateClient extends BaseClient {
-  private _auth: Auth0ContextInterface;
-
-  constructor(auth: Auth0ContextInterface) {
+  constructor(private _auth: Auth) {
     super();
-    this._auth = auth;
   }
 
   protected async createHeaders(): Promise<Headers> {
@@ -14,7 +11,7 @@ export class PrivateClient extends BaseClient {
     return new Headers({ Authorization: `Bearer ${token}` });
   }
 
-  private getToken(): Promise<string> {
-    return this._auth.getAccessTokenSilently();
-  }
+  private getToken = () => {
+    return this._auth.getToken();
+  };
 }

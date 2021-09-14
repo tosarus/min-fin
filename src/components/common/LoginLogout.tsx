@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import { Theme, ButtonProps, Button } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
+import { useAuth } from '../../auth';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -12,9 +12,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const LoginLogout = ({ ...props }: ButtonProps) => {
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
-  const handleLogin = () => loginWithRedirect({ prompt: 'login' });
-  const handleLogout = () => logout({ returnTo: window.location.origin });
+  const { isAuthenticated, auth } = useAuth();
+  const handleLogin = () => auth.login({ prompt: 'login' });
+  const handleLogout = () => auth.logout({ returnTo: window.location.origin });
   const classes = useStyles();
 
   return (

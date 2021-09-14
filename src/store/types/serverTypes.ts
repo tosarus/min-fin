@@ -1,17 +1,7 @@
-export interface WeatherForecast {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
-}
-
-type TransactionType = 'debit' | 'credit';
-
-export interface CsvTrans {
-  date: string;
-  descr: string;
-  amount: number;
-  type: TransactionType;
-  category: string;
-  account: string;
+export interface UserInfo {
+  email: string;
+  name: string;
+  picture: string;
+  is_admin: boolean;
+  allowed: boolean;
 }

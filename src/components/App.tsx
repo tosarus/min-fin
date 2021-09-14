@@ -1,9 +1,9 @@
 import React from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import { AppBar, Avatar, Container, CssBaseline, Toolbar } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Brand, Footer, LoginLogout, MenuButton, ReportSnackbar, SwitchPages, RoutablePage } from './common';
+import { Brand, Error, Footer, LoginLogout, MenuButton, ReportSnackbar, SwitchPages, RoutablePage } from './common';
 import * as Views from './listViews';
+import { useAuth } from '../auth';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -23,7 +23,7 @@ const renderLinks = (pages: RoutablePage[]) =>
   ));
 
 function App() {
-  const { isAuthenticated, user } = useAuth0();
+  const { isAuthenticated, isReady, error, user } = useAuth();
   const classes = useStyles();
 
   const viewPages = Views.listViewPages(isAuthenticated);
@@ -39,16 +39,14 @@ function App() {
           <Toolbar>
             <SwitchPages pages={routedPages}>{(page) => <Brand title={`Min-Fin App - ${page.name}`} />}</SwitchPages>
             {renderLinks(systemPages)}
-            <LoginLogout color="inherit" />
+            {isReady && <LoginLogout color="inherit" />}
             {isAuthenticated && user?.picture && <Avatar src={user.picture!} className={classes.small} />}
           </Toolbar>
         </Container>
       </AppBar>
       <Container maxWidth="lg" component="main">
-        <Toolbar>
-          {renderLinks(viewPages)}
-          <MenuButton href="/foo">Foo</MenuButton>
-        </Toolbar>
+        {error && <Error error={error} />}
+        <Toolbar>{renderLinks(viewPages)}</Toolbar>
         <SwitchPages pages={routedPages} />
       </Container>
       <Footer copyname="Vlad-Dev" link="https://vlad-k.dev/" />

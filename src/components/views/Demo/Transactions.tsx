@@ -2,7 +2,7 @@ import React from 'react';
 import { colors, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Title, useDispatchedRender } from '../../common';
-import { Actions, CsvTrans, useTransactions } from '../../../store';
+import { Actions, CsvTrans, Selectors } from '../../../store';
 
 const useStyles = makeStyles(() => ({
   debit: {
@@ -45,7 +45,7 @@ const Trans = ({ trans }: { trans: CsvTrans[] }) => {
 };
 
 export const Transactions = () => {
-  const renderTransactions = useDispatchedRender(useTransactions, Actions.loadTransactions);
+  const renderTransactions = useDispatchedRender(Selectors.transactions, Actions.loadTransactions);
 
   return (
     <>

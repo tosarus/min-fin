@@ -12,8 +12,9 @@ const makeRouter = (config: Configuration) => {
   });
 
   router.get('/demo/trans', (req, res) => {
-    const trans = Trans.getTransactions();
-    res.json(trans);
+    Trans.getTransactions()
+      .then((trans) => res.json(trans))
+      .catch((err) => res.status(501).send(err));
   });
 
   return router;

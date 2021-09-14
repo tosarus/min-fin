@@ -1,4 +1,5 @@
 export * from './Brand';
+export * from './Error';
 export * from './Footer';
 export * from './listItems';
 export * from './LoginLogout';
