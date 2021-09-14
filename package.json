@@ -11,7 +11,7 @@
     "start": "node dist",
     "build": "run-p build:client build:server",
     "build:client": "INLINE_RUNTIME_CHUNK=false react-scripts build",
-    "build:server": "rm -rf dist && tsc --build tsconfig.server.json",
+    "build:server": "rm -rf dist && tsc --build tsconfig.server.json && cp -R server/assets dist/",
     "dev": "run-p server client",
     "client": "react-scripts start",
     "server": "nodemon server/index.ts 3010 500",
