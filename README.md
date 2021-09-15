@@ -8,6 +8,12 @@ Web-app for Mini Finance
 
 This project was bootstrapped with [Create React App][1]. You can learn more in the [documentation](2 'Create React App documentation').
 
+### Deployment
+
+[Heroku][3]. To push changes:
+
+> git push heroku master
+
 ### Database
 
 Postgess heroku instance. Get connection string as:
@@ -16,9 +22,11 @@ Postgess heroku instance. Get connection string as:
 
 ### Authentication
 
-Auth0. Get settings as:
+[Auth0][4]. Get settings as:
 
 > heroku config | grep AUTH0
 
 [1]: https://github.com/facebook/create-react-app
 [2]: https://facebook.github.io/create-react-app/docs/getting-started
+[3]: https://www.heroku.com/
+[4]: https://auth0.com/

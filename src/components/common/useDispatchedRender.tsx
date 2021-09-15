@@ -6,18 +6,23 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 type RenderStateFn<State> = (state: NonNullable<State>) => React.ReactElement;
 type DispatchedRenderFn<State> = (render: RenderStateFn<State>) => React.ReactElement;
 
+function defaultFalsifier<State>(state: State) {
+  return !state;
+}
+
 export function useDispatchedRender<Store, State>(
   selector: (store: Store) => State,
-  action: () => AnyAction
+  action: () => AnyAction,
+  falsifier: (state: State) => boolean = defaultFalsifier
 ): DispatchedRenderFn<State> {
   const state = useSelector(selector);
   const dispath = useDispatch();
 
   useEffect(() => {
-    if (!state) {
+    if (falsifier(state)) {
       dispath(action());
     }
-  }, [state, action, dispath]);
+  }, [state, action, falsifier, dispath]);
 
-  return (render: RenderStateFn<State>) => (state ? render(state!) : <CircularProgress />);
+  return (render: RenderStateFn<State>) => (falsifier(state) ? <CircularProgress /> : render(state!));
 }

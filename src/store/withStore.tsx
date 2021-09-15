@@ -11,6 +11,7 @@ const StoreApp = ({ children }: { children: React.ReactNode }) => {
     ajaxStatus: { count: 0, messages: [] },
     demo: { forecast: null, trans: null },
     reports: [],
+    users: [],
   });
   store.runSaga(rootSaga);
 

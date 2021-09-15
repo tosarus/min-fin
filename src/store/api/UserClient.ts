@@ -6,7 +6,11 @@ export class UserClient extends PrivateClient {
     return await this.getJson('/api/userinfo');
   }
 
-  async updateUserInfo(user: Partial<UserInfo>): Promise<UserInfo> {
-    return await this.putJson('/api/userinfo', user);
+  async list(): Promise<UserInfo[]> {
+    return await this.getJson('/api/users');
+  }
+
+  async update(user: Partial<UserInfo>): Promise<UserInfo> {
+    return await this.putJson('/api/users', user);
   }
 }

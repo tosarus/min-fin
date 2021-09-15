@@ -3,6 +3,7 @@ import { AuthConfig } from './auth';
 
 export type Configuration = {
   isProd: boolean;
+  admins: string[];
   auth: AuthConfig;
   client: {
     root: string;
@@ -45,6 +46,9 @@ const createConfig = (): Configuration => {
   const authDomain = process.env.AUTH0_DOMAIN || '';
   const authAudience = process.env.AUTH0_AUDIENCE || '';
 
+  // admin list
+  const adminList = (process.env.ADMIN_INIT_LIST || '').split(';');
+
   // web client root
   const clientRoot = '../build';
 
@@ -65,6 +69,7 @@ const createConfig = (): Configuration => {
 
   return {
     isProd,
+    admins: adminList,
     auth: { audience: authAudience, domain: authDomain },
     client: { root: clientRoot },
     server: { port },

@@ -3,12 +3,14 @@ import ajaxStatus from './ajaxStatusReducer';
 import auth from './authReducer';
 import demo from './demoReducer';
 import reports from './reportReducer';
+import users from './usersReducer';
 
 export const rootReducer = combineReducers({
   ajaxStatus,
   auth,
   demo,
   reports,
+  users,
 });
 
 export type RootStore = ReturnType<typeof rootReducer>;
