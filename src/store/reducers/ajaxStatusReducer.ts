@@ -1,4 +1,5 @@
-import { AjaxCallActionTypes, BEGIN_AJAX_CALL, STOP_AJAX_CALL } from '../actions';
+import ActionsType from './actionsType';
+import { BEGIN_AJAX_CALL, STOP_AJAX_CALL } from '../actions';
 
 interface AjaxStatusState {
   count: number;
@@ -6,7 +7,7 @@ interface AjaxStatusState {
 }
 const initialState: AjaxStatusState = { count: 0, messages: [] };
 
-export default function ajaxStatusReduser(state = initialState, action: AjaxCallActionTypes) {
+export default function ajaxStatusReduser(state = initialState, action: ActionsType) {
   if (action.type === BEGIN_AJAX_CALL) {
     const count = state.count + 1;
     const messages = [...state.messages, action.message];

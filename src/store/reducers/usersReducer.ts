@@ -1,9 +1,10 @@
-import { UsersActions, LOAD_USER_LIST_DONE, UPDATE_USER_DONE } from '../actions';
+import ActionsType from './actionsType';
+import { LOAD_USER_LIST_DONE, UPDATE_USER_DONE } from '../actions';
 import { UserInfo } from '../types';
 
 const initialState: UserInfo[] = [];
 
-export default function usersReducer(state = initialState, action: UsersActions) {
+export default function usersReducer(state = initialState, action: ActionsType) {
   if (action.type === LOAD_USER_LIST_DONE) {
     return [...action.users];
   }

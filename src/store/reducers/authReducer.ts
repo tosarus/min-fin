@@ -1,9 +1,9 @@
-import { AnyAction } from 'redux';
+import ActionsType from './actionsType';
 import { Auth } from '../../auth/Auth';
 
 const initialState = new Auth();
 
-export default function authReducer(state = initialState, action: AnyAction) {
+export default function authReducer(state = initialState, action: ActionsType) {
   action;
   return state;
 }
