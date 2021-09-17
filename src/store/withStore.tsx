@@ -6,13 +6,7 @@ import { useAuth } from '../auth';
 
 const StoreApp = ({ children }: { children: React.ReactNode }) => {
   const { auth } = useAuth();
-  const store = configureStore({
-    auth,
-    ajaxStatus: { count: 0, messages: [] },
-    demo: { forecast: null, trans: null },
-    reports: [],
-    users: [],
-  });
+  const store = configureStore({ auth });
   store.runSaga(rootSaga);
 
   return <Provider store={store}>{children}</Provider>;

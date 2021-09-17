@@ -13,11 +13,11 @@ const makeRouter = ({ auth: authConfig }: Configuration) => {
     try {
       res.json(!caller!.is_admin ? [caller!] : await Users.getAll());
     } catch (error) {
-      res.status(401).send(error);
+      res.status(400).send(error);
     }
   });
 
-  router.put('/users', tools.checkToken, async (req: Request, res: Response) => {
+  router.put('/users', tools.checkToken(authConfig), async (req: Request, res: Response) => {
     const callerEmail = tools.getEmailFromRequest(authConfig, req);
     const user = req.body as Partial<Users.Type>;
 
@@ -28,7 +28,7 @@ const makeRouter = ({ auth: authConfig }: Configuration) => {
 
     if (!caller!.is_admin) {
       if (user.email != caller!.email) {
-        res.status(401).send('Can`t update info for other user');
+        res.status(400).send('Can`t update info for other user');
         return;
       }
       delete user.allowed;
@@ -38,7 +38,7 @@ const makeRouter = ({ auth: authConfig }: Configuration) => {
     try {
       res.json(await Users.update(user.email, user));
     } catch (error) {
-      res.status(401).send(error);
+      res.status(400).send(error);
     }
   });
 

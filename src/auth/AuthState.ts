@@ -7,17 +7,20 @@ interface AuthState {
   user?: UserInfo;
 }
 
-export const initialAuthState: AuthState = {
+export const initialState: AuthState = {
   isAuthenticated: false,
   isReady: false,
 };
 
-export const AUTH_DONE = '@@auth/AUTH_DONE';
-export const AUTH_ERROR = '@@auth/AUTH_ERROR';
+const AUTH_DONE = '@@auth/AUTH_DONE';
+const AUTH_ERROR = '@@auth/AUTH_ERROR';
 
-type Actions = { type: typeof AUTH_DONE; user?: UserInfo } | { type: typeof AUTH_ERROR; error: Error };
+export const authDone = (user?: UserInfo) => ({ type: AUTH_DONE, user } as const);
+export const authError = (error: Error) => ({ type: AUTH_ERROR, error } as const);
 
-export const stateReducer = (state: AuthState, action: Actions): AuthState => {
+type Actions = ReturnType<typeof authDone> | ReturnType<typeof authError>;
+
+export const reducer = (state: AuthState, action: Actions): AuthState => {
   switch (action.type) {
     case AUTH_DONE: {
       const { user } = action;

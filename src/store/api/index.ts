@@ -1,2 +1,2 @@
-export { DemoClient } from './DemoClient';
-export { UserClient } from './UserClient';
+export * from './DemoClient';
+export * from './UserClient';

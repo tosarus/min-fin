@@ -1,28 +1,16 @@
-import { call, put, select, take } from 'redux-saga/effects';
-import { runAjaxSaga } from './runAjaxSaga';
+import { takeLatest } from 'redux-saga/effects';
 import { loadForecastDone, loadTransactionsDone, LOAD_FORECAST, LOAD_TRANSACTIONS } from '../actions';
-import { DemoClient } from '../api';
-import { CsvTrans, WeatherForecast } from '../types';
-import { Selectors } from '..';
+import { ForecastClient, TransClient } from '../api';
+import { saga, sagaWithAuth } from './sagaHelper';
 
 export function* loadTransactionsSaga() {
-  const auth = Selectors.auth(yield select());
-  const client = new DemoClient(auth);
-
-  while (true) {
-    yield take(LOAD_TRANSACTIONS);
-    const trans: CsvTrans[] = yield call(runAjaxSaga, 'Loading transactions', [client, client.loadTransactions]);
-    yield put(loadTransactionsDone(trans));
-  }
+  yield takeLatest(LOAD_TRANSACTIONS, function* () {
+    yield sagaWithAuth(loadTransactionsDone, 'Loading transactions', [TransClient, TransClient.prototype.load]);
+  });
 }
 
 export function* loadWeatherForecastSaga() {
-  const auth = Selectors.auth(yield select());
-  const client = new DemoClient(auth);
-
-  while (true) {
-    yield take(LOAD_FORECAST);
-    const forecast: WeatherForecast[] = yield call(runAjaxSaga, 'Loading forecast', [client, client.loadForecast]);
-    yield put(loadForecastDone(forecast || []));
-  }
+  yield takeLatest(LOAD_FORECAST, function* () {
+    yield saga(loadForecastDone, 'Loading forecast', [ForecastClient, ForecastClient.prototype.load]);
+  });
 }

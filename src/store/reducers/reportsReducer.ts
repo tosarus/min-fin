@@ -2,7 +2,7 @@ import ActionsType from './actionsType';
 import { REPORT_ADD, REPORT_REMOVE } from '../actions';
 import { Report } from '../types';
 
-export const initialState: Report[] = [];
+const initialState: Report[] = [];
 
 export default function reportsReducer(state = initialState, action: ActionsType) {
   if (action.type === REPORT_ADD) {

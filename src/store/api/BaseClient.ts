@@ -45,7 +45,7 @@ export abstract class BaseClient {
       body: body,
     });
     if (!response.ok) {
-      throw new Error(response.statusText);
+      throw new Error(`[${response.status} - ${response.statusText}]: ${await response.text()}`);
     }
     return response;
   }

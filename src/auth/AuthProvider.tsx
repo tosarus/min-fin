@@ -1,11 +1,11 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { Auth0ClientOptions } from '@auth0/auth0-spa-js';
 import { Auth } from './Auth';
-import { AUTH_DONE, AUTH_ERROR, initialAuthState, stateReducer } from './AuthState';
+import { authDone, authError, initialState, reducer } from './AuthState';
 import { hasAuthParams } from './utils';
 import { UserClient } from '../store';
 
-const AuthContext = React.createContext({ auth: new Auth(), ...initialAuthState });
+const AuthContext = React.createContext({ auth: new Auth(), ...initialState });
 export const useAuth = () => React.useContext(AuthContext);
 
 interface AuthProviderProps extends Auth0ClientOptions {
@@ -23,7 +23,7 @@ export const AuthProvider = ({
   ...opts
 }: AuthProviderProps) => {
   const [auth] = useState(() => new Auth(opts));
-  const [state, dispatch] = useReducer(stateReducer, initialAuthState);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     const authenticate = async (): Promise<void> => {
@@ -37,9 +37,9 @@ export const AuthProvider = ({
       if (await auth.isAuthenticated()) {
         user = await new UserClient(auth).getUserInfo();
       }
-      dispatch({ type: AUTH_DONE, user });
+      dispatch(authDone(user));
     };
-    authenticate().catch((error: Error) => dispatch({ type: AUTH_ERROR, error }));
+    authenticate().catch((error: Error) => dispatch(authError(error)));
   }, [auth, dispatch, onRedirectCallback]);
 
   return (
