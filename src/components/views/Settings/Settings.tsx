@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, Typography, TypographyProps } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { useAuth } from '../../../auth';
-import { Title, useDispatchedRender } from '../../common';
-import { Actions, Selectors } from '../../../store';
 import { UserListTable } from './UserListTable';
+import { Title, useDispatchedRender } from '../../common';
+import { useAuth } from '../../../auth';
+import { Actions, Selectors } from '../../../store';
 
 const useStyles = makeStyles((theme) =>
   createStyles({

@@ -2,7 +2,8 @@ import React from 'react';
 import dateFormat from 'dateformat';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { Title, useDispatchedRender } from '../../common';
-import { Actions, WeatherForecast, Selectors } from '../../../store';
+import { Actions, Selectors } from '../../../store';
+import { WeatherForecast } from '../../../types';
 
 function formatDate(date: string, format = 'mmm dd', gmt = true) {
   return dateFormat(new Date(date), format, gmt);

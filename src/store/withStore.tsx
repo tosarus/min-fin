@@ -1,14 +1,11 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { configureStore } from './configureStore';
-import { rootSaga } from './sagas';
+import { createStore } from './createStore';
 import { useAuth } from '../auth';
 
 const StoreApp = ({ children }: { children: React.ReactNode }) => {
   const { auth } = useAuth();
-  const store = configureStore({ auth });
-  store.runSaga(rootSaga);
-
+  const store = createStore({ auth });
   return <Provider store={store}>{children}</Provider>;
 };
 

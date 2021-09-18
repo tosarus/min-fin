@@ -1,4 +1,5 @@
 import { Report, ReportType } from '../types';
+
 export const REPORT_ADD = '@@report/REPORT_ADD';
 export const REPORT_REMOVE = '@@report/REPORT_REMOVE';
 export const REPORT_CREATE = '@@report/REPORT_CREATE';

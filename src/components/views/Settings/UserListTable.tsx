@@ -1,7 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
-import { Actions, UserInfo } from '../../../store';
+import { Actions } from '../../../store';
+import { UserInfo } from '../../../types';
 
 interface UserListTableProps {
   userList: UserInfo[];

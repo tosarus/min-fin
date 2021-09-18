@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AuthProvider, config } from './auth';
-import App from './components/App';
+import { App } from './components';
 import { withStore } from './store';
 
 ReactDOM.render(

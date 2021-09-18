@@ -1,5 +1,5 @@
 import { fork, delay, put, takeEvery } from 'redux-saga/effects';
-import { REPORT_CREATE, reportAdd, reportRemove } from '../actions';
+import { REPORT_CREATE, reportAdd, reportRemove } from './reportActions';
 import { Report } from '../types';
 
 function* removeReportDelayed(reportId: string, timeOut: number) {

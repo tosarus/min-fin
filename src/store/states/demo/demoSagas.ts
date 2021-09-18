@@ -1,7 +1,7 @@
 import { takeLatest } from 'redux-saga/effects';
-import { loadForecastDone, loadTransactionsDone, LOAD_FORECAST, LOAD_TRANSACTIONS } from '../actions';
-import { ForecastClient, TransClient } from '../api';
-import { saga, sagaWithAuth } from './sagaHelper';
+import { loadForecastDone, loadTransactionsDone, LOAD_FORECAST, LOAD_TRANSACTIONS } from './demoActions';
+import { ForecastClient, TransClient } from '../clients';
+import { saga, sagaWithAuth } from '../sagas';
 
 export function* loadTransactionsSaga() {
   yield takeLatest(LOAD_TRANSACTIONS, function* () {

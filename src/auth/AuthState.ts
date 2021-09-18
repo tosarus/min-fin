@@ -1,4 +1,4 @@
-import { UserInfo } from '../store';
+import { UserInfo } from '../types';
 
 interface AuthState {
   error?: Error;
