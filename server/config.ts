@@ -22,6 +22,7 @@ export type Configuration = {
   };
   pg: {
     database: string;
+    ssl: boolean;
   };
   delay: {
     ms: number | undefined;
@@ -76,7 +77,7 @@ const createConfig = (): Configuration => {
     morgan: { format: morganFormat },
     helmet: { cspDirectives: helmetCspDirectives },
     bodyParser: { json: bodyParserJson },
-    pg: { database: pgDatabase },
+    pg: { database: pgDatabase, ssl: isProd },
     delay: { ms: delayMs },
   };
 };

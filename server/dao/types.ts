@@ -5,4 +5,10 @@ export interface DbUser {
   picture: string;
   is_admin: boolean;
   allowed: boolean;
+  active_budget: number;
+}
+
+export interface DbBudget {
+  id: number;
+  name: string;
 }

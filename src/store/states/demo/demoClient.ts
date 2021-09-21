@@ -1,5 +1,4 @@
-import { PrivateClient } from './PrivateClient';
-import { PublicClient } from './PublicClient';
+import { PrivateClient, PublicClient } from '../clients';
 import { WeatherForecast, CsvTrans } from '../types';
 
 export class ForecastClient extends PublicClient {

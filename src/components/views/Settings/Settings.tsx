@@ -1,9 +1,10 @@
 import React from 'react';
 import { Box, Typography, TypographyProps } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
+import { BudgetListTable } from './BudgetListTable';
 import { UserListTable } from './UserListTable';
 import { Title, useDispatchedRender } from '../../common';
-import { useAuth } from '../../../auth';
 import { Actions, Selectors } from '../../../store';
 
 const useStyles = makeStyles((theme) =>
@@ -17,7 +18,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     separator: {
-      margin: theme.spacing(3, 0),
+      margin: theme.spacing(3),
     },
     subTitle: {
       margin: theme.spacing(1, 0),
@@ -36,31 +37,24 @@ const SectionTitle = (props: TypographyProps) => {
 };
 
 export const Settings = () => {
-  const { user } = useAuth();
-  const { email, name, is_admin } = user!;
-  const classes = useStyles();
+  const profile = useSelector(Selectors.profile);
   const renderUserList = useDispatchedRender(Selectors.userList, Actions.loadUserList, (list) => list.length == 0);
-
-  const details: string[] = [];
-  details.push(name);
-  if (email !== name) {
-    details.push(`(${email})`);
-  }
-  if (is_admin) {
-    details.push('[Admin]');
-  }
+  const renderBudgets = useDispatchedRender(Selectors.budgets, Actions.listBudgets);
+  const classes = useStyles();
 
   return (
     <Box className={classes.root}>
       <section>
-        <Title>Settings</Title>
-        <Typography>{details.join(' ')}</Typography>
+        <Title>Settings{profile?.is_admin && ' [admin]'}</Title>
+        <Separator />
+        <SectionTitle>{profile!.is_admin ? 'Users' : 'Your info'}</SectionTitle>
         {renderUserList((userList) => (
-          <>
-            <Separator />
-            <SectionTitle>{is_admin ? 'Users' : 'Your info'}</SectionTitle>
-            <UserListTable userList={userList} />
-          </>
+          <UserListTable userList={userList} />
+        ))}
+        <Separator />
+        <SectionTitle>Budgets</SectionTitle>
+        {renderBudgets((budgets) => (
+          <BudgetListTable budgets={budgets} />
         ))}
       </section>
     </Box>

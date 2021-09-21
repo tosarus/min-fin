@@ -4,7 +4,7 @@ interface AuthState {
   error?: Error;
   isAuthenticated: boolean;
   isReady: boolean;
-  user?: UserInfo;
+  _user?: UserInfo;
 }
 
 export const initialState: AuthState = {
@@ -24,7 +24,7 @@ export const reducer = (state: AuthState, action: Actions): AuthState => {
   switch (action.type) {
     case AUTH_DONE: {
       const { user } = action;
-      return { ...state, isReady: true, user, isAuthenticated: !!user };
+      return { ...state, isReady: true, _user: user, isAuthenticated: !!user };
     }
     case AUTH_ERROR: {
       const { error } = action;

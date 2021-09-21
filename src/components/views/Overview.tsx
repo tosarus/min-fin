@@ -1,15 +1,16 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { Title } from '../common';
-import { useAuth } from '../../auth';
+import { Selectors } from '../../store';
 
 export const Overview = () => {
-  const { user } = useAuth();
+  const profile = useSelector(Selectors.profile);
 
   return (
     <>
       <Title>Overview</Title>
-      <Typography variant="body1">{`Hi, ${user!.name}.`}</Typography>
+      <Typography variant="body1">{`Hi, ${profile!.name}.`}</Typography>
     </>
   );
 };

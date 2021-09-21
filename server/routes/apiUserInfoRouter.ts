@@ -3,7 +3,7 @@ import { tools } from '../auth';
 import { Configuration } from '../config';
 import { Users } from '../dao';
 
-const makeRouter = ({ auth: authConfig, admins }: Configuration) => {
+const makeRouter = ({ auth: authConfig }: Configuration) => {
   const router = express.Router();
 
   router.get('/userinfo', tools.checkToken(authConfig), async (req: Request, res: Response) => {
@@ -16,8 +16,7 @@ const makeRouter = ({ auth: authConfig, admins }: Configuration) => {
         email,
         name,
         picture,
-        is_admin: admins.includes(email),
-        allowed: admins.includes(email),
+        allowed: Users.isAdmin(email),
       });
     }
 

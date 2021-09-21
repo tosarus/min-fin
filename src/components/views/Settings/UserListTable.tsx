@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { Actions } from '../../../store';
 import { UserInfo } from '../../../types';
+import { EditableString } from '../../common/EditableString';
 
 interface UserListTableProps {
   userList: UserInfo[];
@@ -11,8 +12,8 @@ interface UserListTableProps {
 export const UserListTable = ({ userList }: UserListTableProps) => {
   const dispatch = useDispatch();
 
-  const handleIsAdmin = (user: UserInfo) => {
-    dispatch(Actions.updateUser({ email: user.email, is_admin: !user.is_admin }));
+  const handleName = (user: UserInfo, name: string) => {
+    dispatch(Actions.updateUser({ email: user.email, name }));
   };
 
   const handleAllowed = (user: UserInfo) => {
@@ -32,9 +33,11 @@ export const UserListTable = ({ userList }: UserListTableProps) => {
       <TableBody>
         {userList.map((user) => (
           <TableRow key={user.email}>
-            <TableCell>{user.name}</TableCell>
+            <TableCell>
+              <EditableString value={user.name} name="Name" onChanged={(name) => handleName(user, name)} />
+            </TableCell>
             <TableCell>{user.email}</TableCell>
-            <TableCell onClick={() => handleIsAdmin(user)}>{user.is_admin ? 'Yes' : 'No'}</TableCell>
+            <TableCell>{user.is_admin ? 'Yes' : 'No'}</TableCell>
             <TableCell onClick={() => handleAllowed(user)}>{user.allowed ? 'Yes' : 'No'}</TableCell>
           </TableRow>
         ))}

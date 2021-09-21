@@ -3,7 +3,7 @@ import { Auth0ClientOptions } from '@auth0/auth0-spa-js';
 import { Auth } from './Auth';
 import { authDone, authError, initialState, reducer } from './AuthState';
 import { hasAuthParams } from './utils';
-import { UserClient } from '../clients';
+import { UsersClient } from '../store';
 
 const AuthContext = React.createContext({ auth: new Auth(), ...initialState });
 export const useAuth = () => React.useContext(AuthContext);
@@ -35,7 +35,7 @@ export const AuthProvider = ({
       }
       let user;
       if (await auth.isAuthenticated()) {
-        user = await new UserClient(auth).getUserInfo();
+        user = await new UsersClient(auth).getUserInfo();
       }
       dispatch(authDone(user));
     };

@@ -7,13 +7,13 @@ const config = createConfig();
 const app = createApp(config);
 
 createDb(config)
-  .then((db) => {
+  .then((info) => {
     http.createServer(app).listen(config.server.port, () => {
       console.log(
-        'Running at http://localhost:%d in %s mode. Connected to db with %s listeners.',
+        'Running at http://localhost:%d in %s mode. Connected to %s',
         config.server.port,
         config.isProd ? 'prod' : 'dev',
-        db.getMaxListeners()
+        info
       );
     });
   })

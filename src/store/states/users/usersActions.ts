@@ -9,3 +9,4 @@ export const loadUserList = () => ({ type: LOAD_USER_LIST } as const);
 export const loadUserListDone = (users: UserInfo[]) => ({ type: LOAD_USER_LIST_DONE, users } as const);
 export const updateUser = (user: Partial<UserInfo>) => ({ type: UPDATE_USER, user } as const);
 export const updateUserDone = (user: UserInfo) => ({ type: UPDATE_USER_DONE, user } as const);
+export const updateProfile = updateUser;
