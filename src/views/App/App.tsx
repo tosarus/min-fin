@@ -1,8 +1,8 @@
 import React from 'react';
 import { AppBar, Box, Container, CssBaseline, Toolbar } from '@material-ui/core';
-import { Brand, Error, Footer, LoginLogout, MenuButton, ReportSnackbar, SwitchPages, RoutablePage } from './common';
 import * as Views from './listViews';
-import { useAuth } from '../auth';
+import { Brand, Error, Footer, LoginLogout, MenuButton, ReportSnackbar, SwitchPages, RoutablePage } from '../../common';
+import { useAuth } from '../../auth';
 
 const renderLinks = (pages: RoutablePage[]) =>
   pages.map((page, i) => (
@@ -11,7 +11,7 @@ const renderLinks = (pages: RoutablePage[]) =>
     </MenuButton>
   ));
 
-function App() {
+export const App = () => {
   const { isAuthenticated, isReady, error } = useAuth();
 
   const viewPages = Views.listViewPages(isAuthenticated);
@@ -48,6 +48,4 @@ function App() {
       <ReportSnackbar />
     </>
   );
-}
-
-export default App;
+};

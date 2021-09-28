@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableRow } from '@material-ui/core';
 import { EditableString } from '../../common/EditableString';
-import { Budget } from '../../../types';
-import { Actions, Selectors } from '../../../store';
+import { Budget } from '../../types';
+import { Actions, Selectors } from '../../store';
 
 interface BudgetListTableProps {
   budgets: Budget[];

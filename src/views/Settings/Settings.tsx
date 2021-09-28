@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { BudgetListTable } from './BudgetListTable';
 import { UserListTable } from './UserListTable';
 import { Title, useDispatchedRender } from '../../common';
-import { Actions, Selectors } from '../../../store';
+import { Actions, Selectors } from '../../store';
 
 const useStyles = makeStyles((theme) =>
   createStyles({

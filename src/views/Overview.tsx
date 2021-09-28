@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { Title } from '../common';
-import { Selectors } from '../../store';
+import { Selectors } from '../store';
 
 export const Overview = () => {
   const profile = useSelector(Selectors.profile);

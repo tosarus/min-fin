@@ -1,5 +1,5 @@
-import { Forecast, NotFound, Orders, Overview, Settings, Transactions, WelcomeScreen } from './views';
-import { createRoutablePage } from './common';
+import { Forecast, NotFound, Orders, Overview, Settings, Transactions, WelcomeScreen } from '..';
+import { createRoutablePage } from '../../common';
 
 const _systemPages = [createRoutablePage('/settings', Settings, 'Settings')];
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Theme, ButtonProps, Button } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import { useAuth } from '../../auth';
+import { useAuth } from '../auth';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
