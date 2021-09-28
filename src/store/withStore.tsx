@@ -5,7 +5,7 @@ import { useAuth } from '../auth';
 
 const StoreApp = ({ children }: { children: React.ReactNode }) => {
   const { auth, _user: profile } = useAuth();
-  const store = createStore({ auth, profile });
+  const store = createStore(/*context*/ { auth }, /*preloadedState*/ { profile });
   return <Provider store={store}>{children}</Provider>;
 };
 

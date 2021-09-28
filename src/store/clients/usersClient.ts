@@ -1,5 +1,5 @@
-import { PrivateClient } from '../clients';
-import { UserInfo } from '../types';
+import { PrivateClient } from './privateClient';
+import { UserInfo } from '../../types';
 
 export class UsersClient extends PrivateClient {
   getUserInfo(): Promise<UserInfo> {

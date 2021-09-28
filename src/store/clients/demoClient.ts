@@ -1,5 +1,6 @@
-import { PrivateClient, PublicClient } from '../clients';
-import { WeatherForecast, CsvTrans } from '../types';
+import { PrivateClient } from './privateClient';
+import { PublicClient } from './publicClient';
+import { WeatherForecast, CsvTrans } from '../../types';
 
 export class ForecastClient extends PublicClient {
   load(): Promise<WeatherForecast[]> {

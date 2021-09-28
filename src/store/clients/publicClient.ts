@@ -1,4 +1,4 @@
-import { BaseClient } from './BaseClient';
+import { BaseClient } from './baseClient';
 
 export class PublicClient extends BaseClient {
   protected createHeaders(): Promise<Headers> {

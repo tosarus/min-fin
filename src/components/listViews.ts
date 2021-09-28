@@ -10,7 +10,11 @@ const _privatePages = [
   createRoutablePage('/forecast', Forecast, 'Forecast'),
 ];
 
-const _publicPages = [createRoutablePage('/', WelcomeScreen, 'Home')];
+const _publicPages = [
+  createRoutablePage('/', WelcomeScreen, 'Home'),
+  createRoutablePage('/trans', Transactions, 'Transactions'),
+  createRoutablePage('/forecast', Forecast, 'Forecast'),
+];
 
 const _notFound = createRoutablePage('/:rest', NotFound, '404');
 

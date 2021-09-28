@@ -1,5 +1,5 @@
-import { PrivateClient } from '../clients';
-import { Budget } from '../types';
+import { PrivateClient } from './privateClient';
+import { Budget } from '../../types';
 
 export class BudgetsClient extends PrivateClient {
   list(): Promise<Budget[]> {

@@ -1,5 +1,5 @@
-import { BaseClient } from './BaseClient';
-import { Auth } from '../types';
+import { BaseClient } from './baseClient';
+import { Auth } from '../../auth';
 
 export class PrivateClient extends BaseClient {
   constructor(private _auth: Auth) {
@@ -7,11 +7,7 @@ export class PrivateClient extends BaseClient {
   }
 
   protected async createHeaders(): Promise<Headers> {
-    const token = await this.getToken();
+    const token = await this._auth.getToken();
     return new Headers({ Authorization: `Bearer ${token}` });
   }
-
-  private getToken = () => {
-    return this._auth.getToken();
-  };
 }

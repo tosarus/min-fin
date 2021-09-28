@@ -1,20 +1,19 @@
-import { createStore as createReduxStore, applyMiddleware } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-import { all, fork } from 'redux-saga/effects';
-import { rootReducer, Actions, Sagas } from './states';
+import { createLogger } from 'redux-logger';
+import { reducer, rootSaga } from './slices';
 
-const rootSaga = function* () {
-  const sagasArr = Object.values(Sagas);
-  yield all(sagasArr.map((s) => fork(s)));
-};
-
-export function createStore(additionalState?: Partial<ReturnType<typeof rootReducer>>) {
-  const sagaMiddleware = createSagaMiddleware();
-
-  const middlewares = [sagaMiddleware];
-
-  const initialState = rootReducer(undefined, Actions.getInitialState());
-  const store = createReduxStore(rootReducer, { ...initialState, ...additionalState }, applyMiddleware(...middlewares));
+export function createStore<C extends Record<string, unknown>>(
+  context?: C,
+  preloadedState?: Partial<ReturnType<typeof reducer>>
+) {
+  const sagaMiddleware = createSagaMiddleware({ context });
+  const loggerMiddleware = createLogger({ duration: true });
+  const store = configureStore({
+    reducer,
+    middleware: (getDefault) => getDefault({ thunk: false }).concat([sagaMiddleware, loggerMiddleware]),
+    preloadedState,
+  });
   sagaMiddleware.run(rootSaga);
   return store;
 }
