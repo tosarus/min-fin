@@ -18,11 +18,11 @@ const {
   name: 'demo',
   initialState,
   reducers: {
-    loadForecastDone(state, action: PayloadAction<WeatherForecast[]>) {
-      state.forecast = action.payload;
+    loadForecastDone(state, { payload: forecast }: PayloadAction<WeatherForecast[]>) {
+      state.forecast = forecast;
     },
-    loadTransactionsDone(state, action: PayloadAction<CsvTrans[]>) {
-      state.trans = action.payload;
+    loadTransactionsDone(state, { payload: trans }: PayloadAction<CsvTrans[]>) {
+      state.trans = trans;
     },
   },
 });

@@ -39,9 +39,10 @@ export async function create(email: string, budget: Partial<DbBudget>) {
   return rows[0];
 }
 
-export function remove(email: string, id: number) {
-  return db().query({
+export async function remove(email: string, id: number) {
+  await db().query({
     text: 'delete from budgets b using users u where b.user_id = u.id and b.id = $2 and u.email = $1',
     values: [email, id],
   });
+  return { id };
 }

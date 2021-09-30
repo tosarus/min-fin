@@ -1,6 +1,6 @@
 import React from 'react';
 import dateFormat from 'dateformat';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { Title, useDispatchedRender } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { WeatherForecast } from '../../types';

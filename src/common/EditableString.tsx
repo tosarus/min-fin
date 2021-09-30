@@ -1,7 +1,7 @@
 import React, { FormEvent, KeyboardEvent, useState } from 'react';
-import { Box, TextField } from '@material-ui/core';
+import { Box, TextField } from '@mui/material';
 
-interface EditableStringProps {
+interface Props {
   value: string;
   name: string;
   editing?: boolean;
@@ -9,13 +9,7 @@ interface EditableStringProps {
   onCancel?: () => void;
 }
 
-export const EditableString = ({
-  value: initialValue,
-  name,
-  editing = false,
-  onChanged,
-  onCancel = () => {},
-}: EditableStringProps) => {
+export const EditableString = ({ value: initialValue, name, editing = false, onChanged, onCancel = () => {} }: Props) => {
   const [edit, setEdit] = useState(editing);
   const [value, setValue] = useState(initialValue);
   const handleSubmit = (e: FormEvent) => {

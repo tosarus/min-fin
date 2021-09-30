@@ -4,10 +4,6 @@ import { UsersClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
 import { UserInfo } from '../../types';
 
-function cmpUsers(a: UserInfo, b: UserInfo) {
-  return a.email < b.email ? -1 : a.email > b.email ? 1 : 0;
-}
-
 const {
   name,
   actions: { loadUserListDone, updateUserDone },
@@ -16,11 +12,12 @@ const {
   name: 'users',
   initialState: [] as UserInfo[],
   reducers: {
-    loadUserListDone(state, action: PayloadAction<UserInfo[]>) {
-      return [...action.payload].sort(cmpUsers);
+    loadUserListDone(state, { payload: userList }: PayloadAction<UserInfo[]>) {
+      return userList;
     },
-    updateUserDone(state, action: PayloadAction<UserInfo>) {
-      return [...state.filter((user) => user.email !== action.payload.email), action.payload].sort(cmpUsers);
+    updateUserDone(state, { payload: user }: PayloadAction<UserInfo>) {
+      const index = state.findIndex((u) => u.email === user.email);
+      state[index] = user;
     },
   },
 });
@@ -43,13 +40,13 @@ const { reducer: profileReducer } = createSlice({
   initialState: null as UserInfo | null,
   reducers: {},
   extraReducers: {
-    [loadUserListDone.type]: (state, action: PayloadAction<UserInfo[]>) => {
-      const profile = action.payload.find((user) => user.email === state?.email);
+    [loadUserListDone.type]: (state, { payload: userList }: PayloadAction<UserInfo[]>) => {
+      const profile = userList.find((user) => user.email === state?.email);
       return profile ? { ...profile } : state;
     },
-    [updateUserDone.type]: (state, action: PayloadAction<UserInfo>) => {
-      if (action.payload.email === state?.email) {
-        return { ...action.payload };
+    [updateUserDone.type]: (state, { payload: user }: PayloadAction<UserInfo>) => {
+      if (user.email === state?.email) {
+        return { ...user };
       }
     },
   },

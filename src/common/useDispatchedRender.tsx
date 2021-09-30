@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AnyAction } from 'redux';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { LinearProgress } from '@mui/material';
 
 type RenderStateFn<State> = (state: NonNullable<State>) => React.ReactElement;
 type DispatchedRenderFn<State> = (render: RenderStateFn<State>) => React.ReactElement;
@@ -13,7 +13,8 @@ function defaultFalsifier<State>(state: State) {
 export function useDispatchedRender<Store, State>(
   selector: (store: Store) => State,
   action: () => AnyAction,
-  falsifier: (state: State) => boolean = defaultFalsifier
+  falsifier: (state: State) => boolean = defaultFalsifier,
+  loader: React.ReactElement = <LinearProgress />
 ): DispatchedRenderFn<State> {
   const state = useSelector(selector);
   const dispath = useDispatch();
@@ -24,5 +25,5 @@ export function useDispatchedRender<Store, State>(
     }
   }, [state, action, falsifier, dispath]);
 
-  return (render: RenderStateFn<State>) => (falsifier(state) ? <CircularProgress /> : render(state!));
+  return (render: RenderStateFn<State>) => (falsifier(state) ? loader : render(state!));
 }

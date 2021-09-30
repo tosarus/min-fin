@@ -7,7 +7,7 @@ export function* callPublic(action: (param: any) => any, message: string, caller
     const retVal = yield call(caller);
     yield put(action(retVal));
   } catch (error) {
-    yield put(Actions.reportError({ text: `${message}: ${error}`, timeOut: 5000 }));
+    yield put(Actions.reportError(`${message}: ${error}`, 5000));
   }
 }
 
@@ -17,6 +17,6 @@ export function* callPrivate(action: (param: any) => any, message: string, calle
     const retVal = yield call(caller, auth);
     yield put(action(retVal));
   } catch (error) {
-    yield put(Actions.reportError({ text: `${message}: ${error}`, timeOut: 5000 }));
+    yield put(Actions.reportError(`${message}: ${error}`, 5000));
   }
 }

@@ -1,50 +1,33 @@
 import React from 'react';
-import { Box, Typography, TypographyProps } from '@material-ui/core';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
+import { Box, IconButton, Typography, TypographyProps } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { useDispatch, useSelector } from 'react-redux';
 import { BudgetListTable } from './BudgetListTable';
 import { UserListTable } from './UserListTable';
 import { Title, useDispatchedRender } from '../../common';
 import { Actions, Selectors } from '../../store';
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-      padding: theme.spacing(0, 2),
-      justifyContent: 'space-around',
-      '& > section': {
-        flex: '1 0 auto',
-      },
-    },
-    separator: {
-      margin: theme.spacing(3),
-    },
-    subTitle: {
-      margin: theme.spacing(1, 0),
-    },
-  })
-);
-
 const Separator = () => {
-  const classes = useStyles();
-  return <hr className={classes.separator} />;
+  return <Box component="hr" m={3} />;
 };
 
 const SectionTitle = (props: TypographyProps) => {
-  const classes = useStyles();
-  return <Typography variant="h5" className={classes.subTitle} {...props} />;
+  return <Typography variant="h5" my={1} mx={0} {...props} />;
 };
 
 export const Settings = () => {
   const profile = useSelector(Selectors.profile);
   const renderUserList = useDispatchedRender(Selectors.userList, Actions.loadUserList, (list) => list.length == 0);
   const renderBudgets = useDispatchedRender(Selectors.budgets, Actions.listBudgets);
-  const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const handleRefreshBudgets = () => {
+    dispatch(Actions.resetBudgets());
+  };
 
   return (
-    <Box className={classes.root}>
-      <section>
+    <Box display="flex" px={0} py={2} justifyContent="space-around">
+      <Box component="section" flex="1 0 auto">
         <Title>Settings{profile?.is_admin && ' [admin]'}</Title>
         <Separator />
         <SectionTitle>{profile!.is_admin ? 'Users' : 'Your info'}</SectionTitle>
@@ -52,11 +35,16 @@ export const Settings = () => {
           <UserListTable userList={userList} />
         ))}
         <Separator />
-        <SectionTitle>Budgets</SectionTitle>
+        <SectionTitle>
+          <span style={{ display: 'inline-block', marginRight: '10px' }}>Budgets</span>
+          <IconButton area-label="refresh budgets" size="small" onClick={handleRefreshBudgets}>
+            <RefreshIcon />
+          </IconButton>
+        </SectionTitle>
         {renderBudgets((budgets) => (
           <BudgetListTable budgets={budgets} />
         ))}
-      </section>
+      </Box>
     </Box>
   );
 };

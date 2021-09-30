@@ -67,8 +67,7 @@ const makeRouter = ({ auth: authConfig }: Configuration) => {
     const id = +req.params.id;
 
     try {
-      await Budgets.remove(email, id);
-      res.json({ id });
+      res.json(await Budgets.remove(email, id));
     } catch (error) {
       console.log(error);
       res.status(400).send(error);

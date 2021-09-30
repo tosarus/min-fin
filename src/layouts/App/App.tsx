@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Box, Container, CssBaseline, Toolbar } from '@material-ui/core';
+import { AppBar, Box, Container, CssBaseline, LinearProgress, Toolbar } from '@mui/material';
 import * as Views from './listViews';
 import { Brand, Error, Footer, LoginLogout, MenuButton, ReportSnackbar, SwitchPages, RoutablePage } from '../../common';
 import { useAuth } from '../../auth';
@@ -36,12 +36,14 @@ export const App = () => {
         </Container>
       </AppBar>
       <Box display="flex" flexDirection="column" height="calc(100vh - 64px)">
-        {isReady && (
-          <Container maxWidth="lg" component="main">
+        {isReady ? (
+          <Container maxWidth="lg" component="main" style={{ display: 'flex', flexDirection: 'column', minHeight: '0' }}>
             {error && <Error error={error} />}
             <Toolbar disableGutters>{renderLinks(viewPages)}</Toolbar>
             <SwitchPages pages={routedPages} />
           </Container>
+        ) : (
+          <LinearProgress />
         )}
         <Footer copyname="Vlad-Dev" link="https://vlad-k.dev/" />
       </Box>

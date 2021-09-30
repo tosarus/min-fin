@@ -9,25 +9,52 @@ const initialState = null as Budget[] | null;
 const {
   name,
   reducer: budgetReducer,
-  actions: { listBudgetsDone, getActiveBudgetDone, createBudgetDone, updateBudgetDone, removeBudgetDone },
+  actions: { listBudgetsDone, getActiveBudgetDone, createBudgetDone, updateBudgetDone, removeBudgetDone, resetBudgets },
 } = createSlice({
   name: 'budgets',
   initialState,
   reducers: {
-    listBudgetsDone(state, action: PayloadAction<Budget[]>) {
-      return action.payload;
+    listBudgetsDone(state, { payload: budgetList }: PayloadAction<Budget[]>) {
+      return budgetList;
     },
-    getActiveBudgetDone(state, action: PayloadAction<Budget>) {
-      return state ? [...state.filter((budget) => budget.id !== action.payload.id), action.payload] : [action.payload];
+    getActiveBudgetDone(state, { payload: budget }: PayloadAction<Budget>) {
+      if (!state) {
+        return [budget];
+      }
+      const index = state.findIndex((b) => b.id === budget.id);
+      if (index === -1) {
+        state.push(budget);
+      } else {
+        state[index] = budget;
+      }
     },
-    createBudgetDone(state, action: PayloadAction<Budget>) {
-      return state ? [...state, action.payload] : [action.payload];
+    createBudgetDone(state, { payload: budget }: PayloadAction<Budget>) {
+      if (!state) {
+        return [budget];
+      }
+      state.push(budget);
     },
-    updateBudgetDone(state, action: PayloadAction<Budget>) {
-      return state ? [...state.filter((budget) => budget.id !== action.payload.id), action.payload] : [action.payload];
+    updateBudgetDone(state, { payload: budget }: PayloadAction<Budget>) {
+      if (!state) {
+        return [budget];
+      }
+      const index = state.findIndex((b) => b.id === budget.id);
+      if (index > -1) {
+        state[index] = budget;
+      } else {
+        state.push(budget);
+      }
     },
-    removeBudgetDone(state, action: PayloadAction<Budget>) {
-      return state ? [...state.filter((budget) => budget.id !== action.payload.id)] : state;
+    removeBudgetDone(state, { payload: id }: PayloadAction<number>) {
+      if (state) {
+        const index = state.findIndex((b) => b.id === id);
+        if (index >= 0) {
+          state.splice(index, 1);
+        }
+      }
+    },
+    resetBudgets() {
+      return initialState;
     },
   },
 });
@@ -65,7 +92,7 @@ function selectors<Store extends { budgets: typeof initialState }>() {
 }
 
 export default {
-  actions,
+  actions: { ...actions, resetBudgets },
   reducer,
   saga,
   selectors,

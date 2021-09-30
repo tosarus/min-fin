@@ -1,12 +1,16 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { EditableString } from '../../common';
 import { Actions } from '../../store';
 import { UserInfo } from '../../types';
-import { EditableString } from '../../common/EditableString';
 
 interface UserListTableProps {
   userList: UserInfo[];
+}
+
+function cmpUsers(a: UserInfo, b: UserInfo) {
+  return a.email < b.email ? -1 : a.email > b.email ? 1 : 0;
 }
 
 export const UserListTable = ({ userList }: UserListTableProps) => {
@@ -31,7 +35,7 @@ export const UserListTable = ({ userList }: UserListTableProps) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {userList.map((user) => (
+        {[...userList].sort(cmpUsers).map((user) => (
           <TableRow key={user.email}>
             <TableCell>
               <EditableString value={user.name} name="Name" onChanged={(name) => handleName(user, name)} />

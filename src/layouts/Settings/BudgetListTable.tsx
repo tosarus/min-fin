@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableRow } from '@material-ui/core';
-import { EditableString } from '../../common/EditableString';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableRow } from '@mui/material';
+import { EditableString } from '../../common';
 import { Budget } from '../../types';
 import { Actions, Selectors } from '../../store';
 
@@ -53,9 +53,7 @@ export const BudgetListTable = ({ budgets }: BudgetListTableProps) => {
             <TableCell>
               <EditableString value={budget.name} name="Name" onChanged={(name) => handleUpdate(budget, name)} />
             </TableCell>
-            <TableCell onClick={() => handleActive(budget)}>
-              {budget.id === profile?.active_budget ? 'Yes' : 'No'}
-            </TableCell>
+            <TableCell onClick={() => handleActive(budget)}>{budget.id === profile?.active_budget ? 'Yes' : 'No'}</TableCell>
           </TableRow>
         ))}
         {adding && (
