@@ -17,7 +17,7 @@ function getEmailFromRequest(config: AuthConfig, req: Request) {
 
 async function fetchAuthUser(config: AuthConfig, req: Request) {
   const res = await axios.get<AuthUser>(`${config.domain}userinfo`, {
-    headers: { Authorization: req.headers.authorization },
+    headers: { Authorization: req.headers.authorization || '' },
   });
   return res.data;
 }

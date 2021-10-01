@@ -1,19 +1,25 @@
+import { SvgIcon } from '@mui/material';
+import AppsIcon from '@mui/icons-material/Apps';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
+import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
+import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import { Forecast, NotFound, Orders, Overview, Settings, Transactions, WelcomeScreen } from '..';
-import { createRoutablePage } from '../../common';
 
+const createRoutablePage = (link: string, component: React.ComponentType, name: string, icon?: typeof SvgIcon) => {
+  return { link, component, name, icon };
+};
 const _systemPages = [createRoutablePage('/settings', Settings, 'Settings')];
 
 const _privatePages = [
-  createRoutablePage('/', Overview, 'Overview'),
-  createRoutablePage('/trans', Transactions, 'Transactions'),
-  createRoutablePage('/orders', Orders, 'Orders'),
-  createRoutablePage('/forecast', Forecast, 'Forecast'),
+  createRoutablePage('/', Overview, 'Overview', AppsIcon),
+  createRoutablePage('/trans', Transactions, 'Transactions', StorageRoundedIcon),
+  createRoutablePage('/orders', Orders, 'Orders', ReceiptLongOutlinedIcon),
+  createRoutablePage('/forecast', Forecast, 'Forecast', WbSunnyOutlinedIcon),
 ];
 
 const _publicPages = [
-  createRoutablePage('/', WelcomeScreen, 'Home'),
-  createRoutablePage('/trans', Transactions, 'Transactions'),
-  createRoutablePage('/forecast', Forecast, 'Forecast'),
+  createRoutablePage('/', WelcomeScreen, 'Home', AppsIcon),
+  createRoutablePage('/forecast', Forecast, 'Forecast', WbSunnyOutlinedIcon),
 ];
 
 const _notFound = createRoutablePage('/:rest', NotFound, '404');

@@ -8,7 +8,7 @@ export const LoginLogout = ({ ...props }: ButtonProps) => {
   const handleLogout = () => auth.logout({ returnTo: window.location.origin });
 
   return (
-    <Button sx={{ ml: 3 }} color="inherit" onClick={isAuthenticated ? handleLogout : handleLogin} {...props}>
+    <Button onClick={isAuthenticated ? handleLogout : handleLogin} {...props}>
       {isAuthenticated ? 'Logout' : 'Login'}
     </Button>
   );
