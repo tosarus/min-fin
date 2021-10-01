@@ -13,7 +13,7 @@ export function createDb(config: Configuration): Promise<string> {
   _admins = config.admins;
   _db = new Pool({
     connectionString: config.pg.database,
-    ssl: config.pg.ssl,
+    ssl: config.pg.ssl ? { rejectUnauthorized: false } : undefined,
   });
   return _db
     .query<DbInfo>('select now() as now, current_database() as db')
