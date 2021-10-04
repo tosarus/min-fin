@@ -1,4 +1,5 @@
 import { config as dotenvConfig } from 'dotenv';
+import path from 'path';
 import { AuthConfig } from './auth';
 
 export type Configuration = {
@@ -23,6 +24,10 @@ export type Configuration = {
   pg: {
     database: string;
     ssl: boolean;
+  };
+  migrations: {
+    table: string;
+    folder: string;
   };
   delay: {
     ms: number | undefined;
@@ -68,6 +73,9 @@ const createConfig = (): Configuration => {
   // postgres
   const pgDatabase = process.env.DATABASE_URL || '';
 
+  const migrationsTable = 'pgmigrations';
+  const migrationsFolder = path.resolve(__dirname, 'dao/migrations');
+
   return {
     isProd,
     admins: adminList,
@@ -78,6 +86,7 @@ const createConfig = (): Configuration => {
     helmet: { cspDirectives: helmetCspDirectives },
     bodyParser: { json: bodyParserJson },
     pg: { database: pgDatabase, ssl: isProd },
+    migrations: { table: migrationsTable, folder: migrationsFolder },
     delay: { ms: delayMs },
   };
 };

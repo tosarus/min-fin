@@ -1,6 +1,6 @@
 import { createDb } from './db';
-import * as Budgets from './budgets';
+import * as Workbooks from './workbooks';
 import * as Users from './users';
 
-export { Budgets, Users };
+export { Workbooks, Users };
 export default createDb;

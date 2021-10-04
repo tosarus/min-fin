@@ -1,73 +1,73 @@
 import express, { Request, Response } from 'express';
 import { tools } from '../auth';
 import { Configuration } from '../config';
-import { Budgets } from '../dao';
+import { Workbooks } from '../dao';
 
 const makeRouter = ({ auth: authConfig }: Configuration) => {
   const router = express.Router();
 
-  router.get('/budgets', tools.checkToken(authConfig), async (req: Request, res: Response) => {
+  router.get('/workbooks', tools.checkToken(authConfig), async (req: Request, res: Response) => {
     const email = tools.getEmailFromRequest(authConfig, req);
 
     try {
-      res.json(await Budgets.getAll(email));
+      res.json(await Workbooks.getAll(email));
     } catch (error) {
       console.log(error);
       res.status(400).send(error);
     }
   });
 
-  router.get('/budgets/active', tools.checkToken(authConfig), async (req: Request, res: Response) => {
+  router.get('/workbooks/active', tools.checkToken(authConfig), async (req: Request, res: Response) => {
     const email = tools.getEmailFromRequest(authConfig, req);
 
     try {
-      res.json(await Budgets.getActive(email));
+      res.json(await Workbooks.getActive(email));
     } catch (error) {
       console.log(error);
       res.status(400).send(error);
     }
   });
 
-  router.post('/budgets', tools.checkToken(authConfig), async (req: Request, res: Response) => {
+  router.post('/workbooks', tools.checkToken(authConfig), async (req: Request, res: Response) => {
     const email = tools.getEmailFromRequest(authConfig, req);
-    const budget = req.body as Partial<Budgets.Type>;
+    const workbook = req.body as Partial<Workbooks.Type>;
 
-    if (!budget?.name) {
-      res.status(400).send('New budget: should have a name');
+    if (!workbook?.name) {
+      res.status(400).send('New workbook: should have a name');
       return;
     }
 
     try {
-      res.json(await Budgets.create(email, budget));
+      res.json(await Workbooks.create(email, workbook));
     } catch (error) {
       console.log(error);
       res.status(400).send(error);
     }
   });
 
-  router.put('/budgets', tools.checkToken(authConfig), async (req: Request, res: Response) => {
+  router.put('/workbooks', tools.checkToken(authConfig), async (req: Request, res: Response) => {
     const email = tools.getEmailFromRequest(authConfig, req);
-    const budget = req.body as Partial<Budgets.Type>;
+    const workbook = req.body as Partial<Workbooks.Type>;
 
-    if (!budget) {
-      res.status(400).send('Update budget: should have a body');
+    if (!workbook) {
+      res.status(400).send('Update workbook: should have a body');
       return;
     }
 
     try {
-      res.json(await Budgets.update(email, budget));
+      res.json(await Workbooks.update(email, workbook));
     } catch (error) {
       console.log(error);
       res.status(400).send(error);
     }
   });
 
-  router.delete('/budgets/:id(\\d+)', tools.checkToken(authConfig), async (req: Request, res: Response) => {
+  router.delete('/workbooks/:id(\\d+)', tools.checkToken(authConfig), async (req: Request, res: Response) => {
     const email = tools.getEmailFromRequest(authConfig, req);
     const id = +req.params.id;
 
     try {
-      res.json(await Budgets.remove(email, id));
+      res.json(await Workbooks.remove(email, id));
     } catch (error) {
       console.log(error);
       res.status(400).send(error);

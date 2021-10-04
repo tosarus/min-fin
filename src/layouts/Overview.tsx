@@ -7,20 +7,22 @@ import { Actions, Selectors } from '../store';
 
 export const Overview = () => {
   const profile = useSelector(Selectors.profile);
-  const selectActiveBudget = createSelector(Selectors.budgets, (budgets) =>
-    budgets?.find((b) => b.id === profile?.active_budget)
+  const selectActiveWorkbook = createSelector(Selectors.workbooks, (workbooks) =>
+    workbooks?.find((b) => b.id === profile?.active_workbook)
   );
-  const activeBudget = useDispatchedRender(selectActiveBudget, Actions.getActiveBudget, undefined, <LoadingDots />);
+  const activeWorkbook = useDispatchedRender(selectActiveWorkbook, Actions.getActiveWorkbook, undefined, <LoadingDots />);
 
   return (
     <>
       <Title>Overview</Title>
       <Typography variant="body1">{`Hi, ${profile!.name}.`}</Typography>
       <Typography variant="body1">
-        Active Budget:{' '}
-        {activeBudget((budget) => (
-          <span>{budget.name}</span>
-        ))}
+        Active Workbook:{' '}
+        {profile?.active_workbook ? (
+          activeWorkbook((workbook) => <span>{workbook.name}</span>)
+        ) : (
+          <span>No active workbook, create one?</span>
+        )}
       </Typography>
     </>
   );

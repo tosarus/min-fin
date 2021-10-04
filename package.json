@@ -18,6 +18,7 @@
     "server:self": "nodemon server/index.ts 3000",
     "clean": "rm -rf build dist",
     "eject": "react-scripts eject",
+    "migrate": "TS_NODE_PROJECT=tsconfig.server.json ts-node node_modules/.bin/node-pg-migrate -j ts -m server/dao/migrations",
     "lint": "esw '**/*.ts*' --ext .ts,.tsx --color"
   },
   "browserslist": {
@@ -45,6 +46,7 @@
     "helmet": "^4.6.0",
     "jwks-rsa": "^2.0.4",
     "morgan": "^1.10.0",
+    "node-pg-migrate": "^6.0.0",
     "pg": "^8.7.1"
   },
   "devDependencies": {

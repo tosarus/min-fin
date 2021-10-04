@@ -5,10 +5,11 @@ export interface DbUser {
   picture: string;
   is_admin: boolean;
   allowed: boolean;
-  active_budget: number;
+  active_workbook: number;
 }
 
-export interface DbBudget {
+export interface DbWorkbook {
   id: number;
   name: string;
+  user_id: number;
 }

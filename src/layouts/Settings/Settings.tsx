@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, IconButton, Typography, TypographyProps } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
-import { BudgetListTable } from './BudgetListTable';
+import { WorkbookListTable } from './WorkbookListTable';
 import { UserListTable } from './UserListTable';
 import { Title, useDispatchedRender } from '../../common';
 import { Actions, Selectors } from '../../store';
@@ -18,11 +18,11 @@ const SectionTitle = (props: TypographyProps) => {
 export const Settings = () => {
   const profile = useSelector(Selectors.profile);
   const renderUserList = useDispatchedRender(Selectors.userList, Actions.loadUserList, (list) => list.length == 0);
-  const renderBudgets = useDispatchedRender(Selectors.budgets, Actions.listBudgets);
+  const renderWorkbooks = useDispatchedRender(Selectors.workbooks, Actions.listWorkbooks);
   const dispatch = useDispatch();
 
-  const handleRefreshBudgets = () => {
-    dispatch(Actions.resetBudgets());
+  const handleRefreshWorkbooks = () => {
+    dispatch(Actions.resetWorkbooks());
   };
 
   return (
@@ -36,13 +36,13 @@ export const Settings = () => {
         ))}
         <Separator />
         <SectionTitle>
-          <span style={{ display: 'inline-block', marginRight: '10px' }}>Budgets</span>
-          <IconButton area-label="refresh budgets" size="small" onClick={handleRefreshBudgets}>
+          <span style={{ display: 'inline-block', marginRight: '10px' }}>Workbooks</span>
+          <IconButton area-label="refresh workbooks" size="small" onClick={handleRefreshWorkbooks}>
             <RefreshIcon />
           </IconButton>
         </SectionTitle>
-        {renderBudgets((budgets) => (
-          <BudgetListTable budgets={budgets} />
+        {renderWorkbooks((workbooks) => (
+          <WorkbookListTable workbooks={workbooks} />
         ))}
       </Box>
     </Box>

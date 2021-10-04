@@ -1,3 +1,3 @@
-export * from './budgetsClient';
+export * from './workbooksClient';
 export * from './demoClient';
 export * from './usersClient';

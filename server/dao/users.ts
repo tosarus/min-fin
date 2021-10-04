@@ -24,10 +24,10 @@ export async function update(email: string, user: Partial<DbUser>): Promise<DbUs
            set name = coalesce($2, name),
                picture = coalesce($3, picture),
                allowed = coalesce($4, allowed),
-               active_budget = coalesce($5, active_budget)
+               active_workbook = coalesce($5, active_workbook)
            where email = $1
            returning *`,
-    values: [email, user.name, user.picture, user.allowed, user.active_budget],
+    values: [email, user.name, user.picture, user.allowed, user.active_workbook],
   });
 
   return adminify(rows[0]);

@@ -4,11 +4,10 @@ export interface UserInfo {
   picture: string;
   is_admin: boolean;
   allowed: boolean;
-  active_budget: number;
+  active_workbook: number;
 }
 
-export interface Budget {
-  email: string;
+export interface Workbook {
   id: number;
   name: string;
 }

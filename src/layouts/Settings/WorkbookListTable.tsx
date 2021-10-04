@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableRow } from '@mui/material';
 import { EditableString } from '../../common';
-import { Budget } from '../../types';
 import { Actions, Selectors } from '../../store';
+import { Workbook } from '../../types';
 
-interface BudgetListTableProps {
-  budgets: Budget[];
+interface WorkbookListTableProps {
+  workbooks: Workbook[];
 }
 
-export const BudgetListTable = ({ budgets }: BudgetListTableProps) => {
+export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
   const profile = useSelector(Selectors.profile);
   const dispatch = useDispatch();
   const [adding, setAdding] = useState(false);
@@ -26,16 +26,16 @@ export const BudgetListTable = ({ budgets }: BudgetListTableProps) => {
 
   const handleNewBugget = (name: string) => {
     setAdding(false);
-    dispatch(Actions.createBudget({ name }));
+    dispatch(Actions.createWorkbook({ name }));
   };
 
-  const handleUpdate = (budget: Budget, name: string) => {
-    dispatch(Actions.updateBudget({ id: budget.id, name }));
+  const handleUpdate = (workbook: Workbook, name: string) => {
+    dispatch(Actions.updateWorkbook({ id: workbook.id, name }));
   };
 
-  const handleActive = (budget: Budget) => {
-    if (budget.id !== profile!.active_budget) {
-      dispatch(Actions.updateProfile({ active_budget: budget.id }));
+  const handleActive = (workbook: Workbook) => {
+    if (workbook.id !== profile!.active_workbook) {
+      dispatch(Actions.updateProfile({ active_workbook: workbook.id }));
     }
   };
 
@@ -48,12 +48,14 @@ export const BudgetListTable = ({ budgets }: BudgetListTableProps) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {budgets.map((budget) => (
-          <TableRow key={budget.id}>
+        {workbooks.map((workbook) => (
+          <TableRow key={workbook.id}>
             <TableCell>
-              <EditableString value={budget.name} name="Name" onChanged={(name) => handleUpdate(budget, name)} />
+              <EditableString value={workbook.name} name="Name" onChanged={(name) => handleUpdate(workbook, name)} />
             </TableCell>
-            <TableCell onClick={() => handleActive(budget)}>{budget.id === profile?.active_budget ? 'Yes' : 'No'}</TableCell>
+            <TableCell onClick={() => handleActive(workbook)}>
+              {workbook.id === profile?.active_workbook ? 'Yes' : 'No'}
+            </TableCell>
           </TableRow>
         ))}
         {adding && (
@@ -61,7 +63,7 @@ export const BudgetListTable = ({ budgets }: BudgetListTableProps) => {
             <TableCell>
               <EditableString
                 value=""
-                name="New Budget Name"
+                name="New Workbook Name"
                 editing
                 onChanged={handleNewBugget}
                 onCancel={handleCancelNew}
