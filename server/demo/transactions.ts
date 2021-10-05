@@ -1,15 +1,6 @@
 import * as csv from '@fast-csv/parse';
 import path from 'path';
-
-// "Date","Description","Original Description","Amount","Transaction Type","Category","Account Name","Labels","Notes"
-interface CsvTrans {
-  date: string;
-  descr: string;
-  amount: number;
-  type: string;
-  category: string;
-  account: string;
-}
+import { CsvTrans } from '@shared/types';
 
 let _trans: CsvTrans[];
 
@@ -26,7 +17,7 @@ export const getTransactions = (): Promise<CsvTrans[]> => {
 
     const trans: CsvTrans[] = [];
     csv
-      .parseFile(path.resolve(__dirname, '../assets/transactions.csv'), {
+      .parseFile(path.resolve(__dirname, '../../assets/transactions.csv'), {
         headers: true,
       })
       .on('error', (error) => reject(error))

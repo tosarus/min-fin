@@ -1,9 +1,4 @@
-interface WeatherForecast {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
-}
+import { WeatherForecast } from '@shared/types';
 
 const summaries = ['Freezing', 'Bracing', 'Chilly', 'Cool', 'Mild', 'Warm', 'Balmy', 'Hot', 'Sweltering', 'Scorching'];
 const getRandInt = (min: number, max: number) => Math.floor(Math.random() * (max - min) + min);

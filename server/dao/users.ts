@@ -1,16 +1,17 @@
+import { UserInfo } from '@shared/types';
 import db, { isAdmin } from './db';
 import { DbUser } from './types';
 
-export { DbUser as Type, isAdmin };
+export { isAdmin };
 
-const adminify = (user: DbUser) => ({ ...user, is_admin: isAdmin(user.email) });
+const adminify = (user: DbUser): UserInfo => ({ ...user, is_admin: isAdmin(user.email) });
 
-export async function getAll(): Promise<DbUser[]> {
+export async function getAll(): Promise<UserInfo[]> {
   const { rows } = await db().query<DbUser>('select * from users');
   return rows.map(adminify);
 }
 
-export async function findByEmail(email: string): Promise<DbUser | null> {
+export async function findByEmail(email: string): Promise<UserInfo | null> {
   const { rows } = await db().query<DbUser>({
     text: 'select * from users where email = $1',
     values: [email],
@@ -18,7 +19,7 @@ export async function findByEmail(email: string): Promise<DbUser | null> {
   return rows.length > 0 ? adminify(rows[0]) : null;
 }
 
-export async function update(email: string, user: Partial<DbUser>): Promise<DbUser> {
+export async function update(email: string, user: Partial<UserInfo>): Promise<UserInfo> {
   const { rows } = await db().query<DbUser>({
     text: `update users
            set name = coalesce($2, name),
@@ -33,7 +34,7 @@ export async function update(email: string, user: Partial<DbUser>): Promise<DbUs
   return adminify(rows[0]);
 }
 
-export async function create(user: Partial<DbUser>): Promise<DbUser> {
+export async function create(user: Partial<UserInfo>): Promise<UserInfo> {
   const { rows } = await db().query<DbUser>({
     text: `insert into users(email, name, picture, allowed)
            values($1, $2, $3, $4)

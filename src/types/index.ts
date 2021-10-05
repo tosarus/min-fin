@@ -1,3 +1,2 @@
-export * from './demoTypes';
+export * from '@shared/types';
 export * from './report';
-export * from './serverTypes';
