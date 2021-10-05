@@ -1,9 +1,10 @@
 import { SvgIcon } from '@mui/material';
 import AppsIcon from '@mui/icons-material/Apps';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
-import { Forecast, NotFound, Orders, Overview, Settings, Transactions, WelcomeScreen } from '..';
+import { Accounts, Forecast, NotFound, Orders, Overview, Settings, Transactions, WelcomeScreen } from '..';
 
 const createRoutablePage = (link: string, component: React.ComponentType, name: string, icon?: typeof SvgIcon) => {
   return { link, component, name, icon };
@@ -12,6 +13,7 @@ const _systemPages = [createRoutablePage('/settings', Settings, 'Settings')];
 
 const _privatePages = [
   createRoutablePage('/', Overview, 'Overview', AppsIcon),
+  createRoutablePage('/accounts', Accounts, 'Accounts', AssignmentOutlinedIcon),
   createRoutablePage('/trans', Transactions, 'Transactions', StorageRoundedIcon),
   createRoutablePage('/orders', Orders, 'Orders', ReceiptLongOutlinedIcon),
   createRoutablePage('/forecast', Forecast, 'Forecast', WbSunnyOutlinedIcon),

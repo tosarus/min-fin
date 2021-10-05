@@ -1,19 +1,18 @@
-export interface DbUser {
-  id: number;
+export interface UserInfo {
   email: string;
   name: string;
   picture: string;
+  is_admin: boolean;
   allowed: boolean;
   active_workbook: number;
 }
 
-export interface DbWorkbook {
+export interface Workbook {
   id: number;
   name: string;
-  user_id: number;
 }
 
-export enum DbAccountType {
+export enum AccountType {
   Income = 'income',
   Expence = 'expence',
   Banking = 'banking',
@@ -21,37 +20,31 @@ export enum DbAccountType {
   Opening = 'opening',
 }
 
-export interface DbAccount {
+export interface Account {
   id: number;
   workbook_id: number;
   name: string;
-  type: DbAccountType;
+  type: AccountType;
   parent_id: number;
   is_group: boolean;
+  balance: string;
 }
 
-export enum DbTransactionType {
+export enum TransactionType {
   Income = 'income',
   Expence = 'expence',
   Transfer = 'transfer',
   Opening = 'opening',
 }
 
-export interface DbTransaction {
+export interface Transaction {
   id: number;
   workbook_id: number;
   date: Date;
   description: string;
   detail: string;
-  type: DbTransactionType;
-  amount_cent: number;
+  type: TransactionType;
+  amount: string;
   account_from: number;
   account_to: number;
-}
-
-export interface DbBalance {
-  id: number;
-  workbook_id: number;
-  account_id: number;
-  amount_cent: number;
 }

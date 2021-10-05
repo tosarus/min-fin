@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { UserInfo } from '@shared/types';
 import { tools } from '../auth';
 import { Configuration } from '../config';
 import { Users } from '../dao';
@@ -18,7 +19,7 @@ const makeRouter = ({ auth: authConfig }: Configuration) => {
 
   router.put('/users', tools.checkToken(authConfig), async (req: Request, res: Response) => {
     const email = tools.getEmailFromRequest(authConfig, req);
-    const user = req.body as Partial<Users.Type>;
+    const user = req.body as Partial<UserInfo>;
 
     if (!user.email) {
       user.email = email;

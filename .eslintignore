@@ -11,3 +11,5 @@
 **/*.eot
 **/*.ttf
 **/*.woff
+
+config-overrides.js
