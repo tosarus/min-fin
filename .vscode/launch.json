@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "ts-node Server",
       "skipFiles": ["<node_internals>/**"],
-      "args": ["${workspaceRoot}/server/index.ts", "3010"],
+      "args": ["${workspaceRoot}/server/index.ts", "3010", "500"],
       "runtimeArgs": ["-r", "ts-node/register"],
       "cwd": "${workspaceRoot}",
       "protocol": "inspector",

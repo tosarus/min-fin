@@ -2,8 +2,6 @@ import { Account, AccountType } from '@shared/types';
 import { centsToStr, strToCents } from './utils';
 import db from '../db';
 
-export type { Account as Type };
-
 type DbAccount = {
   id: number;
   workbook_id: number;

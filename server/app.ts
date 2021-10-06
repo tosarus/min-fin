@@ -6,7 +6,7 @@ import helmet from 'helmet';
 import path from 'path';
 import bodyParser from 'body-parser';
 import { Configuration } from './config';
-import apiRouter from './routes/apiRouter';
+import apiRouter from './routing';
 
 const createApp = (config: Configuration) => {
   const app = express();
@@ -45,7 +45,7 @@ const createApp = (config: Configuration) => {
 
   app.use(express.static(path.resolve(__dirname, config.client.root)));
 
-  app.use(apiRouter(config));
+  app.use('/api', apiRouter(config));
 
   app.use((_, res) => {
     res.sendFile(path.resolve(__dirname, config.client.root, 'index.html'));
