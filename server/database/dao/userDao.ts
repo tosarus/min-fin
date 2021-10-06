@@ -1,8 +1,6 @@
 import { UserInfo } from '@shared/types';
 import db, { isAdmin } from '../db';
 
-export type { UserInfo as Type };
-
 type DbUser = {
   id: number;
   email: string;

@@ -2,8 +2,6 @@ import { Transaction, TransactionType } from '@shared/types';
 import { centsToStr, strToCents } from './utils';
 import db from '../db';
 
-export type { Transaction as Type };
-
 type DbTransaction = {
   id: number;
   workbook_id: number;

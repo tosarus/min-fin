@@ -1,8 +1,6 @@
 import { Workbook } from '@shared/types';
 import db from '../db';
 
-export type { Workbook as Type };
-
 export async function getAll(email: string): Promise<Workbook[]> {
   const { rows } = await db().query<Workbook>({
     text: 'select wb.id, wb.name from workbooks wb join users on wb.user_id = users.id and users.email = $1',
@@ -11,7 +9,19 @@ export async function getAll(email: string): Promise<Workbook[]> {
   return rows;
 }
 
-export async function getActive(email: string): Promise<Workbook | null> {
+export async function getById(email: string, id: number): Promise<Workbook | null> {
+  const { rows } = await db().query<Workbook>({
+    text: `select wb.id, wb.name from workbooks wb join users on wb.user_id = users.id
+           where wb.id = $2 and users.email = $1`,
+    values: [email, id],
+  });
+  if (rows.length > 0) {
+    return rows[0];
+  }
+  throw `no workbook ${id} for the user ${email}`;
+}
+
+export async function findActive(email: string): Promise<Workbook | null> {
   const { rows } = await db().query<Workbook>({
     text: `select wb.id, wb.name from workbooks wb join users on wb.user_id = users.id
            where wb.id = users.active_workbook and users.email = $1`,
