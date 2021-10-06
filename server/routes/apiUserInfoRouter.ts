@@ -1,22 +1,23 @@
 import express, { Request, Response } from 'express';
 import { tools } from '../auth';
 import { Configuration } from '../config';
-import { Users } from '../dao';
+import { UserDao, isAdmin } from '../database';
 
 const makeRouter = ({ auth: authConfig }: Configuration) => {
   const router = express.Router();
+  const baseRoute = '/userinfo';
 
-  router.get('/userinfo', tools.checkToken(authConfig), async (req: Request, res: Response) => {
+  router.get(baseRoute, tools.checkToken(authConfig), async (req: Request, res: Response) => {
     const email = tools.getEmailFromRequest(authConfig, req);
-    let user = await Users.findByEmail(email);
+    let user = await UserDao.findByEmail(email);
     if (!user) {
       const { name, picture } = await tools.fetchAuthUser(authConfig, req);
 
-      user = await Users.create({
+      user = await UserDao.create({
         email,
         name,
         picture,
-        allowed: Users.isAdmin(email),
+        allowed: isAdmin(email),
       });
     }
 

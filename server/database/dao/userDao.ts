@@ -1,14 +1,22 @@
 import { UserInfo } from '@shared/types';
-import db, { isAdmin } from './db';
-import { DbUser } from './types';
+import db, { isAdmin } from '../db';
 
-export { isAdmin };
+export type { UserInfo as Type };
 
-const adminify = (user: DbUser): UserInfo => ({ ...user, is_admin: isAdmin(user.email) });
+type DbUser = {
+  id: number;
+  email: string;
+  name: string;
+  picture: string;
+  allowed: boolean;
+  active_workbook: number;
+};
+
+const convertUser = (user: DbUser): UserInfo => ({ ...user, is_admin: isAdmin(user.email) });
 
 export async function getAll(): Promise<UserInfo[]> {
   const { rows } = await db().query<DbUser>('select * from users');
-  return rows.map(adminify);
+  return rows.map(convertUser);
 }
 
 export async function findByEmail(email: string): Promise<UserInfo | null> {
@@ -16,7 +24,7 @@ export async function findByEmail(email: string): Promise<UserInfo | null> {
     text: 'select * from users where email = $1',
     values: [email],
   });
-  return rows.length > 0 ? adminify(rows[0]) : null;
+  return rows.length > 0 ? convertUser(rows[0]) : null;
 }
 
 export async function update(email: string, user: Partial<UserInfo>): Promise<UserInfo> {
@@ -30,8 +38,7 @@ export async function update(email: string, user: Partial<UserInfo>): Promise<Us
            returning *`,
     values: [email, user.name, user.picture, user.allowed, user.active_workbook],
   });
-
-  return adminify(rows[0]);
+  return convertUser(rows[0]);
 }
 
 export async function create(user: Partial<UserInfo>): Promise<UserInfo> {
@@ -41,7 +48,7 @@ export async function create(user: Partial<UserInfo>): Promise<UserInfo> {
            returning *`,
     values: [user.email, user.name, user.picture, user.allowed],
   });
-  return adminify(rows[0]);
+  return convertUser(rows[0]);
 }
 
 export function remove(email: string) {

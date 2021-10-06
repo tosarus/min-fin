@@ -7,17 +7,18 @@ const addDays = (date: Date, days: number) => {
   return date;
 };
 
-export const getForecast = (): WeatherForecast[] => {
-  return [...Array(5).keys()]
-    .map((index) => ({
-      date: addDays(new Date(), index).toDateString(),
-      temp: getRandInt(-20, 55),
-      summary: summaries[getRandInt(0, summaries.length)],
-    }))
-    .map(({ date, temp, summary }) => ({
-      date,
-      temperatureC: temp,
-      temperatureF: 32 + (temp * 9) / 5,
-      summary,
-    }));
-};
+export const getForecast = (): Promise<WeatherForecast[]> =>
+  Promise.resolve(
+    [...Array(5).keys()]
+      .map((index) => ({
+        date: addDays(new Date(), index).toDateString(),
+        temp: getRandInt(-20, 55),
+        summary: summaries[getRandInt(0, summaries.length)],
+      }))
+      .map(({ date, temp, summary }) => ({
+        date,
+        temperatureC: temp,
+        temperatureF: 32 + (temp * 9) / 5,
+        summary,
+      }))
+  );

@@ -41,9 +41,9 @@ export interface Transaction {
   id: number;
   workbook_id: number;
   date: Date;
+  type: TransactionType;
   description: string;
   detail: string;
-  type: TransactionType;
   amount: string;
   account_from: number;
   account_to: number;
