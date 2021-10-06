@@ -1,40 +1,38 @@
 import express, { Request, Response } from 'express';
-import { UserInfo } from '@shared/types';
 import { tools } from '../auth';
 import { Configuration } from '../config';
-import { Users } from '../dao';
+import { UserDao, isAdmin } from '../database';
 
 const makeRouter = ({ auth: authConfig }: Configuration) => {
   const router = express.Router();
+  const baseRoute = '/users';
 
-  router.get('/users', tools.checkToken(authConfig), async (req: Request, res: Response) => {
-    const email = tools.getEmailFromRequest(authConfig, req);
-
+  router.get(baseRoute, tools.checkToken(authConfig), async (req: Request, res: Response) => {
     try {
-      res.json(Users.isAdmin(email) ? await Users.getAll() : [await Users.findByEmail(email)]);
+      const email = tools.getEmailFromRequest(authConfig, req);
+      res.json(isAdmin(email) ? await UserDao.getAll() : [await UserDao.findByEmail(email)]);
     } catch (error) {
       res.status(400).send(error);
     }
   });
 
-  router.put('/users', tools.checkToken(authConfig), async (req: Request, res: Response) => {
-    const email = tools.getEmailFromRequest(authConfig, req);
-    const user = req.body as Partial<UserInfo>;
-
-    if (!user.email) {
-      user.email = email;
-    }
-
-    if (!Users.isAdmin(email)) {
-      if (user.email != email) {
-        res.status(400).send('Can`t update info for other user');
-        return;
-      }
-      delete user.allowed;
-    }
-
+  router.put(baseRoute, tools.checkToken(authConfig), async (req: Request, res: Response) => {
     try {
-      res.json(await Users.update(user.email, user));
+      const email = tools.getEmailFromRequest(authConfig, req);
+      const user = req.body as Partial<UserDao.Type>;
+
+      if (!user.email) {
+        user.email = email;
+      }
+
+      if (!isAdmin(email)) {
+        if (user.email != email) {
+          throw 'Can`t update info for other user';
+        }
+        delete user.allowed;
+      }
+
+      res.json(await UserDao.update(user.email, user));
     } catch (error) {
       res.status(400).send(error);
     }

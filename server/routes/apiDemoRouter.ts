@@ -5,16 +5,22 @@ import { Forecasts, Trans } from '../demo';
 
 const makeRouter = ({ auth: authConfig }: Configuration) => {
   const router = express.Router();
+  const baseRoute = '/demo';
 
-  router.get('/demo/forecast', (req, res) => {
-    const forecast = Forecasts.getForecast();
-    res.json(forecast);
+  router.get(baseRoute + '/forecast', async (req, res) => {
+    try {
+      res.json(await Forecasts.getForecast());
+    } catch (error) {
+      res.status(400).send(error);
+    }
   });
 
-  router.get('/demo/trans', tools.checkToken(authConfig), (req, res) => {
-    Trans.getTransactions()
-      .then((trans) => res.json(trans))
-      .catch((err) => res.status(501).send(err));
+  router.get(baseRoute + '/trans', tools.checkToken(authConfig), async (req, res) => {
+    try {
+      res.json(await Trans.getTransactions());
+    } catch (error) {
+      res.status(400).send(error);
+    }
   });
 
   return router;

@@ -1,75 +1,66 @@
 import express, { Request, Response } from 'express';
 import { tools } from '../auth';
 import { Configuration } from '../config';
-import { Workbooks } from '../dao';
+import { WorkbookDao } from '../database';
 
 const makeRouter = ({ auth: authConfig }: Configuration) => {
   const router = express.Router();
+  const baseRoute = '/workbooks';
 
-  router.get('/workbooks', tools.checkToken(authConfig), async (req: Request, res: Response) => {
-    const email = tools.getEmailFromRequest(authConfig, req);
-
+  router.get(baseRoute, tools.checkToken(authConfig), async (req: Request, res: Response) => {
     try {
-      res.json(await Workbooks.getAll(email));
+      const email = tools.getEmailFromRequest(authConfig, req);
+      res.json(await WorkbookDao.getAll(email));
     } catch (error) {
-      console.log(error);
       res.status(400).send(error);
     }
   });
 
-  router.get('/workbooks/active', tools.checkToken(authConfig), async (req: Request, res: Response) => {
-    const email = tools.getEmailFromRequest(authConfig, req);
-
+  router.get(baseRoute + '/active', tools.checkToken(authConfig), async (req: Request, res: Response) => {
     try {
-      res.json(await Workbooks.getActive(email));
+      const email = tools.getEmailFromRequest(authConfig, req);
+      res.json(await WorkbookDao.getActive(email));
     } catch (error) {
-      console.log(error);
       res.status(400).send(error);
     }
   });
 
-  router.post('/workbooks', tools.checkToken(authConfig), async (req: Request, res: Response) => {
-    const email = tools.getEmailFromRequest(authConfig, req);
-    const workbook = req.body as Partial<Workbooks.Type>;
-
-    if (!workbook?.name) {
-      res.status(400).send('New workbook: should have a name');
-      return;
-    }
-
+  router.post(baseRoute, tools.checkToken(authConfig), async (req: Request, res: Response) => {
     try {
-      res.json(await Workbooks.create(email, workbook));
+      const email = tools.getEmailFromRequest(authConfig, req);
+      const workbook = req.body as Partial<WorkbookDao.Type>;
+
+      if (!workbook?.name) {
+        throw 'New workbook: should have a name';
+      }
+
+      res.json(await WorkbookDao.create(email, workbook));
     } catch (error) {
-      console.log(error);
       res.status(400).send(error);
     }
   });
 
-  router.put('/workbooks', tools.checkToken(authConfig), async (req: Request, res: Response) => {
-    const email = tools.getEmailFromRequest(authConfig, req);
-    const workbook = req.body as Partial<Workbooks.Type>;
-
-    if (!workbook) {
-      res.status(400).send('Update workbook: should have a body');
-      return;
-    }
-
+  router.put(baseRoute, tools.checkToken(authConfig), async (req: Request, res: Response) => {
     try {
-      res.json(await Workbooks.update(email, workbook));
+      const email = tools.getEmailFromRequest(authConfig, req);
+      const workbook = req.body as Partial<WorkbookDao.Type>;
+
+      if (!workbook) {
+        throw 'Update workbook: should have a body';
+      }
+
+      res.json(await WorkbookDao.update(email, workbook));
     } catch (error) {
-      console.log(error);
       res.status(400).send(error);
     }
   });
 
-  router.delete('/workbooks/:id(\\d+)', tools.checkToken(authConfig), async (req: Request, res: Response) => {
-    const email = tools.getEmailFromRequest(authConfig, req);
-    const id = +req.params.id;
-
+  router.delete(baseRoute + '/:id(\\d+)', tools.checkToken(authConfig), async (req: Request, res: Response) => {
     try {
-      res.json(await Workbooks.remove(email, id));
+      const email = tools.getEmailFromRequest(authConfig, req);
+      const id = +req.params.id;
+      res.json(await WorkbookDao.remove(email, id));
     } catch (error) {
-      console.log(error);
       res.status(400).send(error);
     }
   });

@@ -74,7 +74,7 @@ const createConfig = (): Configuration => {
   const pgDatabase = process.env.DATABASE_URL || '';
 
   const migrationsTable = 'pgmigrations';
-  const migrationsFolder = path.resolve(__dirname, 'dao/migrations');
+  const migrationsFolder = path.resolve(__dirname, 'database/migrations');
 
   return {
     isProd,

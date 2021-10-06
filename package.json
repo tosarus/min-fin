@@ -19,7 +19,7 @@
     "server:self": "nodemon server/index.ts 3000",
     "clean": "rm -rf build dist",
     "eject": "react-scripts eject",
-    "migrate": "TS_NODE_PROJECT=server/tsconfig.json ts-node node_modules/.bin/node-pg-migrate -j ts -m server/dao/migrations",
+    "migrate": "TS_NODE_PROJECT=server/tsconfig.json ts-node node_modules/.bin/node-pg-migrate -j ts -m server/database/migrations",
     "lint": "esw '**/*.ts*' --ext .ts,.tsx --color"
   },
   "browserslist": {

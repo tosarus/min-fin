@@ -1,7 +1,7 @@
 import http from 'http';
 import createApp from './app';
 import createConfig from './config';
-import createDb from './dao';
+import createDb from './database';
 
 const config = createConfig();
 const app = createApp(config);
