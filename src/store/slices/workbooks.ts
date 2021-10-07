@@ -57,10 +57,10 @@ const {
         state.push(workbook);
       }
     },
-    removeWorkbookDone(state, { payload: id }: PayloadAction<number>) {
+    removeWorkbookDone(state, { payload: { id } }: PayloadAction<{ id: number }>) {
       if (state) {
         const index = state.findIndex((b) => b.id === id);
-        if (index >= 0) {
+        if (index > -1) {
           state.splice(index, 1);
         }
       }

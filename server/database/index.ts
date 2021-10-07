@@ -1,4 +1,4 @@
 import { createDb, isAdmin } from './db';
 
-export * from './dao';
+export * from './repositories';
 export { isAdmin, createDb as default };

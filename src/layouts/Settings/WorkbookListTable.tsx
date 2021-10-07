@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableRow } from '@mui/material';
+import { Button, Table, TableBody, TableCell, TableFooter, TableHead, TableRow } from '@mui/material';
 import { EditableString } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { Workbook } from '../../types';
@@ -39,12 +39,21 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
     }
   };
 
+  const handleRemove = (workbook: Workbook) => {
+    if (workbook.id === profile!.active_workbook) {
+      dispatch(Actions.reportWarning('can`t remove active workbook'));
+    } else {
+      dispatch(Actions.removeWorkbook(workbook.id));
+    }
+  };
+
   return (
     <Table>
       <TableHead>
         <TableRow>
           <TableCell>Name</TableCell>
           <TableCell>Active</TableCell>
+          <TableCell />
         </TableRow>
       </TableHead>
       <TableBody>
@@ -55,6 +64,9 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
             </TableCell>
             <TableCell onClick={() => handleActive(workbook)}>
               {workbook.id === profile?.active_workbook ? 'Yes' : 'No'}
+            </TableCell>
+            <TableCell sx={{ textAlign: 'right' }}>
+              <Button onClick={() => handleRemove(workbook)}>Remove</Button>
             </TableCell>
           </TableRow>
         ))}
@@ -70,6 +82,7 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
               />
             </TableCell>
             <TableCell />
+            <TableCell />
           </TableRow>
         )}
       </TableBody>
@@ -78,6 +91,7 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
           <TableCell color="primary" onClick={handleAddNew}>
             Add new
           </TableCell>
+          <TableCell />
           <TableCell />
         </TableRow>
       </TableFooter>

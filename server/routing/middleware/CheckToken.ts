@@ -1,6 +1,6 @@
 import { NextFunction, Response, Request, RequestHandler } from 'express';
-import { Middleware } from '@decorators/express';
 import { Inject } from '@decorators/di';
+import { Middleware } from '@decorators/express';
 import { AUTH_CONFIG } from '../injectTokens';
 import { AuthConfig, tools } from '../../auth';
 
