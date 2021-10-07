@@ -1,23 +1,26 @@
 import { Response, Request } from 'express';
-import { Controller, Get, Response as Res, Request as Req } from '@decorators/express';
 import { Inject } from '@decorators/di';
-import { CheckToken } from '../middleware';
+import { Controller, Get, Response as Res, Request as Req } from '@decorators/express';
 import { AUTH_CONFIG } from '../injectTokens';
+import { CheckToken } from '../middleware';
 import { AuthConfig, tools } from '../../auth';
-import { UserDao, isAdmin } from '../../database';
+import { isAdmin, UserRepository } from '../../database';
 
 @Controller('/userinfo', [CheckToken])
 export class AuthenticateController {
-  constructor(@Inject(AUTH_CONFIG) private config_: AuthConfig) {}
+  constructor(
+    @Inject(AUTH_CONFIG) private config_: AuthConfig,
+    @Inject(UserRepository) private repository_: UserRepository
+  ) {}
 
   @Get('')
   async authenticate(@Req() req: Request, @Res() res: Response) {
     const email = (req as any).email;
-    let user = await UserDao.findByEmail(email);
+    let user = await this.repository_.findByEmail(email);
     if (!user) {
       const { name, picture } = await tools.fetchAuthUser(this.config_, req);
 
-      user = await UserDao.create({
+      user = await this.repository_.create({
         email,
         name,
         picture,

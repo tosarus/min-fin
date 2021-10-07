@@ -2,14 +2,17 @@ import { Response, Request } from 'express';
 import { Body, Controller, Get, Put, Response as Res, Request as Req } from '@decorators/express';
 import { UserInfo } from '@shared/types';
 import { CheckToken } from '../middleware';
-import { isAdmin, UserDao } from '../../database';
+import { isAdmin, UserRepository } from '../../database';
+import { Inject } from '@decorators/di';
 
 @Controller('/users', [CheckToken])
 export class UsersController {
+  constructor(@Inject(UserRepository) private repository_: UserRepository) {}
+
   @Get('')
   async getUsers(@Req() req: Request, @Res() res: Response) {
     const email = (req as any).email;
-    res.json(isAdmin(email) ? await UserDao.getAll() : [await UserDao.findByEmail(email)]);
+    res.json(isAdmin(email) ? await this.repository_.getAll() : [await this.repository_.findByEmail(email)]);
   }
 
   @Put('')
@@ -26,6 +29,6 @@ export class UsersController {
       delete user.allowed;
     }
 
-    res.json(await UserDao.update(user.email, user));
+    res.json(await this.repository_.update(user.email, user));
   }
 }

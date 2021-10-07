@@ -1,14 +1,16 @@
 import { Response } from 'express';
+import { Inject } from '@decorators/di';
 import { Body, Controller, Delete, Get, Params, Post, Put, Response as Res } from '@decorators/express';
-import { Account } from '@shared/types';
 import { CheckToken, ValidateWorkbook } from '../middleware';
-import { AccountDao } from '../../database';
+import { Account, AccountRepository } from '../../database';
 
 @Controller('/accounts/:workbookId(\\d+)', [CheckToken, ValidateWorkbook])
 export class AccountsController {
+  constructor(@Inject(AccountRepository) private repository_: AccountRepository) {}
+
   @Get('')
   async getAccounts(@Res() res: Response, @Params('workbookId') workbookId: string) {
-    res.json(await AccountDao.getAll(+workbookId));
+    res.json(await this.repository_.getForWorkbook(+workbookId));
   }
 
   @Post('')
@@ -16,7 +18,7 @@ export class AccountsController {
     if (!account || !account.name || !account.type) {
       throw 'New account: should provide name and type';
     }
-    res.json(await AccountDao.create(+workbookId, account));
+    res.json(await this.repository_.create(+workbookId, account));
   }
 
   @Put('')
@@ -24,11 +26,11 @@ export class AccountsController {
     if (!account || !account.id) {
       throw 'Upate account: should provide id';
     }
-    res.json(await AccountDao.update(+workbookId, account));
+    res.json(await this.repository_.update(+workbookId, account));
   }
 
   @Delete('/:id(\\d+)')
   async deleteAccount(@Res() res: Response, @Params('workbookId') workbookId: string, @Params('id') accountId: string) {
-    res.json(await AccountDao.remove(+workbookId, +accountId));
+    res.json(await this.repository_.remove(+workbookId, +accountId));
   }
 }

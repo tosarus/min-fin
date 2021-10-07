@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { AppBar, Box, Container, CssBaseline, Divider, LinearProgress, Toolbar, Typography } from '@mui/material';
+import { Box, Container, CssBaseline, Divider, LinearProgress, Toolbar, Typography } from '@mui/material';
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Route, Switch } from 'wouter';
+import { Head } from './Head';
 import * as Views from './listViews';
-import { ButtonLink, Error, FlexLink, Footer, LoginLogout, ReportSnackbar } from '../../common';
+import { Error, FlexLink, Footer, ReportSnackbar } from '../../common';
 import { useAuth } from '../../auth';
 
 const Navigation = styled(Box)<{ expanded: boolean }>(({ expanded }) => ({
@@ -23,10 +24,6 @@ const Navigation = styled(Box)<{ expanded: boolean }>(({ expanded }) => ({
   overflowX: 'hidden',
 }));
 
-const BrandLink = styled(FlexLink)({
-  marginRight: 'auto',
-});
-
 export const App = () => {
   const { isAuthenticated, isReady, error } = useAuth();
   const [expanded, setExpanded] = useState(true);
@@ -41,25 +38,7 @@ export const App = () => {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed">
-        <Toolbar disableGutters sx={{ alignItems: 'stretch' }}>
-          <BrandLink href="/" noActive>
-            <CalculateOutlinedIcon sx={{ color: 'white', px: 1, width: 48, boxSizing: 'content-box' }} />
-            {expanded && (
-              <Typography color="white" variant="h5" sx={{ width: 196 }}>
-                Min-Fin
-              </Typography>
-            )}
-          </BrandLink>
-          {/* <Divider orientation="vertical" flexItem sx={{ ml: 'auto' }} /> */}
-          {systemPages.map((page, i) => (
-            <ButtonLink key={i} href={page.link} sx={{ px: 4, color: 'inherit' }}>
-              {page.name}
-            </ButtonLink>
-          ))}
-          {isReady && <LoginLogout sx={{ px: 4, color: 'inherit' }} />}
-        </Toolbar>
-      </AppBar>
+      <Head expanded={expanded} title="Min-Fin" />
       <Navigation component="nav" expanded={expanded}>
         {viewPages.map(({ link, name, icon: PageIcon = CalculateOutlinedIcon }, i) => (
           <FlexLink key={i} href={link}>
