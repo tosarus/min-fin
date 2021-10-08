@@ -38,7 +38,7 @@ export class AccountRepository {
 insert into accounts(workbook_id, name, type, parent_id, is_group, balance_cent)
 values($1, $2, $3, $4, $5, $6)
 returning *`,
-      values: [workbookId, name, type, parent_id, is_group, strToCents(balance || '0')],
+      values: [workbookId, name, type, parent_id, is_group ?? false, strToCents(balance ?? '0')],
     });
     return convertAccount(rows[0]);
   }

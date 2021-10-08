@@ -1,3 +1,4 @@
+import { createSelector } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { all, fork } from 'redux-saga/effects';
 import accounts from './accounts';
@@ -24,13 +25,19 @@ export const reducer = combineReducers({
 
 type Store = ReturnType<typeof reducer>;
 
-export const Selectors = {
+const selectors = {
   ...accounts.selectors<Store>(),
   ...demo.selectors<Store>(),
   ...reports.selectors<Store>(),
   ...users.selectors<Store>(),
   ...workbooks.selectors<Store>(),
 };
+
+const activeWorkbook = createSelector(selectors.workbooks, selectors.profile, (workbooks, profile) =>
+  workbooks?.find((b) => b.id === profile?.active_workbook)
+);
+
+export const Selectors = { ...selectors, activeWorkbook };
 
 export const rootSaga = function* () {
   yield all([accounts.saga, demo.saga, reports.saga, users.saga, workbooks.saga].map((s) => fork(s)));

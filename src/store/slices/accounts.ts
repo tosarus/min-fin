@@ -59,12 +59,12 @@ const { saga, actions } = createSliceSaga({
         new AccountsClient(auth).create(workbookId, account)
       );
     },
-    *updateWorkbook({ payload: { workbookId, account } }: PayloadAction<{ workbookId: number; account: Partial<Account> }>) {
+    *updateAccount({ payload: { workbookId, account } }: PayloadAction<{ workbookId: number; account: Partial<Account> }>) {
       yield callPrivate(updateAccountDone, 'Updating account', (auth) =>
         new AccountsClient(auth).update(workbookId, account)
       );
     },
-    *removeWorkbook({ payload: { workbookId, id } }: PayloadAction<{ workbookId: number; id: number }>) {
+    *removeAccount({ payload: { workbookId, id } }: PayloadAction<{ workbookId: number; id: number }>) {
       yield callPrivate(removeAccountDone, 'Removing account', (auth) => new AccountsClient(auth).remove(workbookId, id));
     },
   },
