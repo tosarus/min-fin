@@ -1,7 +1,9 @@
+import currency from 'currency.js';
+
 export const centsToStr = (cents: number): string => {
-  return (cents / 100).toFixed(2);
+  return currency(cents, { fromCents: true }).format();
 };
 
 export const strToCents = (str: string): number => {
-  return +str * 100;
+  return currency(str).intValue;
 };
