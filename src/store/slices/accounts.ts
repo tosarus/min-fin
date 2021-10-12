@@ -1,15 +1,16 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createSliceSaga, SagaType } from 'redux-toolkit-saga/lib/createSliceSaga';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Account, WorldUpdate } from '../../types';
 import { AccountsClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
-import { Account } from '../../types';
+import { applyWorldUpdate } from './transactions';
 
 const initialState = null as Account[] | null;
 
 const {
   name,
   reducer: accountsReducer,
-  actions: { listAccountsDone, createAccountDone, updateAccountDone, removeAccountDone, resetAccounts },
+  actions: { listAccountsDone, createAccountDone, updateAccountDone },
 } = createSlice({
   name: 'accounts',
   initialState,
@@ -42,8 +43,23 @@ const {
         }
       }
     },
-    resetAccounts() {
-      return initialState;
+  },
+  extraReducers: {
+    [applyWorldUpdate.type]: (state, { payload: { accounts } }: PayloadAction<WorldUpdate>) => {
+      if (!state) {
+        return accounts;
+      }
+      if (accounts.length === 0) {
+        return state;
+      }
+      accounts.forEach((update) => {
+        const index = state.findIndex((acc) => acc.id === update.id);
+        if (index > -1) {
+          state.splice(index, 1, update);
+        } else {
+          state.push(update);
+        }
+      });
     },
   },
 });
@@ -65,7 +81,7 @@ const { saga, actions } = createSliceSaga({
       );
     },
     *removeAccount({ payload: { workbookId, id } }: PayloadAction<{ workbookId: number; id: number }>) {
-      yield callPrivate(removeAccountDone, 'Removing account', (auth) => new AccountsClient(auth).remove(workbookId, id));
+      yield callPrivate(applyWorldUpdate, 'Removing account', (auth) => new AccountsClient(auth).remove(workbookId, id));
     },
   },
   sagaType: SagaType.TakeLatest,
@@ -82,7 +98,7 @@ function selectors<Store extends { accounts: typeof initialState }>() {
 }
 
 export default {
-  actions: { ...actions, resetAccounts },
+  actions,
   reducer,
   saga,
   selectors,

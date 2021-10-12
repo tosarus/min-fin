@@ -1,21 +1,21 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { AppBar, Toolbar, Typography } from '@mui/material';
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
-import { ButtonLink, FlexLink, LoginLogout } from '../../common';
+import { AppBar, Toolbar, Typography } from '@mui/material';
 import { useAuth } from '../../auth';
-import { listSystemPages } from './listViews';
+import { ButtonLink, FlexLink, LoginLogout } from '../../common';
+import { listSystemPages } from '../listViews';
 
 const BrandLink = styled(FlexLink)({
   marginRight: 'auto',
 });
 
-interface HeasProps {
+interface HeaderProps {
   expanded: boolean;
   title: string;
 }
 
-export const Head = ({ expanded, title }: HeasProps) => {
+export const Header = ({ expanded, title }: HeaderProps) => {
   const { isAuthenticated, isReady } = useAuth();
   const sxStyle = {
     px: 4,

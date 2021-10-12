@@ -1,10 +1,10 @@
-import { UserInfo } from '../types';
+import { WorldUpdate } from '../types';
 
 interface AuthState {
   error?: Error;
   isAuthenticated: boolean;
   isReady: boolean;
-  _user?: UserInfo;
+  _world?: WorldUpdate;
 }
 
 export const initialState: AuthState = {
@@ -15,7 +15,7 @@ export const initialState: AuthState = {
 const AUTH_DONE = '@@auth/AUTH_DONE';
 const AUTH_ERROR = '@@auth/AUTH_ERROR';
 
-export const authDone = (user?: UserInfo) => ({ type: AUTH_DONE, user } as const);
+export const authDone = (world?: WorldUpdate) => ({ type: AUTH_DONE, world } as const);
 export const authError = (error: Error) => ({ type: AUTH_ERROR, error } as const);
 
 type Actions = ReturnType<typeof authDone> | ReturnType<typeof authError>;
@@ -23,8 +23,8 @@ type Actions = ReturnType<typeof authDone> | ReturnType<typeof authError>;
 export const reducer = (state: AuthState, action: Actions): AuthState => {
   switch (action.type) {
     case AUTH_DONE: {
-      const { user } = action;
-      return { ...state, isReady: true, _user: user, isAuthenticated: !!user };
+      const { world } = action;
+      return { ...state, isReady: true, _world: world, isAuthenticated: !!world };
     }
     case AUTH_ERROR: {
       const { error } = action;

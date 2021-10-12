@@ -1,2 +1,2 @@
-export { Forecast } from './Forecast';
-export { Transactions } from './Transactions';
+export { DemoForecast } from './DemoForecast';
+export { DemoTransactions } from './DemoTransactions';

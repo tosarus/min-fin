@@ -1,5 +1,5 @@
-import { BaseClient } from './baseClient';
 import { Auth } from '../../auth';
+import { BaseClient } from './baseClient';
 
 export class PrivateClient extends BaseClient {
   constructor(private _auth: Auth) {

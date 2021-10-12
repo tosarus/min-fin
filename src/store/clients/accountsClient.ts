@@ -1,5 +1,5 @@
-import { PrivateClient } from './privateClient';
 import { Account } from '../../types';
+import { PrivateClient } from './privateClient';
 
 export class AccountsClient extends PrivateClient {
   list(workbookId: number): Promise<Account[]> {

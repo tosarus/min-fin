@@ -1,6 +1,5 @@
 import React from 'react';
-import * as colors from '@mui/material/colors';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { colors, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { Title, useDispatchedRender } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { CsvTrans } from '../../types';
@@ -32,8 +31,8 @@ const Trans = ({ trans }: { trans: CsvTrans[] }) => (
   </Table>
 );
 
-export const Transactions = () => {
-  const renderTransactions = useDispatchedRender(Selectors.transactions, Actions.loadTransactions);
+export const DemoTransactions = () => {
+  const renderTransactions = useDispatchedRender(Selectors.demoTransactions, Actions.loadDemoTransactions);
 
   return (
     <>

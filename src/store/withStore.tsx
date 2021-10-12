@@ -1,11 +1,12 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { createStore } from './createStore';
 import { useAuth } from '../auth';
+import { createStore } from './createStore';
 
 const StoreApp = ({ children }: { children: React.ReactNode }) => {
-  const { auth, _user: profile } = useAuth();
-  const store = createStore(/*context*/ { auth }, /*preloadedState*/ { profile });
+  const { auth, _world } = useAuth();
+  const { removedTrans: ignored, ...world } = _world ?? { removedTrans: [] };
+  const store = createStore(/*context*/ { auth }, /*preloadedState*/ { ...world });
   return <Provider store={store}>{children}</Provider>;
 };
 

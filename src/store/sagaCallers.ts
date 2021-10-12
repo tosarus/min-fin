@@ -1,6 +1,6 @@
 import { put, call, getContext } from 'redux-saga/effects';
-import { Actions } from './slices';
 import { Auth } from '../auth';
+import { Actions } from './slices';
 
 export function* callPublic(action: (param: any) => any, message: string, caller: () => any): any {
   try {

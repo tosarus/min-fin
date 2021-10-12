@@ -1,5 +1,5 @@
-import { config as dotenvConfig } from 'dotenv';
 import path from 'path';
+import { config as dotenvConfig } from 'dotenv';
 import { AuthConfig } from './auth';
 
 export type Configuration = {

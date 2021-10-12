@@ -16,7 +16,6 @@
     "dev": "run-p server client",
     "client": "react-app-rewired start",
     "server": "nodemon server/index.ts 3010 500",
-    "server:self": "nodemon server/index.ts 3000",
     "clean": "rm -rf build dist",
     "eject": "react-scripts eject",
     "migrate": "TS_NODE_PROJECT=server/tsconfig.json ts-node node_modules/.bin/node-pg-migrate -j ts -m server/database/migrations",
@@ -49,6 +48,7 @@
     "express-jwt": "^6.1.0",
     "helmet": "^4.6.0",
     "jwks-rsa": "^2.0.4",
+    "module-alias": "^2.2.2",
     "morgan": "^1.10.0",
     "node-pg-migrate": "^6.0.0",
     "pg": "^8.7.1"
@@ -63,6 +63,7 @@
     "@types/compression": "^1.7.1",
     "@types/cors": "^2.8.12",
     "@types/dateformat": "^3.0.1",
+    "@types/module-alias": "^2.0.1",
     "@types/morgan": "^1.9.3",
     "@types/node": "^16.10.2",
     "@types/pg": "^8.6.1",

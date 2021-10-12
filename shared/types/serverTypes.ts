@@ -18,6 +18,11 @@ export enum AccountType {
   Banking = 'banking',
   Credit = 'credit',
   Opening = 'opening',
+  Removed = 'removed',
+}
+
+export function userLevelAccounts() {
+  return [AccountType.Banking, AccountType.Credit, AccountType.Income, AccountType.Expence];
 }
 
 export interface Account {
@@ -47,4 +52,12 @@ export interface Transaction {
   amount: string;
   account_from: number;
   account_to: number;
+}
+
+export interface WorldUpdate {
+  profile?: UserInfo;
+  accounts: Account[];
+  transactions: Transaction[];
+  workbooks: Workbook[];
+  removedTrans: number[];
 }

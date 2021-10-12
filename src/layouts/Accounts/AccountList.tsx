@@ -1,53 +1,56 @@
 import React from 'react';
-import { Button, Divider, List, ListItem, ListItemText, ListProps, Typography } from '@mui/material';
-import { accountTypeName, editableAccountTypes, sortAccounts } from './utils';
+import { useLocation } from 'wouter';
+import styled from '@emotion/styled';
+import { Box, BoxProps, Button, Divider, Typography } from '@mui/material';
+import { AmountSpan, FlexLink, Title } from '../../common';
 import { Account, AccountType } from '../../types';
+import { Links } from '../listViews';
+import { accountTypeName, editableAccountTypes, sortAccounts } from './utils';
 
 interface AccountListProps {
   accounts: Account[];
-  selectedId?: number;
-  onAccountSelect: (account: Account) => void;
-  onAccountAdd: (type: AccountType) => void;
 }
 
-export const AccountList = ({ sx, accounts, selectedId, onAccountAdd, onAccountSelect }: AccountListProps & ListProps) => {
+const RoundedLink = styled(FlexLink)({
+  flexFlow: 'row nowrap',
+  justifyContent: 'space-between',
+  paddingLeft: 8,
+  paddingRight: 8,
+  marginLeft: 8,
+  marginRight: 8,
+  marginBottom: 8,
+  borderRadius: 16,
+});
+
+const BalanceSpan = styled(AmountSpan)({ marginLeft: 8 });
+
+export const AccountList = ({ sx, accounts }: AccountListProps & BoxProps) => {
+  const [, navigate] = useLocation();
   const handleAdd = (e: React.MouseEvent, type: AccountType) => {
     e.preventDefault();
-    onAccountAdd(type);
-  };
-
-  const handleSelect = (e: React.MouseEvent, acc: Account) => {
-    e.preventDefault();
-    onAccountSelect(acc);
+    navigate(Links.accountsNew(type));
   };
 
   return (
-    <List sx={{ ...sx, display: 'flex', flexDirection: 'column', borderRight: '1px solid rgb(0, 0, 0, 0.1)' }}>
+    <Box sx={{ ...sx, display: 'flex', flexDirection: 'column', borderRight: '1px solid rgb(0, 0, 0, 0.1)', p: 0 }}>
+      <Title>Accounts</Title>
       {editableAccountTypes().map((type, i) => (
-        <>
-          {i > 0 && <Divider />}
-          <ListItem sx={{ display: 'flex', pl: 1, pr: 0 }}>
+        <React.Fragment key={i}>
+          {i > 0 && <Divider sx={{ mb: 1 }} />}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
             <Typography variant="h6">{accountTypeName(type, true)}</Typography>
-            <Button size="small" onClick={(e) => handleAdd(e, type)} sx={{ display: 'inline-block', ml: 'auto' }}>
+            <Button size="small" onClick={(e) => handleAdd(e, type)} sx={{ display: 'inline-block' }}>
               add
             </Button>
-          </ListItem>
+          </Box>
           {sortAccounts(accounts, type).map((acc) => (
-            <ListItemText
-              sx={{
-                px: 2,
-                py: 0.25,
-                m: 1,
-                background: selectedId === acc.id ? 'rgb(0, 0, 0, 0.08)' : undefined,
-                borderRadius: 4,
-              }}
-              onClick={(e) => handleSelect(e, acc)}
-              key={acc.id}>
-              {acc.name} ({acc.balance})
-            </ListItemText>
+            <RoundedLink key={acc.id} href={Links.accountsView(acc.id)}>
+              <span>{acc.name}</span>
+              <BalanceSpan amount={acc.balance} />
+            </RoundedLink>
           ))}
-        </>
+        </React.Fragment>
       ))}
-    </List>
+    </Box>
   );
 };

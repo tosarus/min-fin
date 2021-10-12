@@ -1,9 +1,9 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { Auth0ClientOptions } from '@auth0/auth0-spa-js';
+import { UsersClient } from '../store';
 import { Auth } from './Auth';
 import { authDone, authError, initialState, reducer } from './AuthState';
 import { hasAuthParams } from './utils';
-import { UsersClient } from '../store';
 
 const AuthContext = React.createContext({ auth: new Auth(), ...initialState });
 export const useAuth = () => React.useContext(AuthContext);
@@ -17,11 +17,7 @@ const defaultOnRedirectCallback = (returnUrl?: string): void => {
   window.history.replaceState({}, document.title, returnUrl || window.location.pathname);
 };
 
-export const AuthProvider = ({
-  children,
-  onRedirectCallback = defaultOnRedirectCallback,
-  ...opts
-}: AuthProviderProps) => {
+export const AuthProvider = ({ children, onRedirectCallback = defaultOnRedirectCallback, ...opts }: AuthProviderProps) => {
   const [auth] = useState(() => new Auth(opts));
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -33,11 +29,11 @@ export const AuthProvider = ({
       } else {
         await auth.checkSession();
       }
-      let user;
+      let world;
       if (await auth.isAuthenticated()) {
-        user = await new UsersClient(auth).getUserInfo();
+        world = await new UsersClient(auth).authenticate();
       }
-      dispatch(authDone(user));
+      dispatch(authDone(world));
     };
     authenticate().catch((error: Error) => dispatch(authError(error)));
   }, [auth, dispatch, onRedirectCallback]);

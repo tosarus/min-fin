@@ -1,6 +1,6 @@
 import { Injectable } from '@decorators/di';
+import { centsToStr, strToCents } from '@shared/calcs';
 import { Account, AccountType } from '@shared/types';
-import { centsToStr, strToCents } from './utils';
 import db from '../db';
 
 type DbAccount = {
@@ -20,8 +20,6 @@ const convertAccount = ({ balance_cent, ...account }: DbAccount): Account => {
   };
 };
 
-export { Account };
-
 @Injectable()
 export class AccountRepository {
   async getForWorkbook(workbookId: number): Promise<Account[]> {
@@ -32,18 +30,28 @@ export class AccountRepository {
     return rows.map(convertAccount);
   }
 
-  async create(workbookId: number, { name, type, parent_id, is_group, balance }: Partial<Account>): Promise<Account> {
+  async getByIds(workbookId: number, ids: number[]): Promise<Account[]> {
+    const { rows } = await db().query<DbAccount>({
+      text: 'select * from accounts where workbook_id = $1 and id = ANY($2::int[])',
+      values: [workbookId, ids],
+    });
+    return rows.map(convertAccount);
+  }
+
+  async create(workbookId: number, account: Partial<Account>): Promise<Account> {
+    const { name, type, parent_id, is_group = false } = account;
     const { rows } = await db().query<DbAccount>({
       text: `
 insert into accounts(workbook_id, name, type, parent_id, is_group, balance_cent)
-values($1, $2, $3, $4, $5, $6)
+values($1, $2, $3, $4, $5, 0)
 returning *`,
-      values: [workbookId, name, type, parent_id, is_group ?? false, strToCents(balance ?? '0')],
+      values: [workbookId, name, type, parent_id, is_group],
     });
     return convertAccount(rows[0]);
   }
 
-  async update(workbookId: number, { id, name, type, parent_id, is_group, balance }: Partial<Account>): Promise<Account> {
+  async update(workbookId: number, account: Partial<Account>): Promise<Account> {
+    const { id, name, type, parent_id, is_group, balance } = account;
     const { rows } = await db().query<DbAccount>({
       text: `
 update accounts
@@ -64,6 +72,5 @@ returning *`,
       text: 'delete from accounts where workbook_id = $1 and id = $2',
       values: [workbookId, id],
     });
-    return { workbookId, id };
   }
 }

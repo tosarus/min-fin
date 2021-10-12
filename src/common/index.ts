@@ -1,3 +1,4 @@
+export * from './AmountSpan';
 export * from './ButtonLink';
 export * from './EditableString';
 export * from './Error';

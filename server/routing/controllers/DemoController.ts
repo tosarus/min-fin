@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { Controller, Get, Response as Res } from '@decorators/express';
-import { CheckToken } from '../middleware/CheckToken';
 import { Forecasts, Trans } from '../../demo';
+import { CheckToken } from '../middleware/CheckToken';
 
 @Controller('/demo')
 export class DemoController {

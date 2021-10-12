@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, ButtonProps } from '@mui/material';
 import { LinkProps, useRoute, Link } from 'wouter';
+import { Button, ButtonProps } from '@mui/material';
 
 export const ButtonLink = ({ ...props }: ButtonProps & LinkProps) => {
   const [isActive] = useRoute(props.href!);

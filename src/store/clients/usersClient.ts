@@ -1,8 +1,8 @@
+import { UserInfo, WorldUpdate } from '../../types';
 import { PrivateClient } from './privateClient';
-import { UserInfo } from '../../types';
 
 export class UsersClient extends PrivateClient {
-  getUserInfo(): Promise<UserInfo> {
+  authenticate(): Promise<WorldUpdate> {
     return this.getJson('/api/userinfo');
   }
 
