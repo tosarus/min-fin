@@ -1,3 +1,4 @@
 export { UsersClient } from './clients';
-export { Actions, Selectors } from './slices';
+export { Actions } from './slices';
+export { Selectors } from './selectors';
 export { withStore } from './withStore';
