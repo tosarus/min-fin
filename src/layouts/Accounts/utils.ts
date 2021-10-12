@@ -1,4 +1,4 @@
-import { Account, AccountType } from '../../types';
+import { Account, AccountType, userLevelAccounts } from '../../types';
 
 export function accountTypeName(type: AccountType, plural?: boolean): string {
   switch (type) {
@@ -12,13 +12,15 @@ export function accountTypeName(type: AccountType, plural?: boolean): string {
       return plural ? 'Income Categories' : 'Income';
     case AccountType.Opening:
       return 'Beginning Balace';
+    case AccountType.Removed:
+      return 'Removed Accounts';
     default:
       return 'Unknown';
   }
 }
 
 export function editableAccountTypes() {
-  return [AccountType.Banking, AccountType.Credit, AccountType.Income, AccountType.Expence];
+  return [...userLevelAccounts(), AccountType.Opening, AccountType.Removed];
 }
 
 export function sortAccounts(accounts: Account[], type?: AccountType): Account[] {

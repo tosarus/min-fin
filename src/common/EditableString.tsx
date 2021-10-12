@@ -1,43 +1,67 @@
-import React, { FormEvent, KeyboardEvent, useState } from 'react';
-import { Box, TextField } from '@mui/material';
+import React, { KeyboardEvent, useState } from 'react';
+import { useFormik } from 'formik';
+import { Box, BoxProps, TextField } from '@mui/material';
 
 interface Props {
   value: string;
-  name: string;
+  name?: string;
   editing?: boolean;
   onChanged: (name: string) => void;
   onCancel?: () => void;
 }
 
-export const EditableString = ({ value: initialValue, name, editing = false, onChanged, onCancel = () => {} }: Props) => {
-  const [edit, setEdit] = useState(editing);
-  const [value, setValue] = useState(initialValue);
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setEdit(false);
-    onChanged(value);
+const Editor = ({ sx, value, name, onChanged, onCancel = () => {} }: Props & BoxProps) => {
+  const formik = useFormik({
+    initialValues: { value },
+    onSubmit: ({ value }) => {
+      onChanged(value);
+    },
+  });
+
+  const handleLostFocus = () => {
+    onCancel();
   };
+
   const handleEscape = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       e.preventDefault();
-      setValue(initialValue);
-      setEdit(false);
-      onCancel();
+      handleLostFocus();
     }
   };
 
-  return edit ? (
-    <Box component="form" display="flex" onSubmit={handleSubmit} onKeyDown={handleEscape}>
+  return (
+    <Box sx={{ display: 'flex', ...sx }} component="form" onSubmit={formik.handleSubmit} onKeyDown={handleEscape}>
       <TextField
-        style={{ flex: '1 0 auto' }}
-        id="user-name"
+        sx={{ flex: '1 0 auto' }}
+        id="editable-string"
         label={name}
-        value={value}
-        onChange={(e: any) => setValue(e.target.value)}
+        value={formik.values.value}
+        onChange={formik.handleChange}
+        name="value"
+        size="small"
+        variant="standard"
+        onBlur={handleLostFocus}
       />
     </Box>
+  );
+};
+
+export const EditableString = ({ editing = false, onChanged, onCancel = () => {}, ...rest }: Props & BoxProps) => {
+  const [edit, setEdit] = useState(editing);
+  const { sx, value } = rest;
+  const handleChanged = (value: string) => {
+    setEdit(false);
+    onChanged(value);
+  };
+  const handleCancel = () => {
+    setEdit(false);
+    onCancel();
+  };
+
+  return edit ? (
+    <Editor {...rest} onChanged={handleChanged} onCancel={handleCancel} />
   ) : (
-    <Box component="span" onClick={() => setEdit(true)}>
+    <Box sx={{ ...sx, py: 1 }} onClick={() => setEdit(true)}>
       {value}
     </Box>
   );

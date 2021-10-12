@@ -1,13 +1,13 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import MenuIcon from '@mui/icons-material/Menu';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { AppBar as MuiAppBar, AppBarProps as MuiAppBarProps, Badge, Box, Container, CssBaseline } from '@mui/material';
 import { Divider, Drawer as MuiDrawer, Grid, IconButton, Link, List, Paper, Toolbar } from '@mui/material';
 import { Typography, TypographyProps } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { Orders } from './Orders';
+import { styled } from '@mui/material/styles';
 import { Deposits } from './Deposits';
+import { Orders } from './Orders';
 import { mainListItems, secondaryListItems } from './listItems';
 
 const Copyright = (props: TypographyProps) => (

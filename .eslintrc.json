@@ -12,14 +12,35 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["react", "@typescript-eslint"],
+  "plugins": ["react", "@typescript-eslint", "import"],
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "[iI]gnored" }],
     "curly": ["error", "all"],
+    "import/order": [
+      "error",
+      {
+        "alphabetize": { "order": "asc" },
+        "pathGroups": [
+          {
+            "pattern": "@*/**",
+            "group": "external",
+            "position": "after"
+          },
+          {
+            "pattern": "react",
+            "group": "builtin",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": [],
+        "warnOnUnassignedImports": true
+      }
+    ],
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "linebreak-style": ["error", "unix"],
     "no-use-before-define": "off",

@@ -1,12 +1,13 @@
+import { createSliceSaga, SagaType } from 'redux-toolkit-saga';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createSliceSaga, SagaType } from 'redux-toolkit-saga/lib/createSliceSaga';
+import { UserInfo, WorldUpdate } from '../../types';
 import { UsersClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
-import { UserInfo } from '../../types';
+import { applyWorldUpdate } from './transactions';
 
 const {
   name,
-  actions: { loadUserListDone, updateUserDone },
+  actions: { loadUserListDone },
   reducer: usersReducer,
 } = createSlice({
   name: 'users',
@@ -15,9 +16,15 @@ const {
     loadUserListDone(state, { payload: userList }: PayloadAction<UserInfo[]>) {
       return userList;
     },
-    updateUserDone(state, { payload: user }: PayloadAction<UserInfo>) {
-      const index = state.findIndex((u) => u.email === user.email);
-      state[index] = user;
+  },
+  extraReducers: {
+    [applyWorldUpdate.type]: (state, { payload: { profile } }: PayloadAction<WorldUpdate>) => {
+      if (profile) {
+        const index = state.findIndex((u) => u.email === profile.email);
+        if (index > -1) {
+          state.splice(index, 1, profile);
+        }
+      }
     },
   },
 });
@@ -29,7 +36,7 @@ const { saga, actions } = createSliceSaga({
       yield callPrivate(loadUserListDone, 'Loading user list', (auth) => new UsersClient(auth).list());
     },
     *updateUser({ payload: user }: PayloadAction<Partial<UserInfo>>) {
-      yield callPrivate(updateUserDone, 'Updating user', (auth) => new UsersClient(auth).update(user));
+      yield callPrivate(applyWorldUpdate, 'Updating user', (auth) => new UsersClient(auth).update(user));
     },
   },
   sagaType: SagaType.TakeLatest,
@@ -44,9 +51,9 @@ const { reducer: profileReducer } = createSlice({
       const profile = userList.find((user) => user.email === state?.email);
       return profile ? { ...profile } : state;
     },
-    [updateUserDone.type]: (state, { payload: user }: PayloadAction<UserInfo>) => {
-      if (user.email === state?.email) {
-        return { ...user };
+    [applyWorldUpdate.type]: (state, { payload: { profile } }: PayloadAction<WorldUpdate>) => {
+      if (profile && (!state || state.email === profile.email)) {
+        return { ...profile };
       }
     },
   },

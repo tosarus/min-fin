@@ -27,9 +27,9 @@ export abstract class BaseClient {
     await this.sendRequest(url, JSON.stringify(body));
   }
 
-  protected async putJson<T>(url: string, body: Partial<T>): Promise<T> {
+  protected async putJson<T, TRet = T>(url: string, body: Partial<T>): Promise<TRet> {
     const response = await this.sendRequest(url, JSON.stringify(body), 'put');
-    return (await response.json()) as T;
+    return (await response.json()) as TRet;
   }
 
   protected abstract createHeaders(): Promise<Headers>;

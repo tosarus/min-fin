@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from '@emotion/styled';
 import { Link, LinkProps, useRoute } from 'wouter';
+import styled from '@emotion/styled';
 
 interface ActiveProps {
   isActive?: boolean;
@@ -16,6 +16,11 @@ const StyledLink = styled(Link, { shouldForwardProp: (prop) => prop !== 'isActiv
     textDecoration: 'none',
 
     background: isActive && 'rgb(0,0,0,0.06)',
+
+    color: 'inherit',
+    '&:visited': {
+      color: 'inherit',
+    },
 
     '&:hover': {
       background: isActive ? 'rgb(0,0,0,0.1)' : 'rgb(0,0,0,0.04)',

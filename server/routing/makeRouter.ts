@@ -1,16 +1,17 @@
 import express from 'express';
 import { Container } from '@decorators/di';
 import { attachControllers, ERROR_MIDDLEWARE } from '@decorators/express';
+import { Configuration } from '../config';
 import {
   AccountsController,
   AuthenticateController,
   DemoController,
+  TransactionsController,
   UsersController,
   WorkbooksController,
 } from './controllers';
 import { AUTH_CONFIG } from './injectTokens';
 import { ApiErrorMiddleware } from './middleware';
-import { Configuration } from '../config';
 
 export const makeRouter = ({ auth: authConfig }: Configuration) => {
   Container.provide([
@@ -23,6 +24,7 @@ export const makeRouter = ({ auth: authConfig }: Configuration) => {
     AuthenticateController,
     AccountsController,
     DemoController,
+    TransactionsController,
     UsersController,
     WorkbooksController,
   ]);

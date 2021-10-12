@@ -1,22 +1,16 @@
+import { createSliceSaga, SagaType } from 'redux-toolkit-saga';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createSliceSaga, SagaType } from 'redux-toolkit-saga/lib/createSliceSaga';
+import { Workbook, WorldUpdate } from '../../types';
 import { WorkbooksClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
-import { Workbook } from '../../types';
+import { applyWorldUpdate } from './transactions';
 
 const initialState = null as Workbook[] | null;
 
 const {
   name,
   reducer: workbooksReducer,
-  actions: {
-    listWorkbooksDone,
-    getActiveWorkbookDone,
-    createWorkbookDone,
-    updateWorkbookDone,
-    removeWorkbookDone,
-    resetWorkbooks,
-  },
+  actions: { listWorkbooksDone, getActiveWorkbookDone, createWorkbookDone, updateWorkbookDone, removeWorkbookDone },
 } = createSlice({
   name: 'workbooks',
   initialState,
@@ -65,8 +59,23 @@ const {
         }
       }
     },
-    resetWorkbooks() {
-      return initialState;
+  },
+  extraReducers: {
+    [applyWorldUpdate.type]: (state, { payload: { workbooks } }: PayloadAction<WorldUpdate>) => {
+      if (!state) {
+        return workbooks;
+      }
+      if (workbooks.length === 0) {
+        return state;
+      }
+      workbooks.forEach((update) => {
+        const index = state.findIndex((wb) => wb.id === update.id);
+        if (index > -1) {
+          state.splice(index, 1, update);
+        } else {
+          state.push(update);
+        }
+      });
     },
   },
 });
@@ -104,7 +113,7 @@ function selectors<Store extends { workbooks: typeof initialState }>() {
 }
 
 export default {
-  actions: { ...actions, resetWorkbooks },
+  actions,
   reducer,
   saga,
   selectors,

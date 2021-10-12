@@ -1,5 +1,5 @@
-import { Pool } from 'pg';
 import runMigrations from 'node-pg-migrate';
+import { Pool } from 'pg';
 import { Configuration } from '../config';
 
 let _admins: string[] = [];

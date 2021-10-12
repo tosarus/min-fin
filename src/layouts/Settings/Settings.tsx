@@ -1,11 +1,10 @@
 import React from 'react';
-import { Box, IconButton, Typography, TypographyProps } from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import { useDispatch, useSelector } from 'react-redux';
-import { WorkbookListTable } from './WorkbookListTable';
-import { UserListTable } from './UserListTable';
+import { useSelector } from 'react-redux';
+import { Box, Typography, TypographyProps } from '@mui/material';
 import { Title, useDispatchedRender } from '../../common';
 import { Actions, Selectors } from '../../store';
+import { UserListTable } from './UserListTable';
+import { WorkbookListTable } from './WorkbookListTable';
 
 const Separator = () => {
   return <Box component="hr" m={3} />;
@@ -19,31 +18,27 @@ export const Settings = () => {
   const profile = useSelector(Selectors.profile);
   const renderUserList = useDispatchedRender(Selectors.userList, Actions.loadUserList, (list) => list.length == 0);
   const renderWorkbooks = useDispatchedRender(Selectors.workbooks, Actions.listWorkbooks);
-  const dispatch = useDispatch();
-
-  const handleRefreshWorkbooks = () => {
-    dispatch(Actions.resetWorkbooks());
-  };
+  const isAdmin = profile?.is_admin ?? false;
+  const fullContent = profile?.allowed ?? false;
 
   return (
     <Box display="flex" px={0} py={2} justifyContent="space-around">
       <Box component="section" flex="1 0 auto">
-        <Title>Settings{profile?.is_admin && ' [admin]'}</Title>
+        <Title>Settings{isAdmin && ' [admin]'}</Title>
         <Separator />
-        <SectionTitle>{profile!.is_admin ? 'Users' : 'Your info'}</SectionTitle>
+        <SectionTitle>{isAdmin ? 'Users' : 'Your info'}</SectionTitle>
         {renderUserList((userList) => (
           <UserListTable userList={userList} />
         ))}
         <Separator />
-        <SectionTitle>
-          <span style={{ display: 'inline-block', marginRight: '10px' }}>Workbooks</span>
-          <IconButton area-label="refresh workbooks" size="small" onClick={handleRefreshWorkbooks}>
-            <RefreshIcon />
-          </IconButton>
-        </SectionTitle>
-        {renderWorkbooks((workbooks) => (
-          <WorkbookListTable workbooks={workbooks} />
-        ))}
+        {fullContent && (
+          <>
+            <SectionTitle>Workbooks</SectionTitle>
+            {renderWorkbooks((workbooks) => (
+              <WorkbookListTable workbooks={workbooks} />
+            ))}
+          </>
+        )}
       </Box>
     </Box>
   );

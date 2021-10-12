@@ -9,9 +9,12 @@ const genId = () => {
   return `id-${id}`;
 };
 
-export class Report {
-  public id: string;
-  constructor(public type: ReportType, public text: string) {
-    this.id = genId();
-  }
+export interface Report {
+  id: string;
+  type: ReportType;
+  text: string;
+}
+
+export function createReport(type: ReportType, text: string): Report {
+  return { id: genId(), type, text };
 }

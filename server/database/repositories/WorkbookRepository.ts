@@ -2,8 +2,6 @@ import { Injectable } from '@decorators/di';
 import { Workbook } from '@shared/types';
 import db from '../db';
 
-export { Workbook };
-
 @Injectable()
 export class WorkbookRepository {
   async getAll(email: string): Promise<Workbook[]> {

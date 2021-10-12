@@ -1,7 +1,7 @@
 import { delay, fork, put } from 'redux-saga/effects';
+import { createSliceSaga } from 'redux-toolkit-saga';
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createSliceSaga } from 'redux-toolkit-saga/lib/createSliceSaga';
-import { Report, ReportType } from '../../types';
+import { createReport, Report, ReportType } from '../../types';
 
 const initialState = [] as Report[];
 
@@ -38,7 +38,7 @@ const {
   name,
   caseSagas: {
     *reportCreate({ payload: { type, text, timeOut } }: PayloadAction<ReportCreateArgs>) {
-      const report = new Report(type, text);
+      const report = createReport(type, text);
       yield put(sliceActions.reportAdd(report));
 
       if (timeOut) {

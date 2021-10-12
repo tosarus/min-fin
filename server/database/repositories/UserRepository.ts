@@ -13,8 +13,6 @@ type DbUser = {
 
 const convertUser = (user: DbUser): UserInfo => ({ ...user, is_admin: isAdmin(user.email) });
 
-export type { UserInfo };
-
 @Injectable()
 export class UserRepository {
   async getAll() {
@@ -31,17 +29,19 @@ export class UserRepository {
   }
 
   async create(user: Partial<UserInfo>): Promise<UserInfo> {
+    const { email, name, picture } = user;
     const { rows } = await db().query<DbUser>({
       text: `
 insert into users(email, name, picture, allowed)
 values($1, $2, $3, $4)
 returning *`,
-      values: [user.email, user.name, user.picture, user.allowed],
+      values: [email, name, picture, isAdmin(email!)],
     });
     return convertUser(rows[0]);
   }
 
   async update(email: string, user: Partial<UserInfo>): Promise<UserInfo> {
+    const { name, picture, allowed, active_workbook } = user;
     const { rows } = await db().query<DbUser>({
       text: `
 update users
@@ -51,7 +51,7 @@ set name = coalesce($2, name),
     active_workbook = coalesce($5, active_workbook)
 where email = $1
 returning *`,
-      values: [email, user.name, user.picture, user.allowed, user.active_workbook],
+      values: [email, name, picture, allowed, active_workbook],
     });
     return convertUser(rows[0]);
   }

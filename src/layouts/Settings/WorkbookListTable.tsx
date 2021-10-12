@@ -48,12 +48,12 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
   };
 
   return (
-    <Table>
+    <Table size="small">
       <TableHead>
         <TableRow>
           <TableCell>Name</TableCell>
           <TableCell>Active</TableCell>
-          <TableCell />
+          <TableCell sx={{ width: 200 }} />
         </TableRow>
       </TableHead>
       <TableBody>
@@ -87,7 +87,7 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
         )}
       </TableBody>
       <TableFooter>
-        <TableRow>
+        <TableRow sx={{ '& td': { border: 0 } }}>
           <TableCell color="primary" onClick={handleAddNew}>
             Add new
           </TableCell>

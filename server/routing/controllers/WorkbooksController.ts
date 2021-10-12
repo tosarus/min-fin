@@ -1,8 +1,9 @@
 import { Response, Request } from 'express';
-import { Body, Controller, Delete, Get, Params, Post, Put, Response as Res, Request as Req } from '@decorators/express';
-import { CheckToken } from '../middleware';
-import { Workbook, WorkbookRepository } from '../../database';
 import { Inject } from '@decorators/di';
+import { Body, Controller, Delete, Get, Params, Post, Put, Response as Res, Request as Req } from '@decorators/express';
+import { Workbook } from '@shared/types';
+import { WorkbookRepository } from '../../database';
+import { CheckToken } from '../middleware';
 
 @Controller('/workbooks', [CheckToken])
 export class WorkbooksController {

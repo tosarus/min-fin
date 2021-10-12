@@ -25,7 +25,7 @@ export const UserListTable = ({ userList }: UserListTableProps) => {
   };
 
   return (
-    <Table>
+    <Table size="small">
       <TableHead>
         <TableRow>
           <TableCell>Name</TableCell>
@@ -36,7 +36,7 @@ export const UserListTable = ({ userList }: UserListTableProps) => {
       </TableHead>
       <TableBody>
         {[...userList].sort(cmpUsers).map((user) => (
-          <TableRow key={user.email}>
+          <TableRow key={user.email} sx={{ '&:last-child td': { border: 0 } }}>
             <TableCell>
               <EditableString value={user.name} name="Name" onChanged={(name) => handleName(user, name)} />
             </TableCell>

@@ -38,8 +38,8 @@ const ForecastTable = ({ forecast }: Props) => {
   );
 };
 
-export const Forecast = () => {
-  const renderForecast = useDispatchedRender(Selectors.forecast, Actions.loadForecast);
+export const DemoForecast = () => {
+  const renderForecast = useDispatchedRender(Selectors.demoForecast, Actions.loadDemoForecast);
 
   return (
     <>

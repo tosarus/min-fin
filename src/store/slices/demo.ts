@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createSliceSaga, SagaType } from 'redux-toolkit-saga/lib/createSliceSaga';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { WeatherForecast, CsvTrans } from '../../types';
 import { ForecastClient, TransClient } from '../clients';
 import { callPublic, callPrivate } from '../sagaCallers';
-import { WeatherForecast, CsvTrans } from '../../types';
 
 type DemoState = {
   forecast: WeatherForecast[] | null;
@@ -12,16 +12,16 @@ const initialState = { forecast: null, trans: null } as DemoState;
 
 const {
   name,
-  actions: { loadForecastDone, loadTransactionsDone },
+  actions: { loadDemoForecastDone, loadDemoTransactionsDone },
   reducer: demoReducer,
 } = createSlice({
   name: 'demo',
   initialState,
   reducers: {
-    loadForecastDone(state, { payload: forecast }: PayloadAction<WeatherForecast[]>) {
+    loadDemoForecastDone(state, { payload: forecast }: PayloadAction<WeatherForecast[]>) {
       state.forecast = forecast;
     },
-    loadTransactionsDone(state, { payload: trans }: PayloadAction<CsvTrans[]>) {
+    loadDemoTransactionsDone(state, { payload: trans }: PayloadAction<CsvTrans[]>) {
       state.trans = trans;
     },
   },
@@ -30,11 +30,11 @@ const {
 const { actions, saga } = createSliceSaga({
   name,
   caseSagas: {
-    *loadForecast() {
-      yield callPublic(loadForecastDone, 'Loading forecast', () => new ForecastClient().load());
+    *loadDemoForecast() {
+      yield callPublic(loadDemoForecastDone, 'Loading demo forecast', () => new ForecastClient().load());
     },
-    *loadTransactions() {
-      yield callPrivate(loadTransactionsDone, 'Loading transactions', (auth) => new TransClient(auth).load());
+    *loadDemoTransactions() {
+      yield callPrivate(loadDemoTransactionsDone, 'Loading demo transactions', (auth) => new TransClient(auth).load());
     },
   },
   sagaType: SagaType.TakeLatest,
@@ -46,8 +46,8 @@ const reducer = {
 
 function selectors<Store extends { demo: typeof initialState }>() {
   return {
-    forecast: (store: Store) => store.demo.forecast,
-    transactions: (store: Store) => store.demo.trans,
+    demoForecast: (store: Store) => store.demo.forecast,
+    demoTransactions: (store: Store) => store.demo.trans,
   };
 }
 

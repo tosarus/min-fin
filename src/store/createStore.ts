@@ -1,6 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit';
-import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
+import createSagaMiddleware from 'redux-saga';
+import { configureStore } from '@reduxjs/toolkit';
 import { reducer, rootSaga } from './slices';
 
 export function createStore<C extends Record<string, unknown>>(
