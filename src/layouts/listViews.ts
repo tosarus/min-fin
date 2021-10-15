@@ -17,7 +17,7 @@ import { WelcomeScreen } from './WelcomeScreen';
 export const Links = {
   accounts: () => '/accounts',
   accountsNew: (type: string) => `/accounts/new/${type}`,
-  accountsView: (id: number) => `/accounts/${id}`,
+  accountsView: (id: string) => `/accounts/${id}`,
   demoForecast: () => '/demo/forecast',
   demoOrders: () => '/demo/orders',
   demoTrans: () => '/demo/trans',

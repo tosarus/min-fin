@@ -9,11 +9,11 @@ export class AccountsService {
     @Inject(TransactionRepository) private transactions_: TransactionRepository
   ) {}
 
-  async getAll(workbookId: number) {
+  async getAll(workbookId: string) {
     return await this.accounts_.getForWorkbook(workbookId);
   }
 
-  async save(workbookId: number, account: Partial<Account>) {
+  async save(workbookId: string, account: Partial<Account>) {
     if (!account) {
       throw 'Save account: should have a body';
     }
@@ -33,14 +33,14 @@ export class AccountsService {
     }
   }
 
-  async removeIfEmpty(workbookId: number, id: number) {
+  async removeIfEmpty(workbookId: string, id: string) {
     const trans = await this.transactions_.findByAccountId(workbookId, id);
     if (trans.length === 0) {
       await this.accounts_.remove(workbookId, id);
     }
   }
 
-  async remove(workbookId: number, id: number): Promise<WorldUpdate> {
+  async remove(workbookId: string, id: string): Promise<WorldUpdate> {
     const updated = await this.accounts_.update(workbookId, { id, type: AccountType.Removed, name: '(removed)' });
     // running async, removed accounts are not shown, but used if transactions exist, so
     // if no transactions => account removal will be pick up on next resync

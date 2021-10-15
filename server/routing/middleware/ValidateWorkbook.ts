@@ -9,7 +9,7 @@ export class ValidateWorkbook implements Middleware {
   public use(req: Request, res: Response, next: NextFunction) {
     const email = (req as any).email;
     this.repository_
-      .getById(email, +req.params.workbookId)
+      .getById(email, req.params.workbookId)
       .then(() => next())
       .catch(next);
   }

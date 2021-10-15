@@ -29,7 +29,7 @@ const {
         state.push(account);
       }
     },
-    removeAccountDone(state, { payload: { id } }: PayloadAction<{ id: number }>) {
+    removeAccountDone(state, { payload: { id } }: PayloadAction<{ id: string }>) {
       if (state) {
         const index = state.findIndex((a) => a.id === id);
         if (index > -1) {
@@ -61,13 +61,13 @@ const {
 const { saga, actions } = createSliceSaga({
   name,
   caseSagas: {
-    *listAccounts({ payload: workbookId }: PayloadAction<number>) {
+    *listAccounts({ payload: workbookId }: PayloadAction<string>) {
       yield callPrivate(listAccountsDone, 'Loading account list', (auth) => new AccountsClient(auth).list(workbookId));
     },
-    *saveAccount({ payload: { workbookId, account } }: PayloadAction<{ workbookId: number; account: Partial<Account> }>) {
+    *saveAccount({ payload: { workbookId, account } }: PayloadAction<{ workbookId: string; account: Partial<Account> }>) {
       yield callPrivate(saveAccountDone, 'Saving account', (auth) => new AccountsClient(auth).save(workbookId, account));
     },
-    *removeAccount({ payload: { workbookId, id } }: PayloadAction<{ workbookId: number; id: number }>) {
+    *removeAccount({ payload: { workbookId, id } }: PayloadAction<{ workbookId: string; id: string }>) {
       yield callPrivate(applyWorldUpdate, 'Removing account', (auth) => new AccountsClient(auth).remove(workbookId, id));
     },
   },

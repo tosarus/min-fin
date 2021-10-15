@@ -51,7 +51,7 @@ const {
         state.push(workbook);
       }
     },
-    removeWorkbookDone(state, { payload: { id } }: PayloadAction<{ id: number }>) {
+    removeWorkbookDone(state, { payload: { id } }: PayloadAction<{ id: string }>) {
       if (state) {
         const index = state.findIndex((b) => b.id === id);
         if (index > -1) {
@@ -95,7 +95,7 @@ const { saga, actions } = createSliceSaga({
     *updateWorkbook({ payload: workbook }: PayloadAction<Partial<Workbook>>) {
       yield callPrivate(updateWorkbookDone, 'Updating workbook', (auth) => new WorkbooksClient(auth).update(workbook));
     },
-    *removeWorkbook({ payload: id }: PayloadAction<number>) {
+    *removeWorkbook({ payload: id }: PayloadAction<string>) {
       yield callPrivate(removeWorkbookDone, 'Removing workbook', (auth) => new WorkbooksClient(auth).remove(id));
     },
   },

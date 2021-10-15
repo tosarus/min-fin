@@ -3,15 +3,14 @@ import { UserInfo } from '@shared/types';
 import db, { isAdmin } from '../db';
 
 type DbUser = {
-  id: number;
-  email: string;
+  id: string;
   name: string;
   picture: string;
   allowed: boolean;
-  active_workbook: number;
+  active_workbook: string;
 };
 
-const convertUser = (user: DbUser): UserInfo => ({ ...user, is_admin: isAdmin(user.email) });
+const convertUser = ({ id, ...user }: DbUser): UserInfo => ({ ...user, email: id, is_admin: isAdmin(id) });
 
 @Injectable()
 export class UserRepository {
@@ -22,7 +21,7 @@ export class UserRepository {
 
   async findByEmail(email: string) {
     const { rows } = await db().query<DbUser>({
-      text: 'select * from users where email = $1',
+      text: 'select * from users where id = $1',
       values: [email],
     });
     return rows.length > 0 ? convertUser(rows[0]) : null;
@@ -32,7 +31,7 @@ export class UserRepository {
     const { email, name, picture } = user;
     const { rows } = await db().query<DbUser>({
       text: `
-insert into users(email, name, picture, allowed)
+insert into users(id, name, picture, allowed)
 values($1, $2, $3, $4)
 returning *`,
       values: [email, name, picture, isAdmin(email!)],
@@ -49,7 +48,7 @@ set name = coalesce($2, name),
     picture = coalesce($3, picture),
     allowed = coalesce($4, allowed),
     active_workbook = coalesce($5, active_workbook)
-where email = $1
+where id = $1
 returning *`,
       values: [email, name, picture, allowed, active_workbook],
     });
@@ -57,6 +56,6 @@ returning *`,
   }
 
   async remove(email: string) {
-    return await db().query({ text: 'delete from users when email = $1', values: [email] });
+    return await db().query({ text: 'delete from users when id = $1', values: [email] });
   }
 }

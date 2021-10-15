@@ -39,9 +39,9 @@ export class WorkbooksController {
     res.json(await this.repository_.update(email, workbook));
   }
 
-  @Delete('/:id(\\d+)')
+  @Delete('/:id')
   async deleteWorkbook(@Req() req: Request, @Res() res: Response, @Params('id') id: string) {
     const email = (req as any).email;
-    res.json(await this.repository_.remove(email, +id));
+    res.json(await this.repository_.remove(email, id));
   }
 }

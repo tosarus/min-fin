@@ -6,17 +6,15 @@ import db from '../db';
 export class WorkbookRepository {
   async getAll(email: string): Promise<Workbook[]> {
     const { rows } = await db().query<Workbook>({
-      text: 'select wb.id, wb.name from workbooks wb join users on wb.user_id = users.id and users.email = $1',
+      text: 'select id, name from workbooks where user_id = $1',
       values: [email],
     });
     return rows;
   }
 
-  async getById(email: string, id: number): Promise<Workbook | null> {
+  async getById(email: string, id: string): Promise<Workbook | null> {
     const { rows } = await db().query<Workbook>({
-      text: `
-select wb.id, wb.name from workbooks wb join users on wb.user_id = users.id
-where wb.id = $2 and users.email = $1`,
+      text: 'select id, name from workbooks where user_id = $1 and id = $2',
       values: [email, id],
     });
     if (rows.length > 0) {
@@ -29,7 +27,7 @@ where wb.id = $2 and users.email = $1`,
     const { rows } = await db().query<Workbook>({
       text: `
 select wb.id, wb.name from workbooks wb join users on wb.user_id = users.id
-where wb.id = users.active_workbook and users.email = $1`,
+where wb.id = users.active_workbook and users.id = $1`,
       values: [email],
     });
     return rows.length > 0 ? rows[0] : null;
@@ -39,7 +37,7 @@ where wb.id = users.active_workbook and users.email = $1`,
     const { rows } = await db().query<Workbook>({
       text: `
 update workbooks wb set name = coalesce($3, wb.name)
-from users where wb.user_id = users.id and wb.id = $2 and users.email = $1
+from users where wb.user_id = users.id and wb.id = $2 and users.id = $1
 returning wb.id, wb.name`,
       values: [email, workbook.id, workbook.name],
     });
@@ -48,18 +46,15 @@ returning wb.id, wb.name`,
 
   async create(email: string, workbook: Partial<Workbook>): Promise<Workbook> {
     const { rows } = await db().query<Workbook>({
-      text: `
-insert into workbooks(user_id, name)
-(select users.id as user_id, $2 as name from users where users.email = $1)
-returning id, name`,
+      text: 'insert into workbooks(user_id, name) values($1, $2) returning id, name',
       values: [email, workbook.name],
     });
     return rows[0];
   }
 
-  async remove(email: string, id: number) {
+  async remove(email: string, id: string) {
     await db().query({
-      text: 'delete from workbooks wb using users where wb.user_id = users.id and wb.id = $2 and users.email = $1',
+      text: 'delete from workbooks where user_id = $1 and id = $2',
       values: [email, id],
     });
     return { id };

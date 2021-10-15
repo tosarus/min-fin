@@ -18,7 +18,7 @@ export class WorkbooksClient extends PrivateClient {
     return this.putJson('/api/workbooks', workbook);
   }
 
-  remove(id: number): Promise<{ id: string }> {
+  remove(id: string): Promise<{ id: string }> {
     return this.delete(`/api/workbooks/${id}`);
   }
 }
