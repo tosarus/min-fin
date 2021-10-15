@@ -45,7 +45,7 @@ export enum TransactionType {
 export interface Transaction {
   id: number;
   workbook_id: number;
-  date: Date;
+  date: string;
   type: TransactionType;
   description: string;
   detail: string;

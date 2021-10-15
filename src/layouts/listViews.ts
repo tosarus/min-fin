@@ -11,6 +11,7 @@ import { NewUserWarning } from './NewUserWarning';
 import { NotFound } from './NotFound';
 import { Overview } from './Overview';
 import { Settings } from './Settings';
+import { Transactions } from './Transactions';
 import { WelcomeScreen } from './WelcomeScreen';
 
 export const Links = {
@@ -22,6 +23,7 @@ export const Links = {
   demoTrans: () => '/demo/trans',
   home: () => '/',
   settings: () => '/settings',
+  transactions: () => '/transactions',
   notFound: () => '/404',
 } as const;
 
@@ -34,6 +36,7 @@ export const Routes = {
   DemoTrans: Links.demoTrans(),
   Home: Links.home(),
   Settings: Links.settings(),
+  Transactions: Links.transactions(),
   NotFound: '/:rest',
 } as const;
 
@@ -57,6 +60,7 @@ const _systemPages = [createRoutablePage(Links.settings(), Routes.Settings, Sett
 const _privatePages = [
   createRoutablePage(Links.home(), Routes.Home, Overview, 'Overview', AppsIcon),
   createRoutablePage(Links.accounts(), Routes.Accounts, Accounts, 'Accounts', AssignmentOutlinedIcon),
+  createRoutablePage(Links.transactions(), Routes.Transactions, Transactions, 'Transactions', StorageRoundedIcon),
   createRoutablePage(Links.demoTrans(), Routes.DemoTrans, DemoTransactions, 'Demo/Transactions', StorageRoundedIcon),
   createRoutablePage(Links.demoOrders(), Routes.DemoOrders, Orders, 'Demo/Orders', ReceiptLongOutlinedIcon),
   createRoutablePage(Links.demoForecast(), Routes.DemoForecast, DemoForecast, 'Demo/Forecast', WbSunnyOutlinedIcon),

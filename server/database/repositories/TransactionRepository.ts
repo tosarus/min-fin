@@ -6,7 +6,7 @@ import db from '../db';
 type DbTransaction = {
   id: number;
   workbook_id: number;
-  date: Date;
+  date: string;
   type: TransactionType;
   description: string;
   detail: string;
@@ -74,8 +74,8 @@ set date = coalesce($3, date),
     type = coalesce($4, type),
     description = coalesce($5, description),
     detail = coalesce($6, detail),
-    amount_cent = coalesce($7, amount_cent)
-    account_from_id = coalesce($8, account_from_id)
+    amount_cent = coalesce($7, amount_cent),
+    account_from_id = coalesce($8, account_from_id),
     account_to_id = coalesce($9, account_to_id)
 where workbook_id = $1 and id = $2
 returning *`,

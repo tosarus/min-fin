@@ -1,6 +1,7 @@
 export * from './AmountSpan';
 export * from './ButtonLink';
 export * from './EditableString';
+export * from './EditorLine';
 export * from './Error';
 export * from './FlexLink';
 export * from './Footer';
