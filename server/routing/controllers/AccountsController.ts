@@ -9,18 +9,18 @@ import { CheckToken, ValidateWorkbook } from '../middleware';
 export class AccountsController {
   constructor(@Inject(AccountsService) private accounts_: AccountsService) {}
 
-  @Get('/:workbookId(\\d+)', [ValidateWorkbook])
+  @Get('/:workbookId', [ValidateWorkbook])
   async getAccounts(@Res() res: Response, @Params('workbookId') workbookId: string) {
-    res.json(await this.accounts_.getAll(+workbookId));
+    res.json(await this.accounts_.getAll(workbookId));
   }
 
-  @Post('/:workbookId(\\d+)', [ValidateWorkbook])
+  @Post('/:workbookId', [ValidateWorkbook])
   async saveAccount(@Res() res: Response, @Params('workbookId') workbookId: string, @Body() account: Partial<Account>) {
-    res.json(await this.accounts_.save(+workbookId, account));
+    res.json(await this.accounts_.save(workbookId, account));
   }
 
-  @Delete('/:workbookId(\\d+)/:id(\\d+)', [ValidateWorkbook])
+  @Delete('/:workbookId/:id', [ValidateWorkbook])
   async deleteAccount(@Res() res: Response, @Params('workbookId') workbookId: string, @Params('id') accountId: string) {
-    res.json(await this.accounts_.remove(+workbookId, +accountId));
+    res.json(await this.accounts_.remove(workbookId, accountId));
   }
 }

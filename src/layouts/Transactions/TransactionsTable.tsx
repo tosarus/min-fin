@@ -8,8 +8,8 @@ import { Selectors } from '../../store';
 import { Account, AccountType, Transaction, TransactionType } from '../../types';
 
 interface TransactionsTableProps {
-  accountId?: number;
-  onRemove: (id: number) => void;
+  accountId?: string;
+  onRemove: (id: string) => void;
   onEdit?: (tr: Partial<Transaction>) => void;
 }
 
@@ -68,7 +68,7 @@ export const TransactionsTable = ({ accountId, onRemove, onEdit = () => {} }: Tr
   );
 };
 
-function sortTransactions(transactions: Transaction[], accId?: number) {
+function sortTransactions(transactions: Transaction[], accId?: string) {
   return [...transactions]
     .filter((tr) => {
       if (!accId) {
@@ -78,11 +78,11 @@ function sortTransactions(transactions: Transaction[], accId?: number) {
     })
     .sort((a, b) => {
       const diff = Date.parse(b.date) - Date.parse(a.date);
-      return diff !== 0 ? diff : b.id - a.id;
+      return diff !== 0 ? diff : b.order - a.order;
     });
 }
 
-function buildCategory(tr: Transaction, accMap: Map<number, Account>, accId?: number) {
+function buildCategory(tr: Transaction, accMap: Map<string, Account>, accId?: string) {
   switch (tr.type) {
     case TransactionType.Expence:
       return accMap.get(tr.account_to)?.name;
@@ -99,14 +99,14 @@ function buildCategory(tr: Transaction, accMap: Map<number, Account>, accId?: nu
   }
 }
 
-function buildAmount(tr: Transaction, accId?: number) {
+function buildAmount(tr: Transaction, accId?: string) {
   if ((!accId && tr.type === TransactionType.Expence) || (accId && accId === tr.account_from)) {
     return currency(tr.amount).multiply(-1).format();
   }
   return tr.amount;
 }
 
-function buildFrom(tr: Transaction, accMap: Map<number, Account>) {
+function buildFrom(tr: Transaction, accMap: Map<string, Account>) {
   const acc = accMap.get(tr.account_from);
   if (acc?.type === AccountType.Opening) {
     return '';
@@ -115,6 +115,6 @@ function buildFrom(tr: Transaction, accMap: Map<number, Account>) {
   }
 }
 
-function buildTo(tr: Transaction, accMap: Map<number, Account>) {
+function buildTo(tr: Transaction, accMap: Map<string, Account>) {
   return accMap.get(tr.account_to)?.name;
 }

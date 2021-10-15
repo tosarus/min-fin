@@ -49,19 +49,19 @@ const {
 const { saga, actions } = createSliceSaga({
   name,
   caseSagas: {
-    *loadTransactions({ payload: workbookId }: PayloadAction<number>) {
+    *loadTransactions({ payload: workbookId }: PayloadAction<string>) {
       yield callPrivate(loadTransactionsDone, 'Loading transaction list', (auth) =>
         new TransactionClient(auth).list(workbookId)
       );
     },
     *saveTransaction({
       payload: { workbookId, trans },
-    }: PayloadAction<{ workbookId: number; trans: Partial<Transaction> }>) {
+    }: PayloadAction<{ workbookId: string; trans: Partial<Transaction> }>) {
       yield callPrivate(applyWorldUpdate, 'Saving transaction', (auth) =>
         new TransactionClient(auth).save(workbookId, trans)
       );
     },
-    *removeTransaction({ payload: { workbookId, id } }: PayloadAction<{ workbookId: number; id: number }>) {
+    *removeTransaction({ payload: { workbookId, id } }: PayloadAction<{ workbookId: string; id: string }>) {
       yield callPrivate(applyWorldUpdate, 'Removing transaction', (auth) =>
         new TransactionClient(auth).remove(workbookId, id)
       );

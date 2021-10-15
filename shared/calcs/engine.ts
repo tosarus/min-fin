@@ -2,7 +2,7 @@ import currency from 'currency.js';
 import { Account, Transaction } from '../types';
 
 interface CashFlow {
-  account: number;
+  account: string;
   amount: string;
 }
 
@@ -24,7 +24,7 @@ export function updateAccounts(accounts: Account[], newTrans: Transaction[], old
     toSubstract.push({ account: account_from, amount });
   }
 
-  const accMap = new Map<number, Account>();
+  const accMap = new Map<string, Account>();
   accounts.forEach((acc) => accMap.set(acc.id, acc));
 
   toSubstract.forEach((flow) => {

@@ -4,15 +4,16 @@ import { Transaction, TransactionType } from '@shared/types';
 import db from '../db';
 
 type DbTransaction = {
-  id: number;
-  workbook_id: number;
+  id: string;
+  workbook_id: string;
   date: string;
   type: TransactionType;
   description: string;
   detail: string;
+  order: number;
   amount_cent: number;
-  account_from_id: number;
-  account_to_id: number;
+  account_from_id: string;
+  account_to_id: string;
 };
 
 const convertTransaction = ({ amount_cent, account_from_id, account_to_id, ...trans }: DbTransaction): Transaction => {
@@ -26,7 +27,7 @@ const convertTransaction = ({ amount_cent, account_from_id, account_to_id, ...tr
 
 @Injectable()
 export class TransactionRepository {
-  async getAll(workbookId: number): Promise<Transaction[]> {
+  async getAll(workbookId: string): Promise<Transaction[]> {
     const { rows } = await db().query<DbTransaction>({
       text: 'select * from transactions where workbook_id = $1',
       values: [workbookId],
@@ -34,7 +35,7 @@ export class TransactionRepository {
     return rows.map(convertTransaction);
   }
 
-  async getById(workbookId: number, id: number): Promise<Transaction> {
+  async getById(workbookId: string, id: string): Promise<Transaction> {
     const { rows } = await db().query<DbTransaction>({
       text: 'select * from transactions where workbook_id = $1 and id = $2',
       values: [workbookId, id],
@@ -45,7 +46,7 @@ export class TransactionRepository {
     return convertTransaction(rows[0]);
   }
 
-  async findByAccountId(workbookId: number, accountId: number): Promise<Transaction[]> {
+  async findByAccountId(workbookId: string, accountId: string): Promise<Transaction[]> {
     const { rows } = await db().query<DbTransaction>({
       text: 'select * from transactions where workbook_id = $1 and (account_from_id = $2 or account_to_id = $2)',
       values: [workbookId, accountId],
@@ -53,7 +54,7 @@ export class TransactionRepository {
     return rows.map(convertTransaction);
   }
 
-  async create(workbookId: number, trans: Partial<Transaction>): Promise<Transaction> {
+  async create(workbookId: string, trans: Partial<Transaction>): Promise<Transaction> {
     const { date, type, description, detail, amount, account_from, account_to } = trans;
     const { rows } = await db().query<DbTransaction>({
       text: `
@@ -65,7 +66,7 @@ returning *`,
     return convertTransaction(rows[0]);
   }
 
-  async update(workbookId: number, trans: Partial<Transaction>): Promise<Transaction> {
+  async update(workbookId: string, trans: Partial<Transaction>): Promise<Transaction> {
     const { id, date, type, description, detail, amount, account_from, account_to } = trans;
     const { rows } = await db().query<DbTransaction>({
       text: `
@@ -84,7 +85,7 @@ returning *`,
     return convertTransaction(rows[0]);
   }
 
-  async remove(workbookId: number, id: number) {
+  async remove(workbookId: string, id: string) {
     await db().query({
       text: 'delete from transactions where workbook_id = $1 and id = $2',
       values: [workbookId, id],

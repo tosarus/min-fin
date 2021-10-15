@@ -8,7 +8,7 @@ import { TransactionDialog } from './TransactionDialog';
 import { TransactionsTable } from './TransactionsTable';
 
 interface TransactionListProps {
-  accountId?: number;
+  accountId?: string;
 }
 
 export const TransactionList = ({ accountId }: TransactionListProps) => {
@@ -23,7 +23,7 @@ export const TransactionList = ({ accountId }: TransactionListProps) => {
     }
   };
 
-  const handleRemove = (id: number) => {
+  const handleRemove = (id: string) => {
     if (workbook) {
       dispatch(Actions.removeTransaction({ workbookId: workbook.id, id }));
     }

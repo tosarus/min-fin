@@ -10,15 +10,15 @@ export class TransactionsService {
     @Inject(TransactionRepository) private transactions_: TransactionRepository
   ) {}
 
-  createUpdate(accounts: Account[], transactions: Transaction[] = [], removedTrans: number[] = []): WorldUpdate {
+  createUpdate(accounts: Account[], transactions: Transaction[] = [], removedTrans: string[] = []): WorldUpdate {
     return { accounts, transactions, workbooks: [], removedTrans };
   }
 
-  async getAll(workbookId: number) {
+  async getAll(workbookId: string) {
     return this.transactions_.getAll(workbookId);
   }
 
-  async processSave(workbookId: number, trans: Transaction): Promise<WorldUpdate> {
+  async processSave(workbookId: string, trans: Transaction): Promise<WorldUpdate> {
     if (!trans) {
       throw 'Save transaction: should have a body';
     }
@@ -54,7 +54,7 @@ export class TransactionsService {
     return this.createUpdate(accounts, [saved]);
   }
 
-  async processRemoval(workbookId: number, transId: number): Promise<WorldUpdate> {
+  async processRemoval(workbookId: string, transId: string): Promise<WorldUpdate> {
     const oldTrans = await this.transactions_.getById(workbookId, transId);
     const accounts = await this.accounts_.getByIds(workbookId, [oldTrans.account_from, oldTrans.account_to]);
     updateAccounts(accounts, [], [oldTrans]);

@@ -19,6 +19,9 @@ export const AccountPage = ({ account, type }: AccountPageProps) => {
     if (workbook) {
       dispatch(Actions.saveAccount({ workbookId: workbook.id, account }));
     }
+    if (!account.id) {
+      setLocation(Links.accounts());
+    }
   };
   const handleCancel = () => {
     window.history.back();

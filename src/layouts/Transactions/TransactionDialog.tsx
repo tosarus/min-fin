@@ -1,7 +1,10 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { Selectors } from '../../store';
 import { Transaction } from '../../types';
-import { TransactionEditor } from './TransactionEditor';
+import { Contract, fromContract, toContract } from './Contract';
+import { ContractEditor } from './ContractEditor';
 
 interface TransactionDialogProps {
   open: boolean;
@@ -10,12 +13,18 @@ interface TransactionDialogProps {
   onSave: (tr: Partial<Transaction>) => void;
 }
 
-export const TransactionDialog = ({ open, ...rest }: TransactionDialogProps) => {
+export const TransactionDialog = ({ open, value, onCancel, onSave }: TransactionDialogProps) => {
+  const accounts = useSelector(Selectors.currentAccounts) ?? [];
+
+  const handleSubmit = (contract: Contract) => {
+    onSave(fromContract(accounts, contract));
+  };
+
   return (
-    <Dialog open={open} onClose={rest.onCancel} fullWidth>
-      <DialogTitle>{rest.value.id ? 'Edit' : 'Add'} Transaction</DialogTitle>
+    <Dialog open={open} onClose={onCancel} fullWidth>
+      <DialogTitle>{value.id ? 'Edit' : 'Add'} Transaction</DialogTitle>
       <DialogContent>
-        <TransactionEditor {...rest} />
+        <ContractEditor contract={toContract(value)} onCancel={onCancel} onSubmit={handleSubmit} />
       </DialogContent>
     </Dialog>
   );

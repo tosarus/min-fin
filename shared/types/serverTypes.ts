@@ -4,11 +4,11 @@ export interface UserInfo {
   picture: string;
   is_admin: boolean;
   allowed: boolean;
-  active_workbook: number;
+  active_workbook: string;
 }
 
 export interface Workbook {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -26,11 +26,11 @@ export function userLevelAccounts() {
 }
 
 export interface Account {
-  id: number;
-  workbook_id: number;
+  id: string;
+  workbook_id: string;
   name: string;
   type: AccountType;
-  parent_id: number;
+  parent_id: string;
   is_group: boolean;
   balance: string;
 }
@@ -43,15 +43,16 @@ export enum TransactionType {
 }
 
 export interface Transaction {
-  id: number;
-  workbook_id: number;
+  id: string;
+  workbook_id: string;
   date: string;
   type: TransactionType;
   description: string;
   detail: string;
+  order: number;
   amount: string;
-  account_from: number;
-  account_to: number;
+  account_from: string;
+  account_to: string;
 }
 
 export interface WorldUpdate {
@@ -59,5 +60,5 @@ export interface WorldUpdate {
   accounts: Account[];
   transactions: Transaction[];
   workbooks: Workbook[];
-  removedTrans: number[];
+  removedTrans: string[];
 }

@@ -4,29 +4,23 @@ import { useFormik } from 'formik';
 import { useSelector } from 'react-redux';
 import { Autocomplete, Box, Button, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { Selectors } from '../../store';
-import { Transaction, TransactionType } from '../../types';
-import {
-  contractToTransaction,
-  getAccountIdsByCategory,
-  getAssetAccountIds,
-  transactionToContract,
-  transactionTypes,
-} from './utils';
+import { TransactionType } from '../../types';
+import { getAssetAccountIds } from '../Accounts/utils';
+import { Contract } from './Contract';
+import { getAccountIdsByCategory, transactionTypes } from './utils';
 
-interface TransactionEditorProps {
-  value: Partial<Transaction>;
+interface ContractEditorProps {
+  contract: Contract;
   onCancel: () => void;
-  onSave: (tr: Partial<Transaction>) => void;
+  onSubmit: (contract: Contract) => void;
 }
 
-export const TransactionEditor = ({ value, onCancel, onSave }: TransactionEditorProps) => {
+export const ContractEditor = ({ contract, onCancel, onSubmit }: ContractEditorProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const formik = useFormik({
-    initialValues: transactionToContract(value),
-    onSubmit: (contract) => {
-      onSave(contractToTransaction(accounts, contract));
-    },
+    initialValues: contract,
+    onSubmit,
   });
 
   const handleTypeChange = (e: React.MouseEvent, newType: TransactionType) => {
@@ -35,6 +29,8 @@ export const TransactionEditor = ({ value, onCancel, onSave }: TransactionEditor
       formik.setFieldValue('otherAccount', 0);
     }
   };
+
+  const idToAccount = (id: string) => accountMap.get(id)?.name ?? '';
 
   return (
     <Box sx={{ pt: 0.75, display: 'flex', flexFlow: 'row wrap' }}>
@@ -45,7 +41,7 @@ export const TransactionEditor = ({ value, onCancel, onSave }: TransactionEditor
         sx={{ mb: 2 }}
         id="contract-account"
         options={getAssetAccountIds(accounts)}
-        getOptionLabel={(id: number) => accountMap.get(id)?.name ?? ''}
+        getOptionLabel={idToAccount}
         value={formik.values.account}
         onChange={(e, value) => formik.setFieldValue('account', value)}
         renderInput={(params) => <TextField label="Account" {...params} />}
@@ -83,7 +79,7 @@ export const TransactionEditor = ({ value, onCancel, onSave }: TransactionEditor
         sx={{ mb: 2, mr: 2, flex: '1 0 350px' }}
         id="contract-category"
         options={getAccountIdsByCategory(accounts, formik.values.account ?? 0, formik.values.type)}
-        getOptionLabel={(id: number) => accountMap.get(id)?.name ?? ''}
+        getOptionLabel={idToAccount}
         value={formik.values.otherAccount}
         onChange={(e, value) => formik.setFieldValue('otherAccount', value)}
         renderInput={(params) => (

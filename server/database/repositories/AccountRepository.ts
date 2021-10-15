@@ -4,11 +4,11 @@ import { Account, AccountType } from '@shared/types';
 import db from '../db';
 
 type DbAccount = {
-  id: number;
-  workbook_id: number;
+  id: string;
+  workbook_id: string;
   name: string;
   type: AccountType;
-  parent_id: number;
+  parent_id: string;
   is_group: boolean;
   balance_cent: number;
 };
@@ -22,7 +22,7 @@ const convertAccount = ({ balance_cent, ...account }: DbAccount): Account => {
 
 @Injectable()
 export class AccountRepository {
-  async getForWorkbook(workbookId: number): Promise<Account[]> {
+  async getForWorkbook(workbookId: string): Promise<Account[]> {
     const { rows } = await db().query<DbAccount>({
       text: 'select * from accounts where workbook_id = $1',
       values: [workbookId],
@@ -30,15 +30,15 @@ export class AccountRepository {
     return rows.map(convertAccount);
   }
 
-  async getByIds(workbookId: number, ids: number[]): Promise<Account[]> {
+  async getByIds(workbookId: string, ids: string[]): Promise<Account[]> {
     const { rows } = await db().query<DbAccount>({
-      text: 'select * from accounts where workbook_id = $1 and id = ANY($2::int[])',
+      text: 'select * from accounts where workbook_id = $1 and id = ANY($2::uuid[])',
       values: [workbookId, ids],
     });
     return rows.map(convertAccount);
   }
 
-  async create(workbookId: number, account: Partial<Account>): Promise<Account> {
+  async create(workbookId: string, account: Partial<Account>): Promise<Account> {
     const { name, type, parent_id, is_group = false } = account;
     const { rows } = await db().query<DbAccount>({
       text: `
@@ -50,7 +50,7 @@ returning *`,
     return convertAccount(rows[0]);
   }
 
-  async update(workbookId: number, account: Partial<Account>): Promise<Account> {
+  async update(workbookId: string, account: Partial<Account>): Promise<Account> {
     const { id, name, type, parent_id, is_group, balance } = account;
     const { rows } = await db().query<DbAccount>({
       text: `
@@ -67,7 +67,7 @@ returning *`,
     return convertAccount(rows[0]);
   }
 
-  async remove(workbookId: number, id: number) {
+  async remove(workbookId: string, id: string) {
     await db().query({
       text: 'delete from accounts where workbook_id = $1 and id = $2',
       values: [workbookId, id],

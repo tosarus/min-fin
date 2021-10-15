@@ -9,18 +9,18 @@ import { CheckToken, ValidateWorkbook } from '../middleware';
 export class TransactionsController {
   constructor(@Inject(TransactionsService) private service_: TransactionsService) {}
 
-  @Get('/:workbookId(\\d+)', [ValidateWorkbook])
+  @Get('/:workbookId', [ValidateWorkbook])
   async getAll(@Res() res: Response, @Params('workbookId') workbookId: string) {
-    res.json(await this.service_.getAll(+workbookId));
+    res.json(await this.service_.getAll(workbookId));
   }
 
-  @Post('/:workbookId(\\d+)', [ValidateWorkbook])
+  @Post('/:workbookId', [ValidateWorkbook])
   async saveTransaction(@Res() res: Response, @Params('workbookId') workbookId: string, @Body() trans: Transaction) {
-    res.json(await this.service_.processSave(+workbookId, trans));
+    res.json(await this.service_.processSave(workbookId, trans));
   }
 
-  @Delete('/:workbookId(\\d+)/:id(\\d+)', [ValidateWorkbook])
+  @Delete('/:workbookId/:id', [ValidateWorkbook])
   async deleteAccount(@Res() res: Response, @Params('workbookId') workbookId: string, @Params('id') transactionId: string) {
-    res.json(await this.service_.processRemoval(+workbookId, +transactionId));
+    res.json(await this.service_.processRemoval(workbookId, transactionId));
   }
 }
