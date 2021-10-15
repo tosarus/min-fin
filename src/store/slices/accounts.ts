@@ -10,7 +10,7 @@ const initialState = null as Account[] | null;
 const {
   name,
   reducer: accountsReducer,
-  actions: { listAccountsDone, createAccountDone, updateAccountDone },
+  actions: { listAccountsDone, saveAccountDone },
 } = createSlice({
   name: 'accounts',
   initialState,
@@ -18,13 +18,7 @@ const {
     listAccountsDone(state, { payload: accountList }: PayloadAction<Account[]>) {
       return accountList;
     },
-    createAccountDone(state, { payload: account }: PayloadAction<Account>) {
-      if (!state) {
-        return [account];
-      }
-      state.push(account);
-    },
-    updateAccountDone(state, { payload: account }: PayloadAction<Account>) {
+    saveAccountDone(state, { payload: account }: PayloadAction<Account>) {
       if (!state) {
         return [account];
       }
@@ -70,15 +64,8 @@ const { saga, actions } = createSliceSaga({
     *listAccounts({ payload: workbookId }: PayloadAction<number>) {
       yield callPrivate(listAccountsDone, 'Loading account list', (auth) => new AccountsClient(auth).list(workbookId));
     },
-    *createAccount({ payload: { workbookId, account } }: PayloadAction<{ workbookId: number; account: Partial<Account> }>) {
-      yield callPrivate(createAccountDone, 'Creating account', (auth) =>
-        new AccountsClient(auth).create(workbookId, account)
-      );
-    },
-    *updateAccount({ payload: { workbookId, account } }: PayloadAction<{ workbookId: number; account: Partial<Account> }>) {
-      yield callPrivate(updateAccountDone, 'Updating account', (auth) =>
-        new AccountsClient(auth).update(workbookId, account)
-      );
+    *saveAccount({ payload: { workbookId, account } }: PayloadAction<{ workbookId: number; account: Partial<Account> }>) {
+      yield callPrivate(saveAccountDone, 'Saving account', (auth) => new AccountsClient(auth).save(workbookId, account));
     },
     *removeAccount({ payload: { workbookId, id } }: PayloadAction<{ workbookId: number; id: number }>) {
       yield callPrivate(applyWorldUpdate, 'Removing account', (auth) => new AccountsClient(auth).remove(workbookId, id));

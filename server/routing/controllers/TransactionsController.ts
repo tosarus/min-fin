@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { Inject } from '@decorators/di';
-import { Body, Controller, Delete, Get, Params, Post, Put, Response as Res } from '@decorators/express';
+import { Body, Controller, Delete, Get, Params, Post, Response as Res } from '@decorators/express';
 import { Transaction } from '@shared/types';
 import { TransactionsService } from '../../services';
 import { CheckToken, ValidateWorkbook } from '../middleware';
@@ -15,13 +15,8 @@ export class TransactionsController {
   }
 
   @Post('/:workbookId(\\d+)', [ValidateWorkbook])
-  async createTransaction(@Res() res: Response, @Params('workbookId') workbookId: string, @Body() trans: Transaction) {
-    res.json(await this.service_.processNew(+workbookId, trans));
-  }
-
-  @Put('/:workbookId(\\d+)', [ValidateWorkbook])
-  async updateAccount(@Res() res: Response, @Params('workbookId') workbookId: string, @Body() trans: Transaction) {
-    res.json(await this.service_.processUpdate(+workbookId, trans));
+  async saveTransaction(@Res() res: Response, @Params('workbookId') workbookId: string, @Body() trans: Transaction) {
+    res.json(await this.service_.processSave(+workbookId, trans));
   }
 
   @Delete('/:workbookId(\\d+)/:id(\\d+)', [ValidateWorkbook])

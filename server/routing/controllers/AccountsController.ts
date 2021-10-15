@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { Inject } from '@decorators/di';
-import { Body, Controller, Delete, Get, Params, Post, Put, Response as Res } from '@decorators/express';
+import { Body, Controller, Delete, Get, Params, Post, Response as Res } from '@decorators/express';
 import { Account } from '@shared/types';
 import { AccountsService } from '../../services';
 import { CheckToken, ValidateWorkbook } from '../middleware';
@@ -15,13 +15,8 @@ export class AccountsController {
   }
 
   @Post('/:workbookId(\\d+)', [ValidateWorkbook])
-  async createAccount(@Res() res: Response, @Params('workbookId') workbookId: string, @Body() account: Partial<Account>) {
-    res.json(await this.accounts_.create(+workbookId, account));
-  }
-
-  @Put('/:workbookId(\\d+)', [ValidateWorkbook])
-  async updateAccount(@Res() res: Response, @Params('workbookId') workbookId: string, @Body() account: Account) {
-    res.json(await this.accounts_.update(+workbookId, account));
+  async saveAccount(@Res() res: Response, @Params('workbookId') workbookId: string, @Body() account: Partial<Account>) {
+    res.json(await this.accounts_.save(+workbookId, account));
   }
 
   @Delete('/:workbookId(\\d+)/:id(\\d+)', [ValidateWorkbook])

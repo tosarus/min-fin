@@ -13,34 +13,24 @@ export class AccountsService {
     return await this.accounts_.getForWorkbook(workbookId);
   }
 
-  async create(worbookId: number, account: Partial<Account>) {
-    if (!account || !account.name || !account.type) {
-      throw 'New account: should provide name and type';
+  async save(workbookId: number, account: Partial<Account>) {
+    if (!account) {
+      throw 'Save account: should have a body';
+    }
+
+    if (!account.name || !account.type) {
+      throw 'Save account: should provide name and type';
     }
 
     if (!userLevelAccounts().includes(account.type)) {
-      throw 'New account: type should be allowed';
+      throw 'Save account: type should be allowed';
     }
 
-    delete account.id;
-    delete account.workbook_id;
-    delete account.balance;
-
-    return this.accounts_.create(worbookId, account);
-  }
-
-  async update(workbookId: number, account: Partial<Account>) {
-    if (!account || !account.id) {
-      throw 'Upate account: should provide id';
+    if (account.id) {
+      return await this.accounts_.update(workbookId, account);
+    } else {
+      return await this.accounts_.create(workbookId, account);
     }
-
-    if (account.type && !userLevelAccounts().includes(account.type)) {
-      throw 'Upate account: type should be allowed';
-    }
-
-    delete account.workbook_id;
-
-    return this.accounts_.update(workbookId, account);
   }
 
   async removeIfEmpty(workbookId: number, id: number) {

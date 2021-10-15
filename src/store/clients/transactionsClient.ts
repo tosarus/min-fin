@@ -6,12 +6,8 @@ export class TransactionClient extends PrivateClient {
     return this.getJson(`/api/transactions/${workbookId}`);
   }
 
-  create(workbookId: number, trans: Partial<Transaction>): Promise<WorldUpdate> {
+  save(workbookId: number, trans: Partial<Transaction>): Promise<WorldUpdate> {
     return this.postJson(`/api/transactions/${workbookId}`, trans);
-  }
-
-  update(workbookId: number, trans: Partial<Transaction>): Promise<WorldUpdate> {
-    return this.putJson(`/api/transactions/${workbookId}`, trans);
   }
 
   remove(workbookId: number, id: number): Promise<WorldUpdate> {

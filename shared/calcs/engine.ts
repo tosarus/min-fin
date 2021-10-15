@@ -7,6 +7,10 @@ interface CashFlow {
 }
 
 export function updateAccounts(accounts: Account[], newTrans: Transaction[], oldTrans: Transaction[]) {
+  if (accounts.length == 0) {
+    return;
+  }
+
   const toAdd: CashFlow[] = [];
   const toSubstract: CashFlow[] = [];
 

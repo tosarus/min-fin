@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'wouter';
-import { Container } from '@mui/material';
+import { Box } from '@mui/material';
 import { useAuth } from '../../auth';
 import { Error } from '../../common';
 import { Selectors } from '../../store';
@@ -14,7 +14,7 @@ export const RoutedContent = () => {
   const routedPages = listRoutedPages(isAuthenticated, fullContent);
 
   return (
-    <Container maxWidth="lg" component="main" sx={{ display: 'flex', flexDirection: 'column', minHeight: '0' }}>
+    <Box component="main" sx={{ display: 'flex', flexDirection: 'column', minHeight: '0%', width: '100%', px: 3 }}>
       {error && <Error error={error} />}
       <Switch>
         {routedPages.map(({ link, route, component: Page }, i) => (
@@ -23,6 +23,6 @@ export const RoutedContent = () => {
           </Route>
         ))}
       </Switch>
-    </Container>
+    </Box>
   );
 };

@@ -6,12 +6,8 @@ export class AccountsClient extends PrivateClient {
     return this.getJson(`/api/accounts/${workbookId}`);
   }
 
-  create(workbookId: number, account: Partial<Account>): Promise<Account> {
+  save(workbookId: number, account: Partial<Account>): Promise<Account> {
     return this.postJson(`/api/accounts/${workbookId}`, account);
-  }
-
-  update(workbookId: number, account: Partial<Account>): Promise<Account> {
-    return this.putJson(`/api/accounts/${workbookId}`, account);
   }
 
   remove(workbookId: number, id: number): Promise<{ id: string }> {

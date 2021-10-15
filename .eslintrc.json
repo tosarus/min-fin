@@ -18,7 +18,7 @@
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/no-use-before-define": ["error", { "functions": false }],
     "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "[iI]gnored" }],
     "curly": ["error", "all"],
     "import/order": [
@@ -41,7 +41,7 @@
         "warnOnUnassignedImports": true
       }
     ],
-    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "indent": "off",
     "linebreak-style": ["error", "unix"],
     "no-use-before-define": "off",
     "no-var": "error",
