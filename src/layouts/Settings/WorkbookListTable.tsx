@@ -15,22 +15,16 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
   const [adding, setAdding] = useState(false);
 
   const handleAddNew = () => {
-    if (!adding) {
-      setAdding(true);
-    }
+    setAdding(true);
   };
 
   const handleCancelNew = () => {
     setAdding(false);
   };
 
-  const handleNewBugget = (name: string) => {
+  const handleSave = (workbook: Partial<Workbook>) => {
     setAdding(false);
-    dispatch(Actions.createWorkbook({ name }));
-  };
-
-  const handleUpdate = (workbook: Workbook, name: string) => {
-    dispatch(Actions.updateWorkbook({ id: workbook.id, name }));
+    dispatch(Actions.saveWorkbook(workbook));
   };
 
   const handleActive = (workbook: Workbook) => {
@@ -60,7 +54,11 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
         {workbooks.map((workbook) => (
           <TableRow key={workbook.id}>
             <TableCell>
-              <EditableString value={workbook.name} name="Name" onChanged={(name) => handleUpdate(workbook, name)} />
+              <EditableString
+                value={workbook.name}
+                name="Name"
+                onChanged={(name) => handleSave({ id: workbook.id, name })}
+              />
             </TableCell>
             <TableCell onClick={() => handleActive(workbook)}>
               {workbook.id === profile?.active_workbook ? 'Yes' : 'No'}
@@ -77,7 +75,7 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
                 value=""
                 name="New Workbook Name"
                 editing
-                onChanged={handleNewBugget}
+                onChanged={(name: string) => handleSave({ name })}
                 onCancel={handleCancelNew}
               />
             </TableCell>
@@ -86,15 +84,17 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
           </TableRow>
         )}
       </TableBody>
-      <TableFooter>
-        <TableRow sx={{ '& td': { border: 0 } }}>
-          <TableCell color="primary" onClick={handleAddNew}>
-            Add new
-          </TableCell>
-          <TableCell />
-          <TableCell />
-        </TableRow>
-      </TableFooter>
+      {!adding && (
+        <TableFooter>
+          <TableRow sx={{ '& td': { border: 0 } }}>
+            <TableCell color="primary" onClick={handleAddNew}>
+              Add new
+            </TableCell>
+            <TableCell />
+            <TableCell />
+          </TableRow>
+        </TableFooter>
+      )}
     </Table>
   );
 };

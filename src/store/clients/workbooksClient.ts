@@ -10,12 +10,8 @@ export class WorkbooksClient extends PrivateClient {
     return this.getJson('/api/workbooks/active');
   }
 
-  create(workbook: Partial<Workbook>): Promise<Workbook> {
+  save(workbook: Partial<Workbook>): Promise<Workbook> {
     return this.postJson('/api/workbooks', workbook);
-  }
-
-  update(workbook: Partial<Workbook>): Promise<Workbook> {
-    return this.putJson('/api/workbooks', workbook);
   }
 
   remove(id: string): Promise<{ id: string }> {

@@ -8,18 +8,10 @@ const initialState = null as Transaction[] | null;
 
 const applyWorldUpdate = createAction<WorldUpdate>('applyWorldUpdate');
 
-const {
-  name,
-  reducer: transactionsReducer,
-  actions: { loadTransactionsDone },
-} = createSlice({
+const { name, reducer: transactionsReducer } = createSlice({
   name: 'transactions',
   initialState,
-  reducers: {
-    loadTransactionsDone(state, { payload: transactions }: PayloadAction<Transaction[]>) {
-      return transactions;
-    },
-  },
+  reducers: {},
   extraReducers: {
     [applyWorldUpdate.type]: (state, { payload: { transactions, removedTrans } }: PayloadAction<WorldUpdate>) => {
       if (!state) {
@@ -49,11 +41,6 @@ const {
 const { saga, actions } = createSliceSaga({
   name,
   caseSagas: {
-    *loadTransactions({ payload: workbookId }: PayloadAction<string>) {
-      yield callPrivate(loadTransactionsDone, 'Loading transaction list', (auth) =>
-        new TransactionClient(auth).list(workbookId)
-      );
-    },
     *saveTransaction({
       payload: { workbookId, trans },
     }: PayloadAction<{ workbookId: string; trans: Partial<Transaction> }>) {
