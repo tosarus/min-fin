@@ -10,14 +10,11 @@ const initialState = null as Account[] | null;
 const {
   name,
   reducer: accountsReducer,
-  actions: { listAccountsDone, saveAccountDone },
+  actions: { saveAccountDone },
 } = createSlice({
   name: 'accounts',
   initialState,
   reducers: {
-    listAccountsDone(state, { payload: accountList }: PayloadAction<Account[]>) {
-      return accountList;
-    },
     saveAccountDone(state, { payload: account }: PayloadAction<Account>) {
       if (!state) {
         return [account];
@@ -61,9 +58,6 @@ const {
 const { saga, actions } = createSliceSaga({
   name,
   caseSagas: {
-    *listAccounts({ payload: workbookId }: PayloadAction<string>) {
-      yield callPrivate(listAccountsDone, 'Loading account list', (auth) => new AccountsClient(auth).list(workbookId));
-    },
     *saveAccount({ payload: { workbookId, account } }: PayloadAction<{ workbookId: string; account: Partial<Account> }>) {
       yield callPrivate(saveAccountDone, 'Saving account', (auth) => new AccountsClient(auth).save(workbookId, account));
     },

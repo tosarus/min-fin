@@ -10,7 +10,7 @@ const initialState = null as Workbook[] | null;
 const {
   name,
   reducer: workbooksReducer,
-  actions: { listWorkbooksDone, getActiveWorkbookDone, createWorkbookDone, updateWorkbookDone, removeWorkbookDone },
+  actions: { listWorkbooksDone, getActiveWorkbookDone, saveWorkbookDone, removeWorkbookDone },
 } = createSlice({
   name: 'workbooks',
   initialState,
@@ -34,13 +34,7 @@ const {
         state[index] = workbook;
       }
     },
-    createWorkbookDone(state, { payload: workbook }: PayloadAction<Workbook>) {
-      if (!state) {
-        return [workbook];
-      }
-      state.push(workbook);
-    },
-    updateWorkbookDone(state, { payload: workbook }: PayloadAction<Workbook>) {
+    saveWorkbookDone(state, { payload: workbook }: PayloadAction<Workbook>) {
       if (!state) {
         return [workbook];
       }
@@ -89,11 +83,8 @@ const { saga, actions } = createSliceSaga({
     *getActiveWorkbook() {
       yield callPrivate(getActiveWorkbookDone, 'Loading active workbook', (auth) => new WorkbooksClient(auth).getActive());
     },
-    *createWorkbook({ payload: workbook }: PayloadAction<Partial<Workbook>>) {
-      yield callPrivate(createWorkbookDone, 'Creating workbook', (auth) => new WorkbooksClient(auth).create(workbook));
-    },
-    *updateWorkbook({ payload: workbook }: PayloadAction<Partial<Workbook>>) {
-      yield callPrivate(updateWorkbookDone, 'Updating workbook', (auth) => new WorkbooksClient(auth).update(workbook));
+    *saveWorkbook({ payload: workbook }: PayloadAction<Partial<Workbook>>) {
+      yield callPrivate(saveWorkbookDone, 'Saving workbook', (auth) => new WorkbooksClient(auth).save(workbook));
     },
     *removeWorkbook({ payload: id }: PayloadAction<string>) {
       yield callPrivate(removeWorkbookDone, 'Removing workbook', (auth) => new WorkbooksClient(auth).remove(id));
