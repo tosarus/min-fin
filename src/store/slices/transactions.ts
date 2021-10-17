@@ -13,12 +13,9 @@ const { name, reducer: transactionsReducer } = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [applyWorldUpdate.type]: (state, { payload: { transactions, removedTrans } }: PayloadAction<WorldUpdate>) => {
+    [applyWorldUpdate.type]: (state, { payload: { transactions = [], removedTrans = [] } }: PayloadAction<WorldUpdate>) => {
       if (!state) {
         return transactions;
-      }
-      if (transactions.length === 0 && removedTrans.length === 0) {
-        return state;
       }
       transactions.forEach((update) => {
         const index = state.findIndex((trans) => trans.id === update.id);

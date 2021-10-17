@@ -34,13 +34,13 @@ export class UsersService {
     if (needWorldUpdate) {
       return await this.getWorldUpdate(profile);
     } else {
-      return { profile, accounts: [], transactions: [], workbooks: [], removedTrans: [] };
+      return { profile };
     }
   }
 
   async getWorldUpdate(profile: UserInfo): Promise<WorldUpdate> {
     if (!profile.allowed) {
-      return { accounts: [], transactions: [], workbooks: [], removedTrans: [] };
+      return { profile };
     }
 
     if (!profile.active_workbook) {
@@ -59,6 +59,6 @@ export class UsersService {
     }
     const transactions = await this.transactions_.getAll(profile.active_workbook);
     const workbooks = await this.workbooks_.getAll(profile.email);
-    return { profile, accounts, transactions, workbooks, removedTrans: [] };
+    return { profile, accounts, transactions, workbooks };
   }
 }

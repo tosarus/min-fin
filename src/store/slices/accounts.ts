@@ -36,12 +36,9 @@ const {
     },
   },
   extraReducers: {
-    [applyWorldUpdate.type]: (state, { payload: { accounts } }: PayloadAction<WorldUpdate>) => {
+    [applyWorldUpdate.type]: (state, { payload: { accounts = [] } }: PayloadAction<WorldUpdate>) => {
       if (!state) {
         return accounts;
-      }
-      if (accounts.length === 0) {
-        return state;
       }
       accounts.forEach((update) => {
         const index = state.findIndex((acc) => acc.id === update.id);

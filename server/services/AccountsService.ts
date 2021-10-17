@@ -46,6 +46,6 @@ export class AccountsService {
     // if no transactions => account removal will be pick up on next resync
     // else (if transactions present) => no action
     this.removeIfEmpty(workbookId, id).catch(console.log);
-    return { accounts: [updated], transactions: [], removedTrans: [], workbooks: [] };
+    return { accounts: [updated] };
   }
 }

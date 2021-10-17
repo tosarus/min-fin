@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@decorators/di';
 import { updateAccounts } from '@shared/calcs';
-import { Account, Transaction, WorldUpdate } from '@shared/types';
+import { Transaction, WorldUpdate } from '@shared/types';
 import { AccountRepository, TransactionRepository } from '../database';
 
 @Injectable()
@@ -9,10 +9,6 @@ export class TransactionsService {
     @Inject(AccountRepository) private accounts_: AccountRepository,
     @Inject(TransactionRepository) private transactions_: TransactionRepository
   ) {}
-
-  createUpdate(accounts: Account[], transactions: Transaction[] = [], removedTrans: string[] = []): WorldUpdate {
-    return { accounts, transactions, workbooks: [], removedTrans };
-  }
 
   async getAll(workbookId: string) {
     return this.transactions_.getAll(workbookId);
@@ -51,7 +47,7 @@ export class TransactionsService {
     const saved = trans.id
       ? await this.transactions_.update(workbookId, trans)
       : await this.transactions_.create(workbookId, trans);
-    return this.createUpdate(accounts, [saved]);
+    return { accounts, transactions: [saved] };
   }
 
   async processRemoval(workbookId: string, transId: string): Promise<WorldUpdate> {
@@ -62,6 +58,6 @@ export class TransactionsService {
     for (const acc of accounts) {
       await this.accounts_.update(workbookId, acc);
     }
-    return this.createUpdate(accounts, undefined, [transId]);
+    return { accounts, removedTrans: [transId] };
   }
 }
