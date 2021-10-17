@@ -1,39 +1,57 @@
 import currency from 'currency.js';
-import { Account, Transaction } from '../types';
+import { Account, CashFlow, FlowDirection, Transaction } from '../types';
 
-interface CashFlow {
-  account: string;
-  amount: string;
+export function buildCashFlows(transaction?: Transaction): CashFlow[] {
+  if (!transaction) {
+    return [];
+  }
+
+  const transactionInfo = {
+    workbook_id: transaction.workbook_id,
+    transaction_id: transaction.id,
+    date: transaction.date,
+    type: transaction.type,
+    description: transaction.description,
+    detail: transaction.detail,
+    order: transaction.order,
+  };
+
+  const fromFlow: CashFlow = {
+    ...transactionInfo,
+    direction: FlowDirection.From,
+    amount: currency(transaction.amount).multiply(-1).format(),
+    account_id: transaction.account_from,
+    other_account_id: transaction.account_to,
+    balance: currency(0).format(),
+  };
+
+  const toFlow: CashFlow = {
+    ...transactionInfo,
+    direction: FlowDirection.To,
+    amount: transaction.amount,
+    account_id: transaction.account_to,
+    other_account_id: transaction.account_from,
+    balance: currency(0).format(),
+  };
+
+  return [fromFlow, toFlow];
 }
 
-export function updateAccounts(accounts: Account[], newTrans: Transaction[], oldTrans: Transaction[]) {
+export function updateAccounts(accounts: Account[], addFlows: CashFlow[], removeFlows: CashFlow[]) {
   if (accounts.length == 0) {
     return;
-  }
-
-  const toAdd: CashFlow[] = [];
-  const toSubstract: CashFlow[] = [];
-
-  for (const { account_from, account_to, amount } of oldTrans) {
-    toAdd.push({ account: account_from, amount });
-    toSubstract.push({ account: account_to, amount: amount });
-  }
-
-  for (const { account_from, account_to, amount } of newTrans) {
-    toAdd.push({ account: account_to, amount });
-    toSubstract.push({ account: account_from, amount });
   }
 
   const accMap = new Map<string, Account>();
   accounts.forEach((acc) => accMap.set(acc.id, acc));
 
-  toSubstract.forEach((flow) => {
-    const acc = accMap.get(flow.account);
+  removeFlows.forEach((flow) => {
+    const acc = accMap.get(flow.account_id);
     acc!.balance = currency(acc!.balance).subtract(flow.amount).format();
   });
 
-  toAdd.forEach((flow) => {
-    const acc = accMap.get(flow.account);
+  addFlows.forEach((flow) => {
+    const acc = accMap.get(flow.account_id);
     acc!.balance = currency(acc!.balance).add(flow.amount).format();
   });
 }

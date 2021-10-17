@@ -1,5 +1,6 @@
+import currency from 'currency.js';
 import dateFormat from 'dateformat';
-import { Account, Transaction, TransactionType } from '../../types';
+import { Account, CashFlow, FlowDirection, Transaction, TransactionType } from '../../types';
 import { getOpeningAccountId } from '../Accounts/utils';
 
 export interface Contract {
@@ -13,7 +14,7 @@ export interface Contract {
   otherAccount: string;
 }
 
-export function toContract(transaction: Partial<Transaction>): Contract {
+export function fromTransaction(transaction: Partial<Transaction>): Contract {
   const {
     id,
     date,
@@ -44,6 +45,45 @@ export function toContract(transaction: Partial<Transaction>): Contract {
       otherAccount = '';
       break;
   }
+  return { id, date: dateFormat(date ?? Date.now(), 'isoDate'), type, description, detail, amount, account, otherAccount };
+}
+
+export function fromCashFlow(flow: Partial<CashFlow>): Contract {
+  const {
+    transaction_id: id,
+    date,
+    type = TransactionType.Expence,
+    description = '',
+    detail = '',
+    direction = FlowDirection.From,
+  } = flow;
+  let amount = flow.amount ?? '0';
+  let account = flow.account_id ?? '';
+  let otherAccount = flow.other_account_id ?? '';
+
+  switch (type) {
+    case TransactionType.Expence:
+      amount = currency(amount).multiply(-1).format();
+      break;
+
+    case TransactionType.Income:
+      break;
+
+    case TransactionType.Opening:
+      otherAccount = '';
+      break;
+
+    case TransactionType.Transfer:
+      if (direction === FlowDirection.From) {
+        amount = currency(amount).multiply(-1).format();
+      } else {
+        const tmp = account;
+        account = otherAccount;
+        otherAccount = tmp;
+      }
+      break;
+  }
+
   return { id, date: dateFormat(date ?? Date.now(), 'isoDate'), type, description, detail, amount, account, otherAccount };
 }
 

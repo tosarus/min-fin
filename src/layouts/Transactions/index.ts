@@ -1,2 +1,1 @@
-export { Transactions } from './Transactions';
-export { TransactionList } from './TransactionList';
+export * from './Transactions';

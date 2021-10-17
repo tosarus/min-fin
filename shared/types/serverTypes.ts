@@ -55,9 +55,30 @@ export interface Transaction {
   account_to: string;
 }
 
+export enum FlowDirection {
+  From = 'from',
+  To = 'to',
+}
+
+export interface CashFlow {
+  workbook_id: string;
+  transaction_id: string;
+  account_id: string;
+  other_account_id: string;
+  direction: FlowDirection;
+  date: string;
+  type: TransactionType;
+  description: string;
+  detail: string;
+  order: number;
+  amount: string;
+  balance: string;
+}
+
 interface WorldUpdate_ {
   profile: UserInfo;
   accounts: Account[];
+  cashFlows: CashFlow[];
   transactions: Transaction[];
   workbooks: Workbook[];
   removedTrans: string[];

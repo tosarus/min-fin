@@ -1,16 +1,19 @@
 import { createSliceSaga, SagaType } from 'redux-toolkit-saga/lib/createSliceSaga';
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Transaction, WorldUpdate } from '../../types';
+import { CashFlow, Transaction, WorldUpdate } from '../../types';
 import { TransactionClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
 
-const initialState = null as Transaction[] | null;
+const initialState = {
+  cashFlows: null as CashFlow[] | null,
+  transactions: null as Transaction[] | null,
+};
 
 const applyWorldUpdate = createAction<WorldUpdate>('applyWorldUpdate');
 
 const { name, reducer: transactionsReducer } = createSlice({
   name: 'transactions',
-  initialState,
+  initialState: initialState.transactions,
   reducers: {},
   extraReducers: {
     [applyWorldUpdate.type]: (state, { payload: { transactions = [], removedTrans = [] } }: PayloadAction<WorldUpdate>) => {
@@ -54,15 +57,47 @@ const { saga, actions } = createSliceSaga({
   sagaType: SagaType.TakeLatest,
 });
 
+const { reducer: cashFlowsReducer } = createSlice({
+  name: 'cashFlows',
+  initialState: initialState.cashFlows,
+  reducers: {},
+  extraReducers: {
+    [applyWorldUpdate.type]: (state, { payload: { cashFlows = [], removedTrans = [] } }: PayloadAction<WorldUpdate>) => {
+      if (!state) {
+        return cashFlows;
+      }
+      cashFlows.forEach((update) => {
+        const index = state.findIndex(
+          (flow) => flow.transaction_id === update.transaction_id && flow.account_id == update.account_id
+        );
+        if (index > -1) {
+          state.splice(index, 1, update);
+        } else {
+          state.push(update);
+        }
+      });
+      removedTrans.forEach((id) => {
+        const index = state.findIndex((trans) => trans.transaction_id === id);
+        if (index > -1) {
+          state.splice(index, 1);
+        }
+      });
+    },
+  },
+});
+
 const reducer = {
+  cashFlows: cashFlowsReducer,
   transactions: transactionsReducer,
 };
 
-function selectors<Store extends { transactions: typeof initialState }>() {
+function selectors<Store extends typeof initialState>() {
   return {
+    cashFlows: (store: Store) => store.cashFlows,
     transactions: (store: Store) => store.transactions,
   };
 }
+
 export { applyWorldUpdate };
 
 export default {

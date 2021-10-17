@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@decorators/di';
-import { updateAccounts } from '@shared/calcs';
+import { buildCashFlows, updateAccounts } from '@shared/calcs';
 import { Transaction, WorldUpdate } from '@shared/types';
-import { AccountRepository, TransactionRepository } from '../database';
+import { AccountRepository, CashFlowRepository, TransactionRepository } from '../database';
 
 @Injectable()
 export class TransactionsService {
   constructor(
     @Inject(AccountRepository) private accounts_: AccountRepository,
+    @Inject(CashFlowRepository) private cashFlows_: CashFlowRepository,
     @Inject(TransactionRepository) private transactions_: TransactionRepository
   ) {}
 
@@ -27,19 +28,14 @@ export class TransactionsService {
       throw 'Save transaction: should have from and to accounts, and ammount';
     }
 
-    const oldTrans = trans.id ? await this.transactions_.getById(workbookId, trans.id) : null;
-    const trivialUpdate =
-      trans.amount === oldTrans?.amount &&
-      trans.account_from === oldTrans?.account_from &&
-      trans.account_to === oldTrans?.account_to;
+    const oldTrans = trans.id ? await this.transactions_.getById(workbookId, trans.id) : undefined;
 
-    const accIds = [trans.account_from, trans.account_to];
-    if (oldTrans) {
-      accIds.push(oldTrans.account_from, oldTrans.account_to);
-    }
+    const addFlows = buildCashFlows(trans);
+    const removeFlows = buildCashFlows(oldTrans);
 
-    const accounts = trivialUpdate ? [] : await this.accounts_.getByIds(workbookId, accIds);
-    updateAccounts(accounts, [trans], oldTrans ? [oldTrans] : []);
+    const accIds = addFlows.concat(removeFlows).map((flow) => flow.account_id);
+    const accounts = await this.accounts_.getByIds(workbookId, accIds);
+    updateAccounts(accounts, addFlows, removeFlows);
     for (const acc of accounts) {
       await this.accounts_.update(workbookId, acc);
     }
@@ -47,17 +43,39 @@ export class TransactionsService {
     const saved = trans.id
       ? await this.transactions_.update(workbookId, trans)
       : await this.transactions_.create(workbookId, trans);
-    return { accounts, transactions: [saved] };
+
+    for (const flow of removeFlows) {
+      await this.cashFlows_.remove(flow);
+    }
+    for (const flow of addFlows) {
+      flow.transaction_id = saved.id;
+      flow.workbook_id = workbookId;
+      await this.cashFlows_.save(flow);
+    }
+
+    const cashFlows = await this.cashFlows_.findAfterDate(workbookId, accIds, saved.date);
+    return { accounts, cashFlows, transactions: [saved] };
   }
 
   async processRemoval(workbookId: string, transId: string): Promise<WorldUpdate> {
     const oldTrans = await this.transactions_.getById(workbookId, transId);
-    const accounts = await this.accounts_.getByIds(workbookId, [oldTrans.account_from, oldTrans.account_to]);
-    updateAccounts(accounts, [], [oldTrans]);
-    await this.transactions_.remove(workbookId, transId);
+
+    const removeFlows = buildCashFlows(oldTrans);
+
+    const accIds = removeFlows.map((flow) => flow.account_id);
+    const accounts = await this.accounts_.getByIds(workbookId, accIds);
+    updateAccounts(accounts, [], removeFlows);
     for (const acc of accounts) {
       await this.accounts_.update(workbookId, acc);
     }
-    return { accounts, removedTrans: [transId] };
+
+    for (const flow of removeFlows) {
+      await this.cashFlows_.remove(flow);
+    }
+
+    await this.transactions_.remove(workbookId, transId);
+
+    const cashFlows = await this.cashFlows_.findAfterDate(workbookId, accIds, oldTrans.date);
+    return { accounts, cashFlows, removedTrans: [transId] };
   }
 }
