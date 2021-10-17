@@ -11,8 +11,19 @@ const currentAccounts = createSelector(activeWorkbook, selectors.accounts, (acti
 
 const currentAccountMap = createSelector(currentAccounts, (accounts) => new Map(accounts?.map((acc) => [acc.id, acc])));
 
+const currentCashFlows = createSelector(activeWorkbook, selectors.cashFlows, (activeWb, cashFlows) =>
+  cashFlows?.filter((flow) => flow.workbook_id === activeWb?.id)
+);
+
 const currentTransactions = createSelector(activeWorkbook, selectors.transactions, (activeWb, transactions) =>
   transactions?.filter((tr) => tr.workbook_id === activeWb?.id)
 );
 
-export const Selectors = { ...selectors, activeWorkbook, currentAccounts, currentAccountMap, currentTransactions };
+export const Selectors = {
+  ...selectors,
+  activeWorkbook,
+  currentAccounts,
+  currentAccountMap,
+  currentCashFlows,
+  currentTransactions,
+};

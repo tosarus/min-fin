@@ -4,7 +4,7 @@ import { useLocation } from 'wouter';
 import { Box } from '@mui/material';
 import { Actions, Selectors } from '../../store';
 import { Account, AccountType } from '../../types';
-import { TransactionList } from '../Transactions';
+import { CashFlowList } from '../CashFlows';
 import { Links } from '../listViews';
 import { AccountDetails } from './AccountDetails';
 
@@ -38,7 +38,7 @@ export const AccountPage = ({ account, type }: AccountPageProps) => {
   return (
     <Box sx={{ display: 'flex', flexFlow: 'column' }}>
       <AccountDetails account={acc} onSubmit={handleSubmit} onDelete={handleDelete} onCancel={handleCancel} />
-      {acc.id && <TransactionList accountId={acc.id} />}
+      {acc.id && <CashFlowList accountId={acc.id} />}
     </Box>
   );
 };

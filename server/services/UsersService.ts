@@ -1,11 +1,19 @@
 import { Inject, Injectable } from '@decorators/di';
 import { AccountType, UserInfo, WorldUpdate } from '@shared/types';
-import { AccountRepository, isAdmin, TransactionRepository, UserRepository, WorkbookRepository } from '../database';
+import {
+  AccountRepository,
+  CashFlowRepository,
+  isAdmin,
+  TransactionRepository,
+  UserRepository,
+  WorkbookRepository,
+} from '../database';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(AccountRepository) private accounts_: AccountRepository,
+    @Inject(CashFlowRepository) private cashFlows_: CashFlowRepository,
     @Inject(TransactionRepository) private transactions_: TransactionRepository,
     @Inject(UserRepository) private users_: UserRepository,
     @Inject(WorkbookRepository) private workbooks_: WorkbookRepository
@@ -57,8 +65,9 @@ export class UsersService {
       });
       accounts.push(openingAccount);
     }
+    const cashFlows = await this.cashFlows_.getAll(profile.active_workbook);
     const transactions = await this.transactions_.getAll(profile.active_workbook);
     const workbooks = await this.workbooks_.getAll(profile.email);
-    return { profile, accounts, transactions, workbooks };
+    return { profile, accounts, cashFlows, transactions, workbooks };
   }
 }
