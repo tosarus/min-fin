@@ -55,10 +55,12 @@ export interface Transaction {
   account_to: string;
 }
 
-export interface WorldUpdate {
-  profile?: UserInfo;
+interface WorldUpdate_ {
+  profile: UserInfo;
   accounts: Account[];
   transactions: Transaction[];
   workbooks: Workbook[];
   removedTrans: string[];
 }
+
+export type WorldUpdate = Partial<WorldUpdate_>;

@@ -7,3 +7,8 @@ export const centsToStr = (cents: number): string => {
 export const strToCents = (str: string): number => {
   return currency(str).intValue;
 };
+
+export function dateOrderCompare<T extends { date: string; order: number }>(a: T, b: T) {
+  const diff = Date.parse(b.date) - Date.parse(a.date);
+  return diff !== 0 ? diff : b.order - a.order;
+}

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { AmountSpan } from '../../common';
 import { Selectors } from '../../store';
-import { Account, AccountType, Transaction, TransactionType } from '../../types';
+import { Account, AccountType, Transaction, dateOrderCompare, TransactionType } from '../../types';
 
 interface TransactionsTableProps {
   accountId?: string;
@@ -74,12 +74,9 @@ function sortTransactions(transactions: Transaction[], accId?: string) {
       if (!accId) {
         return true;
       }
-      return tr.account_from === accId || tr.account_to == accId;
+      return tr.account_from === accId || tr.account_to === accId;
     })
-    .sort((a, b) => {
-      const diff = Date.parse(b.date) - Date.parse(a.date);
-      return diff !== 0 ? diff : b.order - a.order;
-    });
+    .sort(dateOrderCompare);
 }
 
 function buildCategory(tr: Transaction, accMap: Map<string, Account>, accId?: string) {

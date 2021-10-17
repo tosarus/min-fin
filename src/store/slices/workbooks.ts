@@ -55,12 +55,9 @@ const {
     },
   },
   extraReducers: {
-    [applyWorldUpdate.type]: (state, { payload: { workbooks } }: PayloadAction<WorldUpdate>) => {
+    [applyWorldUpdate.type]: (state, { payload: { workbooks = [] } }: PayloadAction<WorldUpdate>) => {
       if (!state) {
         return workbooks;
-      }
-      if (workbooks.length === 0) {
-        return state;
       }
       workbooks.forEach((update) => {
         const index = state.findIndex((wb) => wb.id === update.id);
