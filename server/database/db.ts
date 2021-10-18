@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 import { Configuration } from '../config';
 
 let _admins: string[] = [];
-let _db: Pool;
+let _pool: Pool;
 
 interface DbInfo {
   now: string;
@@ -26,13 +26,13 @@ export async function createDb(config: Configuration): Promise<string> {
     count: Infinity,
   });
 
-  _db = new Pool(dbConfig);
-  const { rows } = await _db.query<DbInfo>('select now() as now, current_database() as db');
+  _pool = new Pool(dbConfig);
+  const { rows } = await _pool.query<DbInfo>('select now() as now, current_database() as db');
   return `${rows[0].db} at ${rows[0].now}`;
 }
 
-export default function db() {
-  return _db;
+export function getPool() {
+  return _pool;
 }
 
 export function isAdmin(email: string) {

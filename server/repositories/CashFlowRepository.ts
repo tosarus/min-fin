@@ -1,7 +1,6 @@
-import { Injectable } from '@decorators/di';
 import { centsToStr, strToCents } from '@shared/calcs';
 import { CashFlow, FlowDirection, TransactionType } from '@shared/types';
-import db from '../db';
+import { AbstractRepository } from './AbstractRepository';
 
 type DbCashFlow = {
   workbook_id: string;
@@ -27,10 +26,9 @@ const convertCashFlow = ({ amount_cent, to_flow, ...cashFlow }: DbCashFlow): Cas
   };
 };
 
-@Injectable()
-export class CashFlowRepository {
+export class CashFlowRepository extends AbstractRepository {
   async getAll(workbookId: string): Promise<CashFlow[]> {
-    const { rows } = await db().query<DbCashFlow>({
+    const { rows } = await this.qm().query<DbCashFlow>({
       text: 'select * from cash_flows_view where workbook_id = $1',
       values: [workbookId],
     });
@@ -38,7 +36,7 @@ export class CashFlowRepository {
   }
 
   async findAfterDate(workbook_id: string, accountIds: string[], date: string) {
-    const { rows } = await db().query<DbCashFlow>({
+    const { rows } = await this.qm().query<DbCashFlow>({
       text: 'select * from cash_flows_view where workbook_id = $1 and account_id = ANY($2::uuid[]) and date >= $3',
       values: [workbook_id, accountIds, date],
     });
@@ -47,7 +45,7 @@ export class CashFlowRepository {
 
   async save(flow: CashFlow) {
     const { workbook_id, transaction_id, account_id, other_account_id, direction, amount } = flow;
-    await db().query({
+    await this.qm().query({
       text: `
 insert into cash_flows(workbook_id, transaction_id, account_id, other_account_id, to_flow, amount_cent)
 values($1, $2, $3, $4, $5, $6)`,
@@ -64,7 +62,7 @@ values($1, $2, $3, $4, $5, $6)`,
 
   async remove(flow: CashFlow) {
     const { workbook_id, transaction_id, account_id } = flow;
-    await db().query({
+    await this.qm().query({
       text: 'delete from cash_flows where workbook_id = $1 and transaction_id = $2 and account_id = $3',
       values: [workbook_id, transaction_id, account_id],
     });

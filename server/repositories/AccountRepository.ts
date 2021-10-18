@@ -1,7 +1,6 @@
-import { Injectable } from '@decorators/di';
 import { centsToStr, strToCents } from '@shared/calcs';
 import { Account, AccountType } from '@shared/types';
-import db from '../db';
+import { AbstractRepository } from './AbstractRepository';
 
 type DbAccount = {
   id: string;
@@ -20,10 +19,9 @@ const convertAccount = ({ balance_cent, ...account }: DbAccount): Account => {
   };
 };
 
-@Injectable()
-export class AccountRepository {
+export class AccountRepository extends AbstractRepository {
   async getForWorkbook(workbookId: string): Promise<Account[]> {
-    const { rows } = await db().query<DbAccount>({
+    const { rows } = await this.qm().query<DbAccount>({
       text: 'select * from accounts where workbook_id = $1',
       values: [workbookId],
     });
@@ -31,7 +29,7 @@ export class AccountRepository {
   }
 
   async getByIds(workbookId: string, ids: string[]): Promise<Account[]> {
-    const { rows } = await db().query<DbAccount>({
+    const { rows } = await this.qm().query<DbAccount>({
       text: 'select * from accounts where workbook_id = $1 and id = ANY($2::uuid[])',
       values: [workbookId, ids],
     });
@@ -40,7 +38,7 @@ export class AccountRepository {
 
   async create(workbookId: string, account: Partial<Account>): Promise<Account> {
     const { name, type, parent_id, is_group = false } = account;
-    const { rows } = await db().query<DbAccount>({
+    const { rows } = await this.qm().query<DbAccount>({
       text: `
 insert into accounts(workbook_id, name, type, parent_id, is_group, balance_cent)
 values($1, $2, $3, $4, $5, 0)
@@ -52,7 +50,7 @@ returning *`,
 
   async update(workbookId: string, account: Partial<Account>): Promise<Account> {
     const { id, name, type, parent_id, is_group, balance } = account;
-    const { rows } = await db().query<DbAccount>({
+    const { rows } = await this.qm().query<DbAccount>({
       text: `
 update accounts
 set name = coalesce($3, name),
@@ -68,7 +66,7 @@ returning *`,
   }
 
   async remove(workbookId: string, id: string) {
-    await db().query({
+    await this.qm().query({
       text: 'delete from accounts where workbook_id = $1 and id = $2',
       values: [workbookId, id],
     });

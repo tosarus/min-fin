@@ -1,16 +1,17 @@
 import { Inject, Injectable } from '@decorators/di';
 import { Account, AccountType, userLevelAccounts, WorldUpdate } from '@shared/types';
-import { AccountRepository, TransactionRepository } from '../database/';
+import { QueryManager } from '../database';
+import { AccountRepository, TransactionRepository } from '../repositories';
+import { BaseService } from './di';
 
 @Injectable()
-export class AccountsService {
-  constructor(
-    @Inject(AccountRepository) private accounts_: AccountRepository,
-    @Inject(TransactionRepository) private transactions_: TransactionRepository
-  ) {}
+export class AccountsService extends BaseService {
+  constructor(@Inject(QueryManager) qm: QueryManager) {
+    super(qm);
+  }
 
   async getAll(workbookId: string) {
-    return await this.accounts_.getForWorkbook(workbookId);
+    return await this.resolve(AccountRepository).getForWorkbook(workbookId);
   }
 
   async save(workbookId: string, account: Partial<Account>) {
@@ -27,21 +28,25 @@ export class AccountsService {
     }
 
     if (account.id) {
-      return await this.accounts_.update(workbookId, account);
+      return await this.resolve(AccountRepository).update(workbookId, account);
     } else {
-      return await this.accounts_.create(workbookId, account);
+      return await this.resolve(AccountRepository).create(workbookId, account);
     }
   }
 
   async removeIfEmpty(workbookId: string, id: string) {
-    const trans = await this.transactions_.findByAccountId(workbookId, id);
+    const accountRepo = this.resolve(AccountRepository);
+    const transactionRepo = this.resolve(TransactionRepository);
+
+    const trans = await transactionRepo.findByAccountId(workbookId, id);
     if (trans.length === 0) {
-      await this.accounts_.remove(workbookId, id);
+      await accountRepo.remove(workbookId, id);
     }
   }
 
   async remove(workbookId: string, id: string): Promise<WorldUpdate> {
-    const updated = await this.accounts_.update(workbookId, { id, type: AccountType.Removed, name: '(removed)' });
+    const accountRepo = this.resolve(AccountRepository);
+    const updated = await accountRepo.update(workbookId, { id, type: AccountType.Removed, name: '(removed)' });
     // running async, removed accounts are not shown, but used if transactions exist, so
     // if no transactions => account removal will be pick up on next resync
     // else (if transactions present) => no action

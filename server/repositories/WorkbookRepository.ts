@@ -1,11 +1,9 @@
-import { Injectable } from '@decorators/di';
 import { Workbook } from '@shared/types';
-import db from '../db';
+import { AbstractRepository } from './AbstractRepository';
 
-@Injectable()
-export class WorkbookRepository {
+export class WorkbookRepository extends AbstractRepository {
   async getAll(email: string): Promise<Workbook[]> {
-    const { rows } = await db().query<Workbook>({
+    const { rows } = await this.qm().query<Workbook>({
       text: 'select id, name from workbooks where user_id = $1',
       values: [email],
     });
@@ -13,7 +11,7 @@ export class WorkbookRepository {
   }
 
   async getById(email: string, id: string): Promise<Workbook | null> {
-    const { rows } = await db().query<Workbook>({
+    const { rows } = await this.qm().query<Workbook>({
       text: 'select id, name from workbooks where user_id = $1 and id = $2',
       values: [email, id],
     });
@@ -24,7 +22,7 @@ export class WorkbookRepository {
   }
 
   async findActive(email: string): Promise<Workbook | null> {
-    const { rows } = await db().query<Workbook>({
+    const { rows } = await this.qm().query<Workbook>({
       text: `
 select wb.id, wb.name from workbooks wb join users on wb.user_id = users.id
 where wb.id = users.active_workbook and users.id = $1`,
@@ -34,7 +32,7 @@ where wb.id = users.active_workbook and users.id = $1`,
   }
 
   async update(email: string, workbook: Partial<Workbook>): Promise<Workbook> {
-    const { rows } = await db().query<Workbook>({
+    const { rows } = await this.qm().query<Workbook>({
       text: `
 update workbooks wb set name = coalesce($3, wb.name)
 from users where wb.user_id = users.id and wb.id = $2 and users.id = $1
@@ -45,7 +43,7 @@ returning wb.id, wb.name`,
   }
 
   async create(email: string, workbook: Partial<Workbook>): Promise<Workbook> {
-    const { rows } = await db().query<Workbook>({
+    const { rows } = await this.qm().query<Workbook>({
       text: 'insert into workbooks(user_id, name) values($1, $2) returning id, name',
       values: [email, workbook.name],
     });
@@ -53,7 +51,7 @@ returning wb.id, wb.name`,
   }
 
   async remove(email: string, id: string) {
-    await db().query({
+    await this.qm().query({
       text: 'delete from workbooks where user_id = $1 and id = $2',
       values: [email, id],
     });
