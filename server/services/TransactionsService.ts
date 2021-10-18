@@ -1,20 +1,21 @@
 import { Inject, Injectable } from '@decorators/di';
 import { buildCashFlows, updateAccounts } from '@shared/calcs';
 import { Transaction, WorldUpdate } from '@shared/types';
-import { AccountRepository, CashFlowRepository, TransactionRepository } from '../database';
+import { QueryManager } from '../database';
+import { AccountRepository, CashFlowRepository, TransactionRepository } from '../repositories';
+import { BaseService, InTransaction } from './di';
 
 @Injectable()
-export class TransactionsService {
-  constructor(
-    @Inject(AccountRepository) private accounts_: AccountRepository,
-    @Inject(CashFlowRepository) private cashFlows_: CashFlowRepository,
-    @Inject(TransactionRepository) private transactions_: TransactionRepository
-  ) {}
-
-  async getAll(workbookId: string) {
-    return this.transactions_.getAll(workbookId);
+export class TransactionsService extends BaseService {
+  constructor(@Inject(QueryManager) qm: QueryManager) {
+    super(qm);
   }
 
+  async getAll(workbookId: string) {
+    return this.resolve(TransactionRepository).getAll(workbookId);
+  }
+
+  @InTransaction()
   async processSave(workbookId: string, trans: Transaction): Promise<WorldUpdate> {
     if (!trans) {
       throw 'Save transaction: should have a body';
@@ -28,54 +29,63 @@ export class TransactionsService {
       throw 'Save transaction: should have from and to accounts, and ammount';
     }
 
-    const oldTrans = trans.id ? await this.transactions_.getById(workbookId, trans.id) : undefined;
+    const accountRepo = this.resolve(AccountRepository);
+    const cashFlowRepo = this.resolve(CashFlowRepository);
+    const transactionRepo = this.resolve(TransactionRepository);
+
+    const oldTrans = trans.id ? await transactionRepo.getById(workbookId, trans.id) : undefined;
 
     const addFlows = buildCashFlows(trans);
     const removeFlows = buildCashFlows(oldTrans);
 
     const accIds = addFlows.concat(removeFlows).map((flow) => flow.account_id);
-    const accounts = await this.accounts_.getByIds(workbookId, accIds);
+    const accounts = await accountRepo.getByIds(workbookId, accIds);
     updateAccounts(accounts, addFlows, removeFlows);
     for (const acc of accounts) {
-      await this.accounts_.update(workbookId, acc);
+      await accountRepo.update(workbookId, acc);
     }
 
     const saved = trans.id
-      ? await this.transactions_.update(workbookId, trans)
-      : await this.transactions_.create(workbookId, trans);
+      ? await transactionRepo.update(workbookId, trans)
+      : await transactionRepo.create(workbookId, trans);
 
     for (const flow of removeFlows) {
-      await this.cashFlows_.remove(flow);
+      await cashFlowRepo.remove(flow);
     }
     for (const flow of addFlows) {
       flow.transaction_id = saved.id;
       flow.workbook_id = workbookId;
-      await this.cashFlows_.save(flow);
+      await cashFlowRepo.save(flow);
     }
 
-    const cashFlows = await this.cashFlows_.findAfterDate(workbookId, accIds, saved.date);
+    const cashFlows = await cashFlowRepo.findAfterDate(workbookId, accIds, saved.date);
     return { accounts, cashFlows, transactions: [saved] };
   }
 
+  @InTransaction()
   async processRemoval(workbookId: string, transId: string): Promise<WorldUpdate> {
-    const oldTrans = await this.transactions_.getById(workbookId, transId);
+    const accountRepo = this.resolve(AccountRepository);
+    const cashFlowRepo = this.resolve(CashFlowRepository);
+    const transactionRepo = this.resolve(TransactionRepository);
+
+    const oldTrans = await transactionRepo.getById(workbookId, transId);
 
     const removeFlows = buildCashFlows(oldTrans);
 
     const accIds = removeFlows.map((flow) => flow.account_id);
-    const accounts = await this.accounts_.getByIds(workbookId, accIds);
+    const accounts = await accountRepo.getByIds(workbookId, accIds);
     updateAccounts(accounts, [], removeFlows);
     for (const acc of accounts) {
-      await this.accounts_.update(workbookId, acc);
+      await accountRepo.update(workbookId, acc);
     }
 
     for (const flow of removeFlows) {
-      await this.cashFlows_.remove(flow);
+      await cashFlowRepo.remove(flow);
     }
 
-    await this.transactions_.remove(workbookId, transId);
+    await transactionRepo.remove(workbookId, transId);
 
-    const cashFlows = await this.cashFlows_.findAfterDate(workbookId, accIds, oldTrans.date);
+    const cashFlows = await cashFlowRepo.findAfterDate(workbookId, accIds, oldTrans.date);
     return { accounts, cashFlows, removedTrans: [transId] };
   }
 }

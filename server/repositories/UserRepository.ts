@@ -1,6 +1,6 @@
-import { Injectable } from '@decorators/di';
 import { UserInfo } from '@shared/types';
-import db, { isAdmin } from '../db';
+import { isAdmin } from '../database/db';
+import { AbstractRepository } from './AbstractRepository';
 
 type DbUser = {
   id: string;
@@ -12,15 +12,14 @@ type DbUser = {
 
 const convertUser = ({ id, ...user }: DbUser): UserInfo => ({ ...user, email: id, is_admin: isAdmin(id) });
 
-@Injectable()
-export class UserRepository {
+export class UserRepository extends AbstractRepository {
   async getAll() {
-    const { rows } = await db().query<DbUser>('select * from users');
+    const { rows } = await this.qm().query<DbUser>('select * from users');
     return rows.map(convertUser);
   }
 
   async findByEmail(email: string) {
-    const { rows } = await db().query<DbUser>({
+    const { rows } = await this.qm().query<DbUser>({
       text: 'select * from users where id = $1',
       values: [email],
     });
@@ -29,7 +28,7 @@ export class UserRepository {
 
   async create(user: Partial<UserInfo>): Promise<UserInfo> {
     const { email, name, picture } = user;
-    const { rows } = await db().query<DbUser>({
+    const { rows } = await this.qm().query<DbUser>({
       text: `
 insert into users(id, name, picture, allowed)
 values($1, $2, $3, $4)
@@ -41,7 +40,7 @@ returning *`,
 
   async update(email: string, user: Partial<UserInfo>): Promise<UserInfo> {
     const { name, picture, allowed, active_workbook } = user;
-    const { rows } = await db().query<DbUser>({
+    const { rows } = await this.qm().query<DbUser>({
       text: `
 update users
 set name = coalesce($2, name),
@@ -56,6 +55,6 @@ returning *`,
   }
 
   async remove(email: string) {
-    return await db().query({ text: 'delete from users when id = $1', values: [email] });
+    return await this.qm().query({ text: 'delete from users when id = $1', values: [email] });
   }
 }

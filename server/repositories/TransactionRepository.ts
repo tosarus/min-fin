@@ -1,7 +1,6 @@
-import { Injectable } from '@decorators/di';
 import { centsToStr, strToCents } from '@shared/calcs';
 import { Transaction, TransactionType } from '@shared/types';
-import db from '../db';
+import { AbstractRepository } from './AbstractRepository';
 
 type DbTransaction = {
   id: string;
@@ -25,10 +24,9 @@ const convertTransaction = ({ amount_cent, account_from_id, account_to_id, ...tr
   };
 };
 
-@Injectable()
-export class TransactionRepository {
+export class TransactionRepository extends AbstractRepository {
   async getAll(workbookId: string): Promise<Transaction[]> {
-    const { rows } = await db().query<DbTransaction>({
+    const { rows } = await this.qm().query<DbTransaction>({
       text: 'select * from transactions where workbook_id = $1',
       values: [workbookId],
     });
@@ -36,7 +34,7 @@ export class TransactionRepository {
   }
 
   async getById(workbookId: string, id: string): Promise<Transaction> {
-    const { rows } = await db().query<DbTransaction>({
+    const { rows } = await this.qm().query<DbTransaction>({
       text: 'select * from transactions where workbook_id = $1 and id = $2',
       values: [workbookId, id],
     });
@@ -47,7 +45,7 @@ export class TransactionRepository {
   }
 
   async findByAccountId(workbookId: string, accountId: string): Promise<Transaction[]> {
-    const { rows } = await db().query<DbTransaction>({
+    const { rows } = await this.qm().query<DbTransaction>({
       text: 'select * from transactions where workbook_id = $1 and (account_from_id = $2 or account_to_id = $2)',
       values: [workbookId, accountId],
     });
@@ -56,7 +54,7 @@ export class TransactionRepository {
 
   async create(workbookId: string, trans: Partial<Transaction>): Promise<Transaction> {
     const { date, type, description, detail, amount, account_from, account_to } = trans;
-    const { rows } = await db().query<DbTransaction>({
+    const { rows } = await this.qm().query<DbTransaction>({
       text: `
 insert into transactions(workbook_id, date, type, description, detail, amount_cent, account_from_id, account_to_id)
 values($1, $2, $3, $4, $5, $6, $7, $8)
@@ -68,7 +66,7 @@ returning *`,
 
   async update(workbookId: string, trans: Partial<Transaction>): Promise<Transaction> {
     const { id, date, type, description, detail, amount, account_from, account_to } = trans;
-    const { rows } = await db().query<DbTransaction>({
+    const { rows } = await this.qm().query<DbTransaction>({
       text: `
 update transactions
 set date = coalesce($3, date),
@@ -86,7 +84,7 @@ returning *`,
   }
 
   async remove(workbookId: string, id: string) {
-    await db().query({
+    await this.qm().query({
       text: 'delete from transactions where workbook_id = $1 and id = $2',
       values: [workbookId, id],
     });

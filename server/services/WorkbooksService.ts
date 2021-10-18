@@ -1,17 +1,25 @@
 import { Inject, Injectable } from '@decorators/di';
 import { Workbook } from '@shared/types';
-import { WorkbookRepository } from './../database';
+import { QueryManager } from '../database';
+import { WorkbookRepository } from '../repositories';
+import { BaseService } from './di';
 
 @Injectable()
-export class WorkbooksService {
-  constructor(@Inject(WorkbookRepository) private workbooks_: WorkbookRepository) {}
+export class WorkbooksService extends BaseService {
+  constructor(@Inject(QueryManager) qm: QueryManager) {
+    super(qm);
+  }
 
   async getAll(email: string) {
-    return await this.workbooks_.getAll(email);
+    return await this.resolve(WorkbookRepository).getAll(email);
+  }
+
+  async getById(email: string, id: string) {
+    return await this.resolve(WorkbookRepository).getById(email, id);
   }
 
   async getActive(email: string) {
-    return await this.workbooks_.findActive(email);
+    return await this.resolve(WorkbookRepository).findActive(email);
   }
 
   async save(email: string, workbook: Workbook) {
@@ -24,13 +32,13 @@ export class WorkbooksService {
     }
 
     if (workbook.id) {
-      return await this.workbooks_.update(email, workbook);
+      return await this.resolve(WorkbookRepository).update(email, workbook);
     } else {
-      return await this.workbooks_.create(email, workbook);
+      return await this.resolve(WorkbookRepository).create(email, workbook);
     }
   }
 
   async remove(email: string, id: string) {
-    return await this.workbooks_.remove(email, id);
+    return await this.resolve(WorkbookRepository).remove(email, id);
   }
 }

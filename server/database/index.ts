@@ -1,4 +1,2 @@
-import { createDb, isAdmin } from './db';
-
-export * from './repositories';
-export { isAdmin, createDb as default };
+export { createDb as default, isAdmin } from './db';
+export * from './QueryManager';

@@ -1,33 +1,33 @@
 import { Inject, Injectable } from '@decorators/di';
 import { AccountType, UserInfo, WorldUpdate } from '@shared/types';
+import { isAdmin, QueryManager } from '../database';
 import {
   AccountRepository,
   CashFlowRepository,
-  isAdmin,
   TransactionRepository,
   UserRepository,
   WorkbookRepository,
-} from '../database';
+} from '../repositories';
+import { BaseService } from './di';
 
 @Injectable()
-export class UsersService {
-  constructor(
-    @Inject(AccountRepository) private accounts_: AccountRepository,
-    @Inject(CashFlowRepository) private cashFlows_: CashFlowRepository,
-    @Inject(TransactionRepository) private transactions_: TransactionRepository,
-    @Inject(UserRepository) private users_: UserRepository,
-    @Inject(WorkbookRepository) private workbooks_: WorkbookRepository
-  ) {}
+export class UsersService extends BaseService {
+  constructor(@Inject(QueryManager) qm: QueryManager) {
+    super(qm);
+  }
 
   async getOrAdd(email: string, creator: (email: string) => Promise<Partial<UserInfo>>): Promise<UserInfo> {
-    return (await this.users_.findByEmail(email)) || (await this.users_.create(await creator(email)));
+    const repository = this.resolve(UserRepository);
+    return (await repository.findByEmail(email)) || (await repository.create(await creator(email)));
   }
 
   async list(email: string) {
-    return isAdmin(email) ? await this.users_.getAll() : [await this.users_.findByEmail(email)];
+    const repository = this.resolve(UserRepository);
+    return isAdmin(email) ? await repository.getAll() : [await repository.findByEmail(email)];
   }
 
   async update(email: string, user: Partial<UserInfo>) {
+    const repository = this.resolve(UserRepository);
     user.email = user.email ?? email;
 
     if (!isAdmin(email)) {
@@ -38,7 +38,7 @@ export class UsersService {
     }
 
     const needWorldUpdate = !!user.active_workbook;
-    const profile = await this.users_.update(user.email, user);
+    const profile = await repository.update(user.email, user);
     if (needWorldUpdate) {
       return await this.getWorldUpdate(profile);
     } else {
@@ -51,23 +51,29 @@ export class UsersService {
       return { profile };
     }
 
+    const accountRepo = this.resolve(AccountRepository);
+    const cashFlowRepo = this.resolve(CashFlowRepository);
+    const transRepo = this.resolve(TransactionRepository);
+    const userRepo = this.resolve(UserRepository);
+    const workbookRepo = this.resolve(WorkbookRepository);
+
     if (!profile.active_workbook) {
-      const workbook = await this.workbooks_.create(profile.email, { name: 'Default' });
+      const workbook = await workbookRepo.create(profile.email, { name: 'Default' });
       profile.active_workbook = workbook.id;
-      await this.users_.update(profile.email, { active_workbook: workbook.id });
+      await userRepo.update(profile.email, { active_workbook: workbook.id });
     }
 
-    const accounts = await this.accounts_.getForWorkbook(profile.active_workbook);
+    const accounts = await accountRepo.getForWorkbook(profile.active_workbook);
     if (accounts.filter((acc) => acc.type === AccountType.Opening).length === 0) {
-      const openingAccount = await this.accounts_.create(profile.active_workbook, {
+      const openingAccount = await accountRepo.create(profile.active_workbook, {
         type: AccountType.Opening,
         name: 'Starting Balaces (hidden)',
       });
       accounts.push(openingAccount);
     }
-    const cashFlows = await this.cashFlows_.getAll(profile.active_workbook);
-    const transactions = await this.transactions_.getAll(profile.active_workbook);
-    const workbooks = await this.workbooks_.getAll(profile.email);
+    const cashFlows = await cashFlowRepo.getAll(profile.active_workbook);
+    const transactions = await transRepo.getAll(profile.active_workbook);
+    const workbooks = await workbookRepo.getAll(profile.email);
     return { profile, accounts, cashFlows, transactions, workbooks };
   }
 }
