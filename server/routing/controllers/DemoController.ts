@@ -1,17 +1,18 @@
-import { Response } from 'express';
-import { Controller, Get, Response as Res } from '@decorators/express';
+import { Service } from 'typedi';
+import { Controller, Get } from '@shared/routing-controllers';
 import { Forecasts, Trans } from '../../demo';
-import { CheckToken } from '../middleware/CheckToken';
+import { CheckToken } from '../middleware';
 
 @Controller('/demo')
+@Service()
 export class DemoController {
   @Get('/forecast')
-  async getForecast(@Res() res: Response) {
-    res.json(await Forecasts.getForecast());
+  getForecast() {
+    return Forecasts.getForecast();
   }
 
   @Get('/trans', [CheckToken])
-  async getTransactions(@Res() res: Response) {
-    res.json(await Trans.getTransactions());
+  getTransactions() {
+    return Trans.getTransactions();
   }
 }

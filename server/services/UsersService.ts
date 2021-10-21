@@ -1,6 +1,6 @@
-import { Inject, Injectable } from '@decorators/di';
+import { Service } from 'typedi';
 import { AccountType, UserInfo, WorldUpdate } from '@shared/types';
-import { isAdmin, QueryManager } from '../database';
+import { isAdmin } from '../database';
 import {
   AccountRepository,
   CashFlowRepository,
@@ -10,12 +10,8 @@ import {
 } from '../repositories';
 import { BaseService } from './di';
 
-@Injectable()
+@Service()
 export class UsersService extends BaseService {
-  constructor(@Inject(QueryManager) qm: QueryManager) {
-    super(qm);
-  }
-
   async getOrAdd(email: string, creator: (email: string) => Promise<Partial<UserInfo>>): Promise<UserInfo> {
     const repository = this.resolve(UserRepository);
     return (await repository.findByEmail(email)) || (await repository.create(await creator(email)));
