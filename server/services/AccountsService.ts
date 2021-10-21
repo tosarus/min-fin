@@ -1,15 +1,10 @@
-import { Inject, Injectable } from '@decorators/di';
+import { Service } from 'typedi';
 import { Account, AccountType, userLevelAccounts, WorldUpdate } from '@shared/types';
-import { QueryManager } from '../database';
 import { AccountRepository, TransactionRepository } from '../repositories';
 import { BaseService } from './di';
 
-@Injectable()
+@Service()
 export class AccountsService extends BaseService {
-  constructor(@Inject(QueryManager) qm: QueryManager) {
-    super(qm);
-  }
-
   async getAll(workbookId: string) {
     return await this.resolve(AccountRepository).getForWorkbook(workbookId);
   }

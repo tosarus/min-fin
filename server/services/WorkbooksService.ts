@@ -1,15 +1,10 @@
-import { Inject, Injectable } from '@decorators/di';
+import { Service } from 'typedi';
 import { Workbook } from '@shared/types';
-import { QueryManager } from '../database';
 import { WorkbookRepository } from '../repositories';
 import { BaseService } from './di';
 
-@Injectable()
+@Service()
 export class WorkbooksService extends BaseService {
-  constructor(@Inject(QueryManager) qm: QueryManager) {
-    super(qm);
-  }
-
   async getAll(email: string) {
     return await this.resolve(WorkbookRepository).getAll(email);
   }

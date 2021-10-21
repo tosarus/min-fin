@@ -1,9 +1,10 @@
 import { NextFunction, Response, Request, RequestHandler } from 'express';
-import { Inject } from '@decorators/di';
-import { Middleware } from '@decorators/express';
+import { Inject, Service } from 'typedi';
+import { Middleware } from '@shared/routing-controllers';
 import { AuthConfig, tools } from '../../auth';
 import { AUTH_CONFIG } from '../injectTokens';
 
+@Service()
 export class CheckToken implements Middleware {
   private handler_: RequestHandler;
 

@@ -1,16 +1,11 @@
-import { Inject, Injectable } from '@decorators/di';
+import { Service } from 'typedi';
 import { buildCashFlows, updateAccounts } from '@shared/calcs';
 import { Transaction, WorldUpdate } from '@shared/types';
-import { QueryManager } from '../database';
 import { AccountRepository, CashFlowRepository, TransactionRepository } from '../repositories';
 import { BaseService, InTransaction } from './di';
 
-@Injectable()
+@Service()
 export class TransactionsService extends BaseService {
-  constructor(@Inject(QueryManager) qm: QueryManager) {
-    super(qm);
-  }
-
   async getAll(workbookId: string) {
     return this.resolve(TransactionRepository).getAll(workbookId);
   }

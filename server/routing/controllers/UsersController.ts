@@ -1,25 +1,21 @@
-import { Response, Request } from 'express';
-import { Inject } from '@decorators/di';
-import { Body, Controller, Get, Put, Response as Res, Request as Req } from '@decorators/express';
+import { Service } from 'typedi';
+import { Body, Controller, Get, Put } from '@shared/routing-controllers';
 import { UserInfo } from '@shared/types';
 import { UsersService } from '../../services';
-import { CheckToken } from '../middleware';
+import { CheckToken, Email } from '../middleware';
 
 @Controller('/users', [CheckToken])
+@Service()
 export class UsersController {
-  constructor(@Inject(UsersService) private users_: UsersService) {}
+  constructor(private users_: UsersService) {}
 
-  private email(req: Request): string {
-    return (req as any).email;
+  @Get()
+  getUsers(@Email() email: string) {
+    return this.users_.list(email);
   }
 
-  @Get('')
-  async getUsers(@Req() req: Request, @Res() res: Response) {
-    res.json(await this.users_.list(this.email(req)));
-  }
-
-  @Put('')
-  async updateUser(@Req() req: Request, @Res() res: Response, @Body() user: Partial<UserInfo>) {
-    res.json(await this.users_.update(this.email(req), user));
+  @Put()
+  updateUser(@Email() email: string, @Body() user: Partial<UserInfo>) {
+    return this.users_.update(email, user);
   }
 }

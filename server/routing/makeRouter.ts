@@ -1,8 +1,6 @@
-import express from 'express';
-import { Container } from '@decorators/di';
-import { attachControllers, ERROR_MIDDLEWARE } from '@decorators/express';
+import { Container } from 'typedi';
+import { useContainer, useRoutingControllers } from '@shared/routing-controllers';
 import { Configuration } from '../config';
-import { QueryManager } from '../database';
 import {
   AccountsController,
   AuthenticateController,
@@ -12,23 +10,20 @@ import {
   WorkbooksController,
 } from './controllers';
 import { AUTH_CONFIG } from './injectTokens';
-import { ApiErrorMiddleware } from './middleware';
 
 export const makeRouter = ({ auth: authConfig }: Configuration) => {
-  Container.provide([
-    { provide: AUTH_CONFIG, useValue: authConfig },
-    { provide: ERROR_MIDDLEWARE, useClass: ApiErrorMiddleware },
-    { provide: QueryManager, useValue: new QueryManager() },
-  ]);
+  Container.set(AUTH_CONFIG, authConfig);
 
-  const router = express.Router();
-  attachControllers(router, [
-    AuthenticateController,
-    AccountsController,
-    DemoController,
-    TransactionsController,
-    UsersController,
-    WorkbooksController,
-  ]);
-  return router;
+  useContainer(Container);
+
+  return useRoutingControllers({
+    controllers: [
+      AuthenticateController,
+      AccountsController,
+      DemoController,
+      TransactionsController,
+      UsersController,
+      WorkbooksController,
+    ],
+  });
 };

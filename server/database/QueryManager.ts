@@ -1,10 +1,10 @@
 import { ClientBase, QueryConfig } from 'pg';
-import { Injectable } from '@decorators/di';
+import { Service } from 'typedi';
 import { getPool } from './db';
 
 export type Creator<Class> = new (manager: QueryManager) => Class;
 
-@Injectable()
+@Service()
 export class QueryManager {
   constructor(private client_?: ClientBase) {}
 

@@ -1,3 +1,3 @@
-import { InjectionToken } from '@decorators/di';
+import { Token } from 'typedi';
 
-export const AUTH_CONFIG = new InjectionToken('AUTH_CONFIG');
+export const AUTH_CONFIG = new Token('AUTH_CONFIG');

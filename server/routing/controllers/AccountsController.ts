@@ -1,26 +1,26 @@
-import { Response } from 'express';
-import { Inject } from '@decorators/di';
-import { Body, Controller, Delete, Get, Params, Post, Response as Res } from '@decorators/express';
+import { Service } from 'typedi';
+import { Body, Controller, Delete, Get, Param, Post } from '@shared/routing-controllers';
 import { Account } from '@shared/types';
 import { AccountsService } from '../../services';
 import { CheckToken, ValidateWorkbook } from '../middleware';
 
-@Controller('/accounts', [CheckToken])
+@Controller('/accounts/:workbookId', [CheckToken, ValidateWorkbook])
+@Service()
 export class AccountsController {
-  constructor(@Inject(AccountsService) private accounts_: AccountsService) {}
+  constructor(private accounts_: AccountsService) {}
 
-  @Get('/:workbookId', [ValidateWorkbook])
-  async getAccounts(@Res() res: Response, @Params('workbookId') workbookId: string) {
-    res.json(await this.accounts_.getAll(workbookId));
+  @Get()
+  getAccounts(@Param('workbookId') workbookId: string) {
+    return this.accounts_.getAll(workbookId);
   }
 
-  @Post('/:workbookId', [ValidateWorkbook])
-  async saveAccount(@Res() res: Response, @Params('workbookId') workbookId: string, @Body() account: Partial<Account>) {
-    res.json(await this.accounts_.save(workbookId, account));
+  @Post()
+  saveAccount(@Param('workbookId') workbookId: string, @Body() account: Partial<Account>) {
+    return this.accounts_.save(workbookId, account);
   }
 
-  @Delete('/:workbookId/:id', [ValidateWorkbook])
-  async deleteAccount(@Res() res: Response, @Params('workbookId') workbookId: string, @Params('id') accountId: string) {
-    res.json(await this.accounts_.remove(workbookId, accountId));
+  @Delete('/:id')
+  deleteAccount(@Param('workbookId') workbookId: string, @Param('id') accountId: string) {
+    return this.accounts_.remove(workbookId, accountId);
   }
 }
