@@ -1,4 +1,4 @@
-import { centsToStr, strToCents } from '@shared/calcs';
+import { centsToStr, FlatCashFlow, strToCents } from '@shared/calcs';
 import { CashFlow, FlowDirection, TransactionType } from '@shared/types';
 import { AbstractRepository } from './AbstractRepository';
 
@@ -14,20 +14,20 @@ type DbCashFlow = {
   description: string;
   detail: string;
   order: number;
-  // balance_cent: number;
+  balance_cent: number;
 };
 
-const convertCashFlow = ({ amount_cent, to_flow, ...cashFlow }: DbCashFlow): CashFlow => {
+const convertCashFlow = ({ amount_cent, to_flow, balance_cent, ...cashFlow }: DbCashFlow): CashFlow => {
   return {
     amount: centsToStr(amount_cent),
     direction: to_flow ? FlowDirection.To : FlowDirection.From,
-    balance: centsToStr(0),
+    balance: centsToStr(balance_cent),
     ...cashFlow,
   };
 };
 
 export class CashFlowRepository extends AbstractRepository {
-  async getAll(workbookId: string): Promise<CashFlow[]> {
+  async getAll(workbookId: string) {
     const { rows } = await this.qm().query<DbCashFlow>({
       text: 'select * from cash_flows_view where workbook_id = $1',
       values: [workbookId],
@@ -43,7 +43,7 @@ export class CashFlowRepository extends AbstractRepository {
     return rows.map(convertCashFlow);
   }
 
-  async save(flow: CashFlow) {
+  async save(flow: FlatCashFlow) {
     const { workbook_id, transaction_id, account_id, other_account_id, direction, amount } = flow;
     await this.qm().query({
       text: `
@@ -60,7 +60,7 @@ values($1, $2, $3, $4, $5, $6)`,
     });
   }
 
-  async remove(flow: CashFlow) {
+  async remove(flow: FlatCashFlow) {
     const { workbook_id, transaction_id, account_id } = flow;
     await this.qm().query({
       text: 'delete from cash_flows where workbook_id = $1 and transaction_id = $2 and account_id = $3',

@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { buildCashFlows, updateAccounts } from '@shared/calcs';
-import { Transaction, WorldUpdate } from '@shared/types';
+import { CashFlowId, Transaction, WorldUpdate } from '@shared/types';
 import { AccountRepository, CashFlowRepository, TransactionRepository } from '../repositories';
 import { BaseService, InTransaction } from './di';
 
@@ -30,12 +30,12 @@ export class TransactionsService extends BaseService {
 
     const oldTrans = trans.id ? await transactionRepo.getById(workbookId, trans.id) : undefined;
 
-    const addFlows = buildCashFlows(trans);
-    const removeFlows = buildCashFlows(oldTrans);
+    const flowsToAdd = buildCashFlows(trans);
+    const flowsToRemove = buildCashFlows(oldTrans);
 
-    const accIds = addFlows.concat(removeFlows).map((flow) => flow.account_id);
+    const accIds = flowsToAdd.concat(flowsToRemove).map((flow) => flow.account_id);
     const accounts = await accountRepo.getByIds(workbookId, accIds);
-    updateAccounts(accounts, addFlows, removeFlows);
+    updateAccounts(accounts, flowsToAdd, flowsToRemove);
     for (const acc of accounts) {
       await accountRepo.update(workbookId, acc);
     }
@@ -44,17 +44,20 @@ export class TransactionsService extends BaseService {
       ? await transactionRepo.update(workbookId, trans)
       : await transactionRepo.create(workbookId, trans);
 
-    for (const flow of removeFlows) {
+    const removedFlows = [] as CashFlowId[];
+    for (const flow of flowsToRemove) {
       await cashFlowRepo.remove(flow);
+      removedFlows.push([flow.transaction_id, flow.account_id]);
     }
-    for (const flow of addFlows) {
+
+    for (const flow of flowsToAdd) {
       flow.transaction_id = saved.id;
       flow.workbook_id = workbookId;
       await cashFlowRepo.save(flow);
     }
 
     const cashFlows = await cashFlowRepo.findAfterDate(workbookId, accIds, saved.date);
-    return { accounts, cashFlows, transactions: [saved] };
+    return { accounts, cashFlows, transactions: [saved], removedFlows };
   }
 
   @InTransaction()

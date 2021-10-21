@@ -4,10 +4,10 @@ import createConfig from './config';
 import createDb from './database';
 
 const config = createConfig();
-const app = createApp(config);
 
 createDb(config)
   .then((info) => {
+    const app = createApp(config);
     http.createServer(app).listen(config.server.port, () => {
       console.log(
         'Running at http://localhost:%d in %s mode. Connected to %s',
