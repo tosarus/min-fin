@@ -75,6 +75,8 @@ export interface CashFlow {
   balance: string;
 }
 
+export type CashFlowId = [transaction_id: string, account_id: string];
+
 interface WorldUpdate_ {
   profile: UserInfo;
   accounts: Account[];
@@ -82,6 +84,7 @@ interface WorldUpdate_ {
   transactions: Transaction[];
   workbooks: Workbook[];
   removedTrans: string[];
+  removedFlows: CashFlowId[];
 }
 
 export type WorldUpdate = Partial<WorldUpdate_>;

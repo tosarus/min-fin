@@ -21,8 +21,8 @@ export const CashFlowTable = ({ accountId, onRemove, onEdit }: CashFlowTableProp
       <TableHead>
         <TableRow>
           <TableCell>Date</TableCell>
-          <TableCell>Category</TableCell>
           <TableCell>Description</TableCell>
+          <TableCell>Category</TableCell>
           <TableCell>Amount</TableCell>
           <TableCell>Balance</TableCell>
           <TableCell></TableCell>
@@ -32,8 +32,8 @@ export const CashFlowTable = ({ accountId, onRemove, onEdit }: CashFlowTableProp
         {sortCashFlows(cashFlows, accountId).map((flow) => (
           <TableRow key={flow.transaction_id}>
             <TableCell>{dateFormat(flow.date, 'isoDate')}</TableCell>
-            <TableCell>{buildCategory(flow, accountMap)}</TableCell>
             <TableCell>{flow.description}</TableCell>
+            <TableCell>{buildCategory(flow, accountMap)}</TableCell>
             <TableCell>
               <AmountSpan amount={flow.amount} />
             </TableCell>
@@ -62,15 +62,14 @@ function sortCashFlows(cashFlows: CashFlow[], accountId: string) {
 }
 
 function buildCategory(flow: CashFlow, accMap: Map<string, Account>) {
-  const { type, other_account_id, direction } = flow;
+  const { type, other_account_id } = flow;
   switch (type) {
     case TransactionType.Expence:
-      return accMap.get(other_account_id)?.name;
     case TransactionType.Income:
       return accMap.get(other_account_id)?.name;
     case TransactionType.Transfer:
-      return `${direction} "accMap.get(other_account_id)?.name"`;
+      return '[' + accMap.get(other_account_id)?.name + ']';
     case TransactionType.Opening:
-      return 'Opening';
+      return type;
   }
 }
