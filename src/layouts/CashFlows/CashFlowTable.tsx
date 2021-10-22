@@ -1,39 +1,41 @@
 import React from 'react';
 import dateFormat from 'dateformat';
 import { useSelector } from 'react-redux';
-import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import { AmountSpan } from '../../common';
+import { Box, Button, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { AmountSpan, StyledTable } from '../../common';
 import { Selectors } from '../../store';
-import { Account, CashFlow, dateOrderCompare, TransactionType } from '../../types';
+import { Account, CashFlow, dateOrderCompare } from '../../types';
+import { getAssetAccountTypes, getDisplayName, getFlowAccountFilter } from '../Accounts/utils';
 
 interface CashFlowTableProps {
-  accountId: string;
+  account: Account;
   onRemove: (id: string) => void;
   onEdit: (tr: CashFlow) => void;
 }
 
-export const CashFlowTable = ({ accountId, onRemove, onEdit }: CashFlowTableProps) => {
+export const CashFlowTable = ({ account, onRemove, onEdit }: CashFlowTableProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
+  const isAsset = getAssetAccountTypes().includes(account.type);
 
   return (
-    <Table size="small">
+    <StyledTable>
       <TableHead>
         <TableRow>
           <TableCell>Date</TableCell>
+          <TableCell>{isAsset ? 'Category' : 'Account'}</TableCell>
           <TableCell>Description</TableCell>
-          <TableCell>Category</TableCell>
           <TableCell>Amount</TableCell>
           <TableCell>Balance</TableCell>
           <TableCell></TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {sortCashFlows(cashFlows, accountId).map((flow) => (
+        {sortCashFlows(cashFlows, account.id, isAsset).map((flow) => (
           <TableRow key={flow.transaction_id}>
             <TableCell>{dateFormat(flow.date, 'isoDate')}</TableCell>
+            <TableCell>{buildCategory(flow, accountMap, isAsset)}</TableCell>
             <TableCell>{flow.description}</TableCell>
-            <TableCell>{buildCategory(flow, accountMap)}</TableCell>
             <TableCell>
               <AmountSpan amount={flow.amount} />
             </TableCell>
@@ -53,23 +55,15 @@ export const CashFlowTable = ({ accountId, onRemove, onEdit }: CashFlowTableProp
           </TableRow>
         ))}
       </TableBody>
-    </Table>
+    </StyledTable>
   );
 };
 
-function sortCashFlows(cashFlows: CashFlow[], accountId: string) {
-  return [...cashFlows].filter((flow) => flow.account_id === accountId).sort(dateOrderCompare);
+function sortCashFlows(cashFlows: CashFlow[], id: string, isAsset: boolean) {
+  return cashFlows.filter(getFlowAccountFilter(id, isAsset)).sort(dateOrderCompare);
 }
 
-function buildCategory(flow: CashFlow, accMap: Map<string, Account>) {
-  const { type, other_account_id } = flow;
-  switch (type) {
-    case TransactionType.Expence:
-    case TransactionType.Income:
-      return accMap.get(other_account_id)?.name;
-    case TransactionType.Transfer:
-      return '[' + accMap.get(other_account_id)?.name + ']';
-    case TransactionType.Opening:
-      return type;
-  }
+function buildCategory(flow: CashFlow, accMap: Map<string, Account>, isAsset: boolean) {
+  const acc = accMap.get(isAsset ? flow.other_account_id : flow.account_id);
+  return getDisplayName(acc);
 }

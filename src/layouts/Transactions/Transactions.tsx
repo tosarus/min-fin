@@ -4,21 +4,13 @@ import { Box, Button } from '@mui/material';
 import { Title } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { Transaction } from '../../types';
-import { Contract, ContractEditor, fromContract, fromTransaction } from '../Contract';
+import { ContractEditor, fromTransaction } from '../Contract';
 import { TransactionsTable } from './TransactionsTable';
 
 export const Transactions = () => {
-  const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const workbook = useSelector(Selectors.activeWorkbook);
   const dispatch = useDispatch();
   const [editable, setEditable] = useState<Partial<Transaction>>();
-
-  const handleSubmit = (contract: Contract) => {
-    setEditable(undefined);
-    if (workbook) {
-      dispatch(Actions.saveTransaction({ workbookId: workbook.id, trans: fromContract(accounts, contract) }));
-    }
-  };
 
   const handleRemove = (id: string) => {
     if (workbook) {
@@ -34,7 +26,7 @@ export const Transactions = () => {
     setEditable({});
   };
 
-  const handleCancel = () => {
+  const handleClose = () => {
     setEditable(undefined);
   };
 
@@ -44,9 +36,7 @@ export const Transactions = () => {
         <span>Transactions</span>
         <Button onClick={handleAdd}>Add</Button>
       </Title>
-      {editable && (
-        <ContractEditor open contract={fromTransaction(editable)} onCancel={handleCancel} onSubmit={handleSubmit} />
-      )}
+      {editable && <ContractEditor open contract={fromTransaction(editable)} onClose={handleClose} />}
       <Box sx={{ overflowY: 'auto' }}>
         <TransactionsTable onRemove={handleRemove} onEdit={handleEdit} />
       </Box>

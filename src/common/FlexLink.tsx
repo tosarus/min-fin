@@ -32,10 +32,11 @@ interface FlexLinkProps {
   className?: string;
   children: React.ReactNode;
   noActive?: boolean;
+  route?: string;
 }
 
-export const FlexLink = ({ children, noActive, ...props }: FlexLinkProps & LinkProps) => {
-  const [isActive] = useRoute(props.href!);
+export const FlexLink = ({ children, noActive, route, ...props }: FlexLinkProps & LinkProps) => {
+  const [isActive] = useRoute(route ?? props.href!);
   return (
     <StyledLink {...props} isActive={!noActive && isActive}>
       {children}

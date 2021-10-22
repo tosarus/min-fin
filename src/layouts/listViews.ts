@@ -16,7 +16,6 @@ import { WelcomeScreen } from './WelcomeScreen';
 
 export const Links = {
   accounts: () => '/accounts',
-  accountsNew: (type: string) => `/accounts/new/${type}`,
   accountsView: (id: string) => `/accounts/${id}`,
   demoForecast: () => '/demo/forecast',
   demoOrders: () => '/demo/orders',
@@ -29,7 +28,6 @@ export const Links = {
 
 export const Routes = {
   Accounts: '/accounts/:all*',
-  AccountsNew: '/accounts/new/:type',
   AccountsView: '/accounts/:id',
   DemoForecast: Links.demoForecast(),
   DemoOrders: Links.demoOrders(),

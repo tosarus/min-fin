@@ -1,7 +1,7 @@
 import React from 'react';
 import dateFormat from 'dateformat';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import { Title, useDispatchedRender } from '../../common';
+import { TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { StyledTable, Title, useDispatchedRender } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { WeatherForecast } from '../../types';
 
@@ -15,7 +15,7 @@ interface Props {
 
 const ForecastTable = ({ forecast }: Props) => {
   return (
-    <Table>
+    <StyledTable>
       <TableHead>
         <TableRow>
           <TableCell>Date</TableCell>
@@ -34,7 +34,7 @@ const ForecastTable = ({ forecast }: Props) => {
           </TableRow>
         ))}
       </TableBody>
-    </Table>
+    </StyledTable>
   );
 };
 

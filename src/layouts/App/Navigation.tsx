@@ -40,8 +40,8 @@ export const Navigation = ({ expanded, toggleExpanded }: NavigationProps) => {
 
   return (
     <NavigationBox component="nav" expanded={expanded}>
-      {viewPages.map(({ link, name, icon: PageIcon = CalculateOutlinedIcon }, i) => (
-        <FlexLink key={i} href={link}>
+      {viewPages.map(({ link, name, route, icon: PageIcon = CalculateOutlinedIcon }, i) => (
+        <FlexLink key={i} href={link} route={route}>
           <PageIcon color="primary" sx={{ width: 48, px: 1, py: 2, boxSizing: 'content-box' }} />
           <Typography color="primary" variant="button" sx={{ flexGrow: 1 }}>
             {name}
