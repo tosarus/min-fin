@@ -3,26 +3,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button } from '@mui/material';
 import { Title } from '../../common';
 import { Actions, Selectors } from '../../store';
-import { CashFlow } from '../../types';
-import { Contract, ContractEditor, fromCashFlow, fromContract } from '../Contract';
+import { Account, AccountType, CashFlow, TransactionType } from '../../types';
+import { getAssetAccountTypes } from '../Accounts/utils';
+import { ContractEditor, fromCashFlow } from '../Contract';
 import { CashFlowTable } from './CashFlowTable';
 
 interface CashFlowListProps {
-  accountId: string;
+  account: Account;
 }
 
-export const CashFlowList = ({ accountId }: CashFlowListProps) => {
-  const accounts = useSelector(Selectors.currentAccounts) ?? [];
+export const CashFlowList = ({ account }: CashFlowListProps) => {
   const workbook = useSelector(Selectors.activeWorkbook);
   const dispatch = useDispatch();
   const [editable, setEditable] = useState<Partial<CashFlow>>();
-
-  const handleSubmit = (contract: Contract) => {
-    setEditable(undefined);
-    if (workbook) {
-      dispatch(Actions.saveTransaction({ workbookId: workbook.id, trans: fromContract(accounts, contract) }));
-    }
-  };
+  const isAsset = getAssetAccountTypes().includes(account.type);
 
   const handleRemove = (id: string) => {
     if (workbook) {
@@ -35,10 +29,16 @@ export const CashFlowList = ({ accountId }: CashFlowListProps) => {
   };
 
   const handleAdd = () => {
-    setEditable({ account_id: accountId });
+    if (isAsset) {
+      setEditable({ account_id: account.id });
+    } else if (account.type === AccountType.Income) {
+      setEditable({ other_account_id: account.id, type: TransactionType.Income });
+    } else {
+      setEditable({ other_account_id: account.id, type: TransactionType.Expence });
+    }
   };
 
-  const handleCancel = () => {
+  const handleClose = () => {
     setEditable(undefined);
   };
 
@@ -48,9 +48,9 @@ export const CashFlowList = ({ accountId }: CashFlowListProps) => {
         <span>Transactions</span>
         <Button onClick={handleAdd}>Add</Button>
       </Title>
-      {editable && <ContractEditor open contract={fromCashFlow(editable)} onCancel={handleCancel} onSubmit={handleSubmit} />}
+      {editable && <ContractEditor open contract={fromCashFlow(editable)} onClose={handleClose} />}
       <Box sx={{ overflowY: 'auto' }}>
-        <CashFlowTable accountId={accountId} onRemove={handleRemove} onEdit={handleEdit} />
+        <CashFlowTable account={account} onRemove={handleRemove} onEdit={handleEdit} />
       </Box>
     </>
   );

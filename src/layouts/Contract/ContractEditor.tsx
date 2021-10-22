@@ -1,35 +1,39 @@
 import React, { useState } from 'react';
 import currency from 'currency.js';
 import { useFormik } from 'formik';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { Selectors } from '../../store';
+import { Actions, Selectors } from '../../store';
 import { TransactionType } from '../../types';
 import { getAssetAccountIds } from '../Accounts/utils';
-import { Contract } from './Contract';
+import { Contract, fromContract } from './Contract';
 import { getAccountIdsByCategory, transactionTypes } from './utils';
 
 interface ContractEditorProps {
   open: boolean;
   contract: Contract;
-  onCancel: () => void;
-  onSubmit: (contract: Contract) => void;
+  onClose: () => void;
 }
 
-export const ContractEditor = ({ open: initOpen, contract, onCancel, onSubmit }: ContractEditorProps) => {
+export const ContractEditor = ({ open: initOpen, contract, onClose }: ContractEditorProps) => {
   const [open, setOpen] = useState(initOpen);
   const accountMap = useSelector(Selectors.currentAccountMap);
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
-
-  const handleCancel = () => {
-    setOpen(false);
-    onCancel();
-  };
+  const workbook = useSelector(Selectors.activeWorkbook);
+  const dispatch = useDispatch();
 
   const handleSubmit = (contract: Contract) => {
     setOpen(false);
-    onSubmit(contract);
+    if (workbook) {
+      dispatch(Actions.saveTransaction({ workbookId: workbook.id, trans: fromContract(accounts, contract) }));
+    }
+    onClose();
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+    onClose();
   };
 
   const formik = useFormik({

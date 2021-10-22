@@ -2,10 +2,11 @@ import React from 'react';
 import currency from 'currency.js';
 import dateFormat from 'dateformat';
 import { useSelector } from 'react-redux';
-import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import { AmountSpan } from '../../common';
+import { Box, Button, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { AmountSpan, StyledTable } from '../../common';
 import { Selectors } from '../../store';
-import { Account, AccountType, Transaction, dateOrderCompare, TransactionType } from '../../types';
+import { Account, Transaction, dateOrderCompare, TransactionType } from '../../types';
+import { getDisplayName } from '../Accounts/utils';
 
 interface TransactionsTableProps {
   onRemove: (id: string) => void;
@@ -17,7 +18,7 @@ export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) 
   const transactions = useSelector(Selectors.currentTransactions) ?? [];
 
   return (
-    <Table size="small">
+    <StyledTable>
       <TableHead>
         <TableRow>
           <TableCell>Date</TableCell>
@@ -32,8 +33,8 @@ export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) 
         {sortTransactions(transactions).map((tr) => (
           <TableRow key={tr.id}>
             <TableCell>{dateFormat(tr.date, 'isoDate')}</TableCell>
-            <TableCell>{buildFrom(tr, accountMap)}</TableCell>
-            <TableCell>{buildTo(tr, accountMap)}</TableCell>
+            <TableCell>{buildName(tr.account_from, accountMap)}</TableCell>
+            <TableCell>{buildName(tr.account_to, accountMap)}</TableCell>
             <TableCell>{tr.description}</TableCell>
             <TableCell>
               <AmountSpan amount={buildAmount(tr)} />
@@ -51,12 +52,12 @@ export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) 
           </TableRow>
         ))}
       </TableBody>
-    </Table>
+    </StyledTable>
   );
 };
 
 function sortTransactions(transactions: Transaction[]) {
-  return [...transactions].sort(dateOrderCompare);
+  return transactions.sort(dateOrderCompare);
 }
 
 function buildAmount(tr: Transaction) {
@@ -66,15 +67,7 @@ function buildAmount(tr: Transaction) {
   return tr.amount;
 }
 
-function buildFrom(tr: Transaction, accMap: Map<string, Account>) {
-  const acc = accMap.get(tr.account_from);
-  if (acc?.type === AccountType.Opening) {
-    return '';
-  } else {
-    return acc?.name;
-  }
-}
-
-function buildTo(tr: Transaction, accMap: Map<string, Account>) {
-  return accMap.get(tr.account_to)?.name;
+function buildName(accId: string, accMap: Map<string, Account>) {
+  const acc = accMap.get(accId);
+  return getDisplayName(acc);
 }

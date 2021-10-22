@@ -9,11 +9,11 @@ import { Links } from '../listViews';
 import { AccountDetails } from './AccountDetails';
 import { AccountEditor } from './AccountEditor';
 
-interface AccountPageProps {
+interface AccountBudgetProps {
   account: Account;
 }
 
-export const AccountPage = ({ account }: AccountPageProps) => {
+export const AccountBudget = ({ account }: AccountBudgetProps) => {
   const workbook = useSelector(Selectors.activeWorkbook);
   const [editable, setEditable] = useState<Partial<Account>>();
   const [, setLocation] = useLocation();
