@@ -36,6 +36,14 @@ export class AccountRepository extends AbstractRepository {
     return rows.map(convertAccount);
   }
 
+  async getByTypes(workbookId: string, types: AccountType[]): Promise<Account[]> {
+    const { rows } = await this.qm().query<DbAccount>({
+      text: 'select * from accounts where workbook_id = $1 and type = ANY ($2::text[])',
+      values: [workbookId, types],
+    });
+    return rows.map(convertAccount);
+  }
+
   async create(workbookId: string, account: Partial<Account>): Promise<Account> {
     const { name, type, parent_id, is_group = false } = account;
     const { rows } = await this.qm().query<DbAccount>({

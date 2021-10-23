@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 import { Box, Button, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { AmountSpan, StyledTable } from '../../common';
 import { Selectors } from '../../store';
-import { Account, CashFlow, dateOrderCompare } from '../../types';
-import { getAssetAccountTypes, getDisplayName, getFlowAccountFilter } from '../Accounts/utils';
+import { Account, CashFlow, dateOrderCompare, getAssetAccountTypes } from '../../types';
+import { getDisplayName, getFlowAccountFilter } from '../Accounts/utils';
 
 interface CashFlowTableProps {
   account: Account;

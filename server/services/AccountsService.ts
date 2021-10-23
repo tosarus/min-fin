@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { Account, AccountType, userLevelAccounts, WorldUpdate } from '@shared/types';
+import { Account, AccountType, getPublicAccountTypes, WorldUpdate } from '@shared/types';
 import { AccountRepository, TransactionRepository } from '../repositories';
 import { BaseService } from './di';
 
@@ -18,7 +18,7 @@ export class AccountsService extends BaseService {
       throw 'Save account: should provide name and type';
     }
 
-    if (!userLevelAccounts().includes(account.type)) {
+    if (!getPublicAccountTypes().includes(account.type)) {
       throw 'Save account: type should be allowed';
     }
 

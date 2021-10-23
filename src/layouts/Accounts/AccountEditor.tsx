@@ -12,8 +12,8 @@ import {
   ToggleButtonGroup,
 } from '@mui/material';
 import { Actions, Selectors } from '../../store';
-import { Account, AccountType } from '../../types';
-import { accountTypeName, editableAccountTypes } from './utils';
+import { Account, AccountType, getPublicAccountTypes } from '../../types';
+import { accountTypeName } from './utils';
 
 interface AccountEditorProps {
   open: boolean;
@@ -77,7 +77,7 @@ export const AccountEditor = ({
           value={formik.values.type}
           onChange={handleTypeChange}
           id="account-type">
-          {editableAccountTypes().map((type, i) => (
+          {getPublicAccountTypes().map((type, i) => (
             <ToggleButton key={i} value={type}>
               {type}
             </ToggleButton>

@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 import { Box, Button, Typography } from '@mui/material';
 import { AmountSpan, Title } from '../../common';
 import { Selectors } from '../../store';
-import { Account, FlowDirection, TransactionType } from '../../types';
-import { getAssetAccountTypes, getFlowAccountFilter } from './utils';
+import { Account, FlowDirection, getAssetAccountTypes, TransactionType } from '../../types';
+import { getFlowAccountFilter } from './utils';
 
 interface AccountDetailsProps {
   account: Account;

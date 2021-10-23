@@ -3,12 +3,12 @@ import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch } from 'wouter';
 import { Box } from '@mui/material';
 import { Selectors } from '../../store';
+import { getAssetAccountTypes } from '../../types';
 import { Transactions } from '../Transactions';
 import { Links, Routes } from '../listViews';
 import { AccountBudget } from './AccountBudget';
 import { AccountList } from './AccountList';
 import { AccountPage } from './AccountPage';
-import { getAssetAccountTypes } from './utils';
 
 export const Accounts = () => {
   const accounts = useSelector(Selectors.currentAccounts);

@@ -1,5 +1,5 @@
 import currency from 'currency.js';
-import { Account, AccountType } from '../../types';
+import { Account, AccountType, getAssetAccountTypes } from '../../types';
 
 export function accountTypeName(type: AccountType, plural?: boolean): string {
   switch (type) {
@@ -36,19 +36,6 @@ export function getDisplayName(account?: Account) {
     default:
       return account.name;
   }
-}
-
-export function getAssetAccountTypes() {
-  return [AccountType.Banking, AccountType.Credit];
-}
-
-export function getBudgetAccountTypes() {
-  return [AccountType.Income, AccountType.Expence];
-}
-
-export function editableAccountTypes() {
-  // return [...userLevelAccounts(), AccountType.Opening, AccountType.Removed];
-  return [...getAssetAccountTypes(), ...getBudgetAccountTypes()];
 }
 
 export function sortAccounts(accounts: Account[], type?: AccountType): Account[] {

@@ -29,7 +29,7 @@ const convertCashFlow = ({ amount_cent, to_flow, balance_cent, ...cashFlow }: Db
 export class CashFlowRepository extends AbstractRepository {
   async getAll(workbookId: string) {
     const { rows } = await this.qm().query<DbCashFlow>({
-      text: 'select * from cash_flows_view where workbook_id = $1',
+      text: 'select * from cash_flows_balance where workbook_id = $1',
       values: [workbookId],
     });
     return rows.map(convertCashFlow);
@@ -37,7 +37,7 @@ export class CashFlowRepository extends AbstractRepository {
 
   async findAfterDate(workbook_id: string, accountIds: string[], date: string) {
     const { rows } = await this.qm().query<DbCashFlow>({
-      text: 'select * from cash_flows_view where workbook_id = $1 and account_id = ANY($2::uuid[]) and date >= $3',
+      text: 'select * from cash_flows_balance where workbook_id = $1 and account_id = ANY($2::uuid[]) and date >= $3',
       values: [workbook_id, accountIds, date],
     });
     return rows.map(convertCashFlow);
@@ -48,7 +48,11 @@ export class CashFlowRepository extends AbstractRepository {
     await this.qm().query({
       text: `
 insert into cash_flows(workbook_id, transaction_id, account_id, other_account_id, to_flow, amount_cent)
-values($1, $2, $3, $4, $5, $6)`,
+values($1, $2, $3, $4, $5, $6)
+on conflict (transaction_id, account_id) do update
+set other_account_id = excluded.other_account_id,
+    to_flow = excluded.to_flow,
+    amount_cent = excluded.amount_cent`,
       values: [
         workbook_id,
         transaction_id,

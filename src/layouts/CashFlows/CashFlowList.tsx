@@ -3,8 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button } from '@mui/material';
 import { Title } from '../../common';
 import { Actions, Selectors } from '../../store';
-import { Account, AccountType, CashFlow, TransactionType } from '../../types';
-import { getAssetAccountTypes } from '../Accounts/utils';
+import { Account, AccountType, CashFlow, getAssetAccountTypes, TransactionType } from '../../types';
 import { ContractEditor, fromCashFlow } from '../Contract';
 import { CashFlowTable } from './CashFlowTable';
 
