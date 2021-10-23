@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { buildCashFlows, updateAccounts } from '@shared/calcs';
-import { CashFlowId, Transaction, WorldUpdate } from '@shared/types';
+import { Account, CashFlowId, getAssetAccountTypes, Transaction, WorldUpdate } from '@shared/types';
 import { AccountRepository, CashFlowRepository, TransactionRepository } from '../repositories';
 import { BaseService, InTransaction } from './di';
 
@@ -24,66 +24,70 @@ export class TransactionsService extends BaseService {
       throw 'Save transaction: should have from and to accounts, and ammount';
     }
 
-    const accountRepo = this.resolve(AccountRepository);
-    const cashFlowRepo = this.resolve(CashFlowRepository);
     const transactionRepo = this.resolve(TransactionRepository);
 
-    const oldTrans = trans.id ? await transactionRepo.getById(workbookId, trans.id) : undefined;
-
-    const flowsToAdd = buildCashFlows(trans);
-    const flowsToRemove = buildCashFlows(oldTrans);
-
-    const accIds = flowsToAdd.concat(flowsToRemove).map((flow) => flow.account_id);
-    const accounts = await accountRepo.getByIds(workbookId, accIds);
-    updateAccounts(accounts, flowsToAdd, flowsToRemove);
-    for (const acc of accounts) {
-      await accountRepo.update(workbookId, acc);
-    }
-
-    const saved = trans.id
+    const oldTrans = trans.id ? [await transactionRepo.getById(workbookId, trans.id)] : [];
+    const newTrans = trans.id
       ? await transactionRepo.update(workbookId, trans)
       : await transactionRepo.create(workbookId, trans);
 
-    const removedFlows = [] as CashFlowId[];
-    for (const flow of flowsToRemove) {
-      await cashFlowRepo.remove(flow);
-      removedFlows.push([flow.transaction_id, flow.account_id]);
-    }
+    const update = await this.updateAccounts(workbookId, [newTrans], oldTrans);
 
-    for (const flow of flowsToAdd) {
-      flow.transaction_id = saved.id;
-      flow.workbook_id = workbookId;
-      await cashFlowRepo.save(flow);
-    }
-
-    const cashFlows = await cashFlowRepo.findAfterDate(workbookId, accIds, saved.date);
-    return { accounts, cashFlows, transactions: [saved], removedFlows };
+    return { ...update, transactions: [newTrans] };
   }
 
   @InTransaction()
   async processRemoval(workbookId: string, transId: string): Promise<WorldUpdate> {
-    const accountRepo = this.resolve(AccountRepository);
-    const cashFlowRepo = this.resolve(CashFlowRepository);
     const transactionRepo = this.resolve(TransactionRepository);
 
     const oldTrans = await transactionRepo.getById(workbookId, transId);
 
-    const removeFlows = buildCashFlows(oldTrans);
-
-    const accIds = removeFlows.map((flow) => flow.account_id);
-    const accounts = await accountRepo.getByIds(workbookId, accIds);
-    updateAccounts(accounts, [], removeFlows);
-    for (const acc of accounts) {
-      await accountRepo.update(workbookId, acc);
-    }
-
-    for (const flow of removeFlows) {
-      await cashFlowRepo.remove(flow);
-    }
+    const update = await this.updateAccounts(workbookId, [], [oldTrans]);
 
     await transactionRepo.remove(workbookId, transId);
 
-    const cashFlows = await cashFlowRepo.findAfterDate(workbookId, accIds, oldTrans.date);
-    return { accounts, cashFlows, removedTrans: [transId] };
+    return { ...update, removedTrans: [transId] };
+  }
+
+  private async updateAccounts(workbookId: string, newTrans: Transaction[], oldTrans: Transaction[]): Promise<WorldUpdate> {
+    const accountRepo = this.resolve(AccountRepository);
+    const cashFlowRepo = this.resolve(CashFlowRepository);
+
+    const assetAccounts = await accountRepo.getByTypes(workbookId, getAssetAccountTypes());
+    const accountIds = new Set<string>(assetAccounts.map((acc) => acc.id));
+
+    const flowsToAdd = buildCashFlows(newTrans).filter((flow) => accountIds.has(flow.account_id));
+    const flowsToRemove = buildCashFlows(oldTrans).filter((flow) => accountIds.has(flow.account_id));
+
+    const updatedIds = updateAccounts(assetAccounts, flowsToAdd, flowsToRemove);
+    const accounts = [] as Account[];
+    for (const acc of assetAccounts.filter((acc) => updatedIds.has(acc.id))) {
+      accounts.push(await accountRepo.update(workbookId, acc));
+    }
+
+    const updatedFlows = new Set<string>();
+    for (const flow of flowsToAdd) {
+      await cashFlowRepo.save(flow);
+      updatedFlows.add(flow.transaction_id + flow.account_id);
+    }
+
+    const removedFlows = [] as CashFlowId[];
+    for (const flow of flowsToRemove.filter((flow) => !updatedFlows.has(flow.transaction_id + flow.account_id))) {
+      await cashFlowRepo.remove(flow);
+      removedFlows.push([flow.transaction_id, flow.account_id]);
+    }
+
+    const getMinDate = (a: string, b: string) => {
+      const dateA = Date.parse(a);
+      const dateB = Date.parse(b);
+      return dateA < dateB ? a : b;
+    };
+    const minDate = oldTrans
+      .concat(newTrans)
+      .map((trans) => trans.date)
+      .reduce(getMinDate, new Date().toISOString());
+    const cashFlows = await cashFlowRepo.findAfterDate(workbookId, [...updatedIds], minDate);
+
+    return { accounts, cashFlows, removedFlows };
   }
 }

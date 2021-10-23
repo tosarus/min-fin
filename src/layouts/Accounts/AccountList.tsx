@@ -1,26 +1,14 @@
 import React, { useMemo, useState } from 'react';
-import styled from '@emotion/styled';
 import { Box, BoxProps, Button, Divider, Typography } from '@mui/material';
-import { AmountSpan, FlexLink, Title } from '../../common';
-import { Account, AccountType } from '../../types';
+import { AmountSpan, RoundedLink, Title } from '../../common';
+import { Account, AccountType, getAssetAccountTypes, getPublicAccountTypes } from '../../types';
 import { Links } from '../listViews';
 import { AccountEditor } from './AccountEditor';
-import { accountTypeName, editableAccountTypes, getAssetAccountTypes, getTotalForAccounts, sortAccounts } from './utils';
+import { accountTypeName, getTotalForAccounts, sortAccounts } from './utils';
 
 interface AccountListProps {
   accounts: Account[];
 }
-
-const RoundedLink = styled(FlexLink)({
-  flexFlow: 'row nowrap',
-  justifyContent: 'space-between',
-  paddingLeft: 8,
-  paddingRight: 8,
-  marginLeft: 8,
-  marginRight: 8,
-  marginBottom: 8,
-  borderRadius: 16,
-});
 
 export const AccountList = ({ sx, accounts }: AccountListProps & BoxProps) => {
   const [editorType, setEditorType] = useState<AccountType>();
@@ -43,7 +31,7 @@ export const AccountList = ({ sx, accounts }: AccountListProps & BoxProps) => {
         <span>Net Worth</span>
         <AmountSpan amount={total} />
       </RoundedLink>
-      {editableAccountTypes().map((type, i) => (
+      {getPublicAccountTypes().map((type, i) => (
         <React.Fragment key={i}>
           <Divider sx={{ mb: 1 }} />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>

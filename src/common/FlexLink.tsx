@@ -43,3 +43,14 @@ export const FlexLink = ({ children, noActive, route, ...props }: FlexLinkProps 
     </StyledLink>
   );
 };
+
+export const RoundedLink = styled(FlexLink)({
+  flexFlow: 'row nowrap',
+  justifyContent: 'space-between',
+  paddingLeft: 8,
+  paddingRight: 8,
+  marginLeft: 8,
+  marginRight: 8,
+  marginBottom: 8,
+  borderRadius: 16,
+});

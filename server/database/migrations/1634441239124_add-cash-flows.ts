@@ -16,9 +16,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
   pgm.createIndex('cash_flows', ['workbook_id', 'transaction_id', 'account_id']);
 
   pgm.createView(
-    'cash_flows_view',
+    'cash_flows_balance',
     {},
-    `SELECT
+    `
+SELECT
   cf.workbook_id,
   cf.transaction_id,
   cf.account_id,
@@ -29,14 +30,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
   tr.type,
   tr.description,
   tr.detail,
-  tr.order
-FROM cash_flows cf JOIN transactions tr
-ON cf.transaction_id = tr.id AND (cf.account_id = tr.account_from_id OR cf.account_id = tr.account_to_id)`
+  tr.order,
+  SUM(cf.amount_cent) OVER (PARTITION BY cf.account_id ORDER BY tr.date, tr.order) AS balance_cent
+FROM cash_flows cf JOIN transactions tr ON cf.transaction_id = tr.id`
   );
 }
 
 export async function down(pgm: MigrationBuilder): Promise<void> {
-  pgm.dropView('cash_flows_view');
+  pgm.dropView('cash_flows_balance');
 
   pgm.dropIndex('cash_flows', ['workbook_id']);
   pgm.dropIndex('cash_flows', ['workbook_id', 'transaction_id', 'account_id']);

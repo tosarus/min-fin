@@ -21,10 +21,6 @@ export enum AccountType {
   Removed = 'removed',
 }
 
-export function userLevelAccounts() {
-  return [AccountType.Banking, AccountType.Credit, AccountType.Income, AccountType.Expence];
-}
-
 export interface Account {
   id: string;
   workbook_id: string;
