@@ -6,6 +6,10 @@ export class TransactionClient extends PrivateClient {
     return this.getJson(`/api/transactions/${workbookId}`);
   }
 
+  updateCashFlows(workbookId: string): Promise<WorldUpdate> {
+    return this.getJson(`/api/transactions/${workbookId}/cashflows`);
+  }
+
   save(workbookId: string, trans: Partial<Transaction>): Promise<WorldUpdate> {
     return this.postJson(`/api/transactions/${workbookId}`, trans);
   }

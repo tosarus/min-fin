@@ -113,7 +113,7 @@ export const ContractEditor = ({ open: initOpen, contract, onClose }: ContractEd
           {...formik.getFieldProps('amount')}
           onBlur={handleAmoutBlur}
         />
-        <TextField id="contract-details" fullWidth multiline rows={2} label="Details" {...formik.getFieldProps('details')} />
+        <TextField id="contract-detail" fullWidth multiline rows={2} label="Details" {...formik.getFieldProps('detail')} />
       </DialogContent>
       <DialogActions>
         <Button onClick={() => formik.handleSubmit()}>Save</Button>

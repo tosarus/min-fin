@@ -19,6 +19,11 @@ export class TransactionsController {
     return this.service_.processSave(workbookId, trans);
   }
 
+  @Get('/cashflows')
+  getCashFlows(@Param('workbookId') workbookId: string) {
+    return this.service_.generateCashFlows(workbookId);
+  }
+
   @Delete('/:id')
   deleteAccount(@Param('workbookId') workbookId: string, @Param('id') transactionId: string) {
     return this.service_.processRemoval(workbookId, transactionId);

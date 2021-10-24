@@ -41,6 +41,9 @@ const { name, reducer: transactionsReducer } = createSlice({
 const { saga, actions } = createSliceSaga({
   name,
   caseSagas: {
+    *updateCashFlows({ payload: id }: PayloadAction<string>) {
+      yield callPrivate(applyWorldUpdate, 'Updating cash flows', (auth) => new TransactionClient(auth).updateCashFlows(id));
+    },
     *saveTransaction({
       payload: { workbookId, trans },
     }: PayloadAction<{ workbookId: string; trans: Partial<Transaction> }>) {

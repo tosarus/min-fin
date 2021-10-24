@@ -11,9 +11,10 @@ interface CashFlowTableProps {
   account: Account;
   onRemove: (id: string) => void;
   onEdit: (tr: CashFlow) => void;
+  showDetails?: boolean;
 }
 
-export const CashFlowTable = ({ account, onRemove, onEdit }: CashFlowTableProps) => {
+export const CashFlowTable = ({ account, onRemove, onEdit, showDetails = false }: CashFlowTableProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
   const isAsset = getAssetAccountTypes().includes(account.type);
@@ -22,37 +23,44 @@ export const CashFlowTable = ({ account, onRemove, onEdit }: CashFlowTableProps)
     <StyledTable>
       <TableHead>
         <TableRow>
-          <TableCell>Date</TableCell>
-          <TableCell>{isAsset ? 'Category' : 'Account'}</TableCell>
+          <TableCell sx={{ width: 140 }}>Date</TableCell>
           <TableCell>Description</TableCell>
-          <TableCell>Amount</TableCell>
-          <TableCell>Balance</TableCell>
-          <TableCell></TableCell>
+          <TableCell>{isAsset ? 'Category' : 'Account'}</TableCell>
+          <TableCell sx={{ textAlign: 'right' }}>Amount</TableCell>
+          <TableCell sx={{ textAlign: 'right' }}>Balance</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {sortCashFlows(cashFlows, account.id, isAsset).map((flow) => (
-          <TableRow key={flow.transaction_id}>
-            <TableCell>{dateFormat(flow.date, 'isoDate')}</TableCell>
-            <TableCell>{buildCategory(flow, accountMap, isAsset)}</TableCell>
-            <TableCell>{flow.description}</TableCell>
-            <TableCell>
-              <AmountSpan amount={flow.amount} />
-            </TableCell>
-            <TableCell>
-              <AmountSpan amount={flow.balance} />
-            </TableCell>
-            <TableCell>
-              <Box sx={{ display: 'flex', flexFlow: 'column' }}>
-                <Button sx={{ m: 0, p: 0 }} size="small" onClick={() => onRemove(flow.transaction_id)}>
-                  remove
-                </Button>
-                <Button sx={{ m: 0, p: 0 }} size="small" onClick={() => onEdit(flow)}>
-                  edit
-                </Button>
-              </Box>
-            </TableCell>
-          </TableRow>
+          <React.Fragment key={flow.transaction_id}>
+            <TableRow>
+              <TableCell>{dateFormat(flow.date, 'isoDate')}</TableCell>
+              <TableCell>{flow.description}</TableCell>
+              <TableCell>{buildCategory(flow, accountMap, isAsset)}</TableCell>
+              <TableCell sx={{ textAlign: 'right' }}>
+                <AmountSpan amount={flow.amount} />
+              </TableCell>
+              <TableCell sx={{ textAlign: 'right' }}>
+                <AmountSpan amount={flow.balance} />
+              </TableCell>
+            </TableRow>
+            {showDetails && (
+              <TableRow>
+                <TableCell />
+                <TableCell colSpan={4}>
+                  <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'flex-start' }}>
+                    <Box sx={{ color: 'GrayText' }}>{flow.detail || '<details>'}</Box>
+                    <Button sx={{ m: 0, p: 0, ml: 'auto' }} size="small" onClick={() => onEdit(flow)}>
+                      edit
+                    </Button>
+                    <Button sx={{ m: 0, p: 0 }} size="small" onClick={() => onRemove(flow.transaction_id)}>
+                      remove
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            )}
+          </React.Fragment>
         ))}
       </TableBody>
     </StyledTable>
