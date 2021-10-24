@@ -3,11 +3,12 @@ import { useSelector } from 'react-redux';
 import { Box, Typography, TypographyProps } from '@mui/material';
 import { Title, useDispatchedRender } from '../../common';
 import { Actions, Selectors } from '../../store';
+import { TransactionManager } from './TransactionManager';
 import { UserListTable } from './UserListTable';
 import { WorkbookListTable } from './WorkbookListTable';
 
 const Separator = () => {
-  return <Box component="hr" m={3} />;
+  return <Box component="hr" sx={{ my: 3 }} />;
 };
 
 const SectionTitle = (props: TypographyProps) => {
@@ -22,24 +23,25 @@ export const Settings = () => {
   const fullContent = profile?.allowed ?? false;
 
   return (
-    <Box display="flex" px={0} py={2} justifyContent="space-around">
-      <Box component="section" flex="1 0 auto">
-        <Title>Settings{isAdmin && ' [admin]'}</Title>
-        <Separator />
-        <SectionTitle>{isAdmin ? 'Users' : 'Your info'}</SectionTitle>
-        {renderUserList((userList) => (
-          <UserListTable userList={userList} />
-        ))}
-        <Separator />
-        {fullContent && (
-          <>
-            <SectionTitle>Workbooks</SectionTitle>
-            {renderWorkbooks((workbooks) => (
-              <WorkbookListTable workbooks={workbooks} />
-            ))}
-          </>
-        )}
-      </Box>
+    <Box component="section" sx={{ maxWidth: 'md', width: '100%', pb: 2, px: 3, mx: 'auto', overflowY: 'auto' }}>
+      <Title>Settings{isAdmin && ' [admin]'}</Title>
+      <Separator />
+      <SectionTitle>{isAdmin ? 'Users' : 'Your info'}</SectionTitle>
+      {renderUserList((userList) => (
+        <UserListTable userList={userList} />
+      ))}
+      <Separator />
+      {fullContent && (
+        <>
+          <SectionTitle>Workbooks</SectionTitle>
+          {renderWorkbooks((workbooks) => (
+            <WorkbookListTable workbooks={workbooks} />
+          ))}
+          <Separator />
+          <SectionTitle>Transactions</SectionTitle>
+          <TransactionManager />
+        </>
+      )}
     </Box>
   );
 };

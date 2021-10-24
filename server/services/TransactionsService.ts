@@ -49,6 +49,12 @@ export class TransactionsService extends BaseService {
     return { ...update, removedTrans: [transId] };
   }
 
+  async generateCashFlows(workbookId: string): Promise<WorldUpdate> {
+    const transactionRepo = this.resolve(TransactionRepository);
+    const transList = await transactionRepo.getAll(workbookId);
+    return await this.updateAccounts(workbookId, transList, transList);
+  }
+
   private async updateAccounts(workbookId: string, newTrans: Transaction[], oldTrans: Transaction[]): Promise<WorldUpdate> {
     const accountRepo = this.resolve(AccountRepository);
     const cashFlowRepo = this.resolve(CashFlowRepository);

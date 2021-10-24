@@ -11,9 +11,10 @@ import { getDisplayName } from '../Accounts/utils';
 interface TransactionsTableProps {
   onRemove: (id: string) => void;
   onEdit: (tr: Partial<Transaction>) => void;
+  showDetails?: boolean;
 }
 
-export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) => {
+export const TransactionsTable = ({ onRemove, onEdit, showDetails = false }: TransactionsTableProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const transactions = useSelector(Selectors.currentTransactions) ?? [];
 
@@ -21,35 +22,42 @@ export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) 
     <StyledTable>
       <TableHead>
         <TableRow>
-          <TableCell>Date</TableCell>
+          <TableCell sx={{ width: 140 }}>Date</TableCell>
+          <TableCell>Description</TableCell>
           <TableCell>From</TableCell>
           <TableCell>To</TableCell>
-          <TableCell>Description</TableCell>
-          <TableCell>Amount</TableCell>
-          <TableCell></TableCell>
+          <TableCell sx={{ textAlign: 'right' }}>Amount</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {sortTransactions(transactions).map((tr) => (
-          <TableRow key={tr.id}>
-            <TableCell>{dateFormat(tr.date, 'isoDate')}</TableCell>
-            <TableCell>{buildName(tr.account_from, accountMap)}</TableCell>
-            <TableCell>{buildName(tr.account_to, accountMap)}</TableCell>
-            <TableCell>{tr.description}</TableCell>
-            <TableCell>
-              <AmountSpan amount={buildAmount(tr)} />
-            </TableCell>
-            <TableCell>
-              <Box sx={{ display: 'flex', flexFlow: 'column' }}>
-                <Button sx={{ m: 0, p: 0 }} size="small" onClick={() => onRemove(tr.id)}>
-                  remove
-                </Button>
-                <Button sx={{ m: 0, p: 0 }} size="small" onClick={() => onEdit(tr)}>
-                  edit
-                </Button>
-              </Box>
-            </TableCell>
-          </TableRow>
+          <React.Fragment key={tr.id}>
+            <TableRow>
+              <TableCell>{dateFormat(tr.date, 'mediumDate')}</TableCell>
+              <TableCell>{tr.description}</TableCell>
+              <TableCell>{buildName(tr.account_from, accountMap)}</TableCell>
+              <TableCell>{buildName(tr.account_to, accountMap)}</TableCell>
+              <TableCell sx={{ textAlign: 'right' }}>
+                <AmountSpan amount={buildAmount(tr)} />
+              </TableCell>
+            </TableRow>
+            {showDetails && (
+              <TableRow>
+                <TableCell />
+                <TableCell colSpan={4}>
+                  <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'flex-start' }}>
+                    <Box sx={{ color: 'GrayText' }}>{tr.detail || '<details>'}</Box>
+                    <Button sx={{ m: 0, p: 0, ml: 'auto' }} size="small" onClick={() => onEdit(tr)}>
+                      edit
+                    </Button>
+                    <Button sx={{ m: 0, p: 0 }} size="small" onClick={() => onRemove(tr.id)}>
+                      remove
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            )}
+          </React.Fragment>
         ))}
       </TableBody>
     </StyledTable>
