@@ -58,6 +58,11 @@ export class ActionMetadata {
   fullRoute?: string | RegExp;
 
   /**
+   * Indicates if this action uses Uploaded File.
+   */
+  isFileUsed: boolean;
+
+  /**
    * Indicates if controller of this action is json-typed.
    */
   isJsonTyped?: boolean;
@@ -96,6 +101,7 @@ export class ActionMetadata {
     this.target = args.target;
     this.method = args.method;
     this.type = args.type;
+    this.isFileUsed = false;
   }
 
   // -------------------------------------------------------------------------
@@ -137,6 +143,7 @@ export class ActionMetadata {
     this.undefinedResultCode = undefinedResultHandler?.value ?? this.globalOptions.defaults?.undefinedResultCode;
     this.nullResultCode = nullResultHandler?.value ?? this.globalOptions.defaults?.nullResultCode;
     this.successHttpCode = successCodeHandler?.value;
+    this.isFileUsed = !!this.params.find((param) => param.type === 'file');
     this.isJsonTyped =
       contentTypeHandler !== undefined ? /json/.test(contentTypeHandler.value) : this.controllerMetadata.type === 'json';
     this.fullRoute = this.buildFullRoute();

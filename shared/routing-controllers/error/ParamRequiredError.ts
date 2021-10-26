@@ -21,6 +21,9 @@ export class ParamRequiredError extends BadRequestError {
       case 'body':
         paramName = 'Request body is';
         break;
+
+      case 'file':
+        paramName = `Uploaded file "${param.name}" is`;
         break;
 
       case 'header':
