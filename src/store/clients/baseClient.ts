@@ -13,9 +13,9 @@ export abstract class BaseClient {
     await this.sendRequest(url, undefined, 'delete');
   }
 
-  protected async postForm(url: string, body: FormData): Promise<string> {
+  protected async postForm<TRet>(url: string, body: FormData): Promise<TRet> {
     const response = await this.sendRequest(url, body);
-    return await response.text();
+    return (await response.json()) as TRet;
   }
 
   protected async postJson<T, TRet = T>(url: string, body: Partial<T>): Promise<TRet> {

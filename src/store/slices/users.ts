@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { UserInfo, WorldUpdate } from '../../types';
 import { UsersClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
-import { applyWorldUpdate } from './transactions';
+import { applyWorldUpdate } from './actions';
 
 const {
   name,

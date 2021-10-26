@@ -1,15 +1,14 @@
 import { createSliceSaga, SagaType } from 'redux-toolkit-saga/lib/createSliceSaga';
-import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CashFlow, Transaction, WorldUpdate } from '../../types';
 import { TransactionClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
+import { applyWorldUpdate } from './actions';
 
 const initialState = {
   cashFlows: null as CashFlow[] | null,
   transactions: null as Transaction[] | null,
 };
-
-const applyWorldUpdate = createAction<WorldUpdate>('applyWorldUpdate');
 
 const { name, reducer: transactionsReducer } = createSlice({
   name: 'transactions',
@@ -54,6 +53,11 @@ const { saga, actions } = createSliceSaga({
     *removeTransaction({ payload: { workbookId, id } }: PayloadAction<{ workbookId: string; id: string }>) {
       yield callPrivate(applyWorldUpdate, 'Removing transaction', (auth) =>
         new TransactionClient(auth).remove(workbookId, id)
+      );
+    },
+    *importTransactions({ payload: { workbookId, file } }: PayloadAction<{ workbookId: string; file: File }>) {
+      yield callPrivate(applyWorldUpdate, 'Importing transactions', (auth) =>
+        new TransactionClient(auth).import(workbookId, file)
       );
     },
   },
@@ -109,8 +113,6 @@ function selectors<Store extends typeof initialState>() {
     transactions: (store: Store) => store.transactions,
   };
 }
-
-export { applyWorldUpdate };
 
 export default {
   actions,

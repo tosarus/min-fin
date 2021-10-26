@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import { Title } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { Account, AccountType, CashFlow, getAssetAccountTypes, TransactionType } from '../../types';
@@ -15,7 +15,6 @@ export const CashFlowList = ({ account }: CashFlowListProps) => {
   const workbook = useSelector(Selectors.activeWorkbook);
   const dispatch = useDispatch();
   const [editable, setEditable] = useState<Partial<CashFlow>>();
-  const [showDetails, setShowDetails] = useState(false);
   const isAsset = getAssetAccountTypes().includes(account.type);
 
   const handleRemove = (id: string) => {
@@ -42,25 +41,14 @@ export const CashFlowList = ({ account }: CashFlowListProps) => {
     setEditable(undefined);
   };
 
-  const toggleShowDetails = () => setShowDetails(!showDetails);
-
   return (
     <>
       <Title sx={{ display: 'flex', alignItems: 'baseline' }}>
         <span>Transactions</span>
         <Button onClick={handleAdd}>Add</Button>
-        <Button
-          size="small"
-          sx={{ ml: 'auto', mr: 2 }}
-          variant={showDetails ? 'contained' : 'outlined'}
-          onClick={toggleShowDetails}>
-          Details
-        </Button>
       </Title>
       {editable && <ContractEditor open contract={fromCashFlow(editable)} onClose={handleClose} />}
-      <Box sx={{ overflowY: 'auto' }}>
-        <CashFlowTable account={account} onRemove={handleRemove} onEdit={handleEdit} showDetails={showDetails} />
-      </Box>
+      <CashFlowTable account={account} onRemove={handleRemove} onEdit={handleEdit} />
     </>
   );
 };

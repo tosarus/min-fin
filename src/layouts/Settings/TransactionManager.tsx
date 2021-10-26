@@ -13,11 +13,29 @@ export const TransactionManager = () => {
     }
   };
 
+  const handleImport = (files: FileList | null) => {
+    if (workbook && files?.length) {
+      dispatch(Actions.importTransactions({ workbookId: workbook.id, file: files[0] }));
+    }
+  };
+
   return (
     <Box sx={{ display: 'flex', flexFlow: 'column', alignItems: 'flex-start', px: 2 }}>
       <Typography>Active Workbook: {workbook?.name ?? 'none'}</Typography>
-      <Button sx={{ px: 0 }} onClick={handleUpdateCashFlows}>
+      <Button sx={{ px: 0, mb: 2 }} onClick={handleUpdateCashFlows}>
         Update Cash Flows
+      </Button>
+      <Button sx={{ px: 0, mb: 2 }} component="label">
+        Import Transactions
+        <input
+          onChange={(e) => {
+            e.preventDefault();
+            handleImport(e.target.files);
+            e.target.value = '';
+          }}
+          type="file"
+          hidden
+        />
       </Button>
     </Box>
   );

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import dateFormat from 'dateformat';
 import { useSelector } from 'react-redux';
-import { Box, Button, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Box, Button, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { AmountSpan, StyledTable } from '../../common';
 import { Selectors } from '../../store';
 import { Account, CashFlow, dateOrderCompare, getAssetAccountTypes } from '../../types';
@@ -11,30 +11,53 @@ interface CashFlowTableProps {
   account: Account;
   onRemove: (id: string) => void;
   onEdit: (tr: CashFlow) => void;
-  showDetails?: boolean;
 }
 
-export const CashFlowTable = ({ account, onRemove, onEdit, showDetails = false }: CashFlowTableProps) => {
+export const CashFlowTable = ({ account, onRemove, onEdit }: CashFlowTableProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
+  const sortedCashFlows = useMemo(() => sortCashFlows(cashFlows, account), [account, cashFlows]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const isAsset = getAssetAccountTypes().includes(account.type);
 
+  const onPageChange = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const onRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
-    <StyledTable>
+    <StyledTable
+      pagination={{
+        rowsPerPageOptions: [25, 50, 100],
+        count: sortedCashFlows.length,
+        rowsPerPage,
+        page,
+        onPageChange,
+        onRowsPerPageChange,
+      }}>
       <TableHead>
         <TableRow>
-          <TableCell sx={{ width: 140 }}>Date</TableCell>
+          <TableCell sx={{ minWidth: 100 }}>Date</TableCell>
           <TableCell>Description</TableCell>
           <TableCell>{isAsset ? 'Category' : 'Account'}</TableCell>
-          <TableCell sx={{ textAlign: 'right' }}>Amount</TableCell>
-          <TableCell sx={{ textAlign: 'right' }}>Balance</TableCell>
+          <TableCell sx={{ maxWidth: 120, textAlign: 'right' }}>Amount</TableCell>
+          <TableCell sx={{ maxWidth: 120, textAlign: 'right' }}>Balance</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {sortCashFlows(cashFlows, account.id, isAsset).map((flow) => (
+        {sortedCashFlows.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((flow) => (
           <React.Fragment key={flow.transaction_id}>
-            <TableRow>
-              <TableCell>{dateFormat(flow.date, 'isoDate')}</TableCell>
+            <TableRow
+              sx={{
+                '& td:not(:first-child)': { borderBottom: 'none', pb: 0 },
+                '&:hover + tr button': { display: 'block' },
+              }}>
+              <TableCell rowSpan={2}>{dateFormat(flow.date, 'mmm d')}</TableCell>
               <TableCell>{flow.description}</TableCell>
               <TableCell>{buildCategory(flow, accountMap, isAsset)}</TableCell>
               <TableCell sx={{ textAlign: 'right' }}>
@@ -44,22 +67,23 @@ export const CashFlowTable = ({ account, onRemove, onEdit, showDetails = false }
                 <AmountSpan amount={flow.balance} />
               </TableCell>
             </TableRow>
-            {showDetails && (
-              <TableRow>
-                <TableCell />
-                <TableCell colSpan={4}>
-                  <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'flex-start' }}>
-                    <Box sx={{ color: 'GrayText' }}>{flow.detail || '<details>'}</Box>
-                    <Button sx={{ m: 0, p: 0, ml: 'auto' }} size="small" onClick={() => onEdit(flow)}>
-                      edit
-                    </Button>
-                    <Button sx={{ m: 0, p: 0 }} size="small" onClick={() => onRemove(flow.transaction_id)}>
-                      remove
-                    </Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            )}
+            <TableRow sx={{ '& td': { pt: 0 }, '&:hover button': { display: 'block' } }}>
+              <TableCell colSpan={2}>
+                <Typography variant="body2" color="text.secondary">
+                  {flow.detail}
+                </Typography>
+              </TableCell>
+              <TableCell colSpan={2} sx={{ pb: 0 }}>
+                <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'flex-start' }}>
+                  <Button sx={{ display: 'none', m: 0, p: 0, ml: 'auto' }} size="small" onClick={() => onEdit(flow)}>
+                    edit
+                  </Button>
+                  <Button sx={{ display: 'none', m: 0, p: 0 }} size="small" onClick={() => onRemove(flow.transaction_id)}>
+                    remove
+                  </Button>
+                </Box>
+              </TableCell>
+            </TableRow>
           </React.Fragment>
         ))}
       </TableBody>
@@ -67,8 +91,8 @@ export const CashFlowTable = ({ account, onRemove, onEdit, showDetails = false }
   );
 };
 
-function sortCashFlows(cashFlows: CashFlow[], id: string, isAsset: boolean) {
-  return cashFlows.filter(getFlowAccountFilter(id, isAsset)).sort(dateOrderCompare);
+function sortCashFlows(cashFlows: CashFlow[], account: Account) {
+  return cashFlows.filter(getFlowAccountFilter(account)).sort(dateOrderCompare);
 }
 
 function buildCategory(flow: CashFlow, accMap: Map<string, Account>, isAsset: boolean) {

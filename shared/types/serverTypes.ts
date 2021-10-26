@@ -26,7 +26,7 @@ export interface Account {
   workbook_id: string;
   name: string;
   type: AccountType;
-  parent_id: string;
+  parent_id?: string;
   is_group: boolean;
   balance: string;
 }
@@ -44,7 +44,7 @@ export interface Transaction {
   date: string;
   type: TransactionType;
   description: string;
-  detail: string;
+  detail?: string;
   order: number;
   amount: string;
   account_from: string;

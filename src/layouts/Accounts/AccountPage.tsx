@@ -35,7 +35,7 @@ export const AccountPage = ({ account }: AccountPageProps) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexFlow: 'column' }}>
+    <Box sx={{ display: 'flex', flexFlow: 'column', overflowY: 'auto' }}>
       {editable && <AccountEditor open account={editable} onClose={handleClose} />}
       {account && <AccountDetails account={account} onEdit={handleEdit} onRemove={handleRemove} />}
       {account && <CashFlowList account={account} />}

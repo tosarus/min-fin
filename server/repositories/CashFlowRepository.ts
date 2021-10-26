@@ -46,6 +46,7 @@ export class CashFlowRepository extends AbstractRepository {
   async save(flow: FlatCashFlow) {
     const { workbook_id, transaction_id, account_id, other_account_id, direction, amount } = flow;
     await this.qm().query({
+      name: 'cash_flows-save',
       text: `
 insert into cash_flows(workbook_id, transaction_id, account_id, other_account_id, to_flow, amount_cent)
 values($1, $2, $3, $4, $5, $6)
@@ -69,6 +70,13 @@ set other_account_id = excluded.other_account_id,
     await this.qm().query({
       text: 'delete from cash_flows where workbook_id = $1 and transaction_id = $2 and account_id = $3',
       values: [workbook_id, transaction_id, account_id],
+    });
+  }
+
+  async removeByWorkbook(workbookId: string) {
+    await this.qm().query({
+      text: 'delete from cash_flows where workbook_id = $1',
+      values: [workbookId],
     });
   }
 }

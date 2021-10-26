@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Account, WorldUpdate } from '../../types';
 import { AccountsClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
-import { applyWorldUpdate } from './transactions';
+import { applyWorldUpdate } from './actions';
 
 const initialState = null as Account[] | null;
 
