@@ -1,4 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response, ErrorRequestHandler, Router } from 'express';
+import multer from 'multer';
 import { Action } from './Action';
 import { ActionParameterHandler } from './ActionParameterHandler';
 import { ErrorMiddleware } from './ErrorMiddleware';
@@ -58,17 +59,33 @@ export class ExpressDriver {
       controller.actions.forEach((actionMetadata) => {
         const middlewares = this.prepareMiddlewares([...controller.middlewares, ...actionMetadata.middlewares]);
 
+        const actionMiddlewares = this.prepareActionMiddlewares(actionMetadata);
+
         const routeHandler = (request: Request, response: Response, next: NextFunction) => {
           return this.executeAction(actionMetadata, { request, response, next });
         };
 
-        router[actionMetadata.type](actionMetadata.fullRoute!, ...middlewares, routeHandler);
+        router[actionMetadata.type](actionMetadata.fullRoute!, ...middlewares, ...actionMiddlewares, routeHandler);
       });
 
       rootRouter.use(router);
     });
 
     return rootRouter;
+  }
+
+  private prepareActionMiddlewares(actionMetadata: ActionMetadata) {
+    const middlewares = [] as RequestHandler[];
+
+    if (actionMetadata.isFileUsed) {
+      actionMetadata.params
+        .filter((param) => param.type === 'file')
+        .forEach((param) => {
+          middlewares.push(multer({ storage: multer.memoryStorage() }).single(param.name));
+        });
+    }
+
+    return middlewares;
   }
 
   /**
@@ -124,6 +141,9 @@ export class ExpressDriver {
 
       case 'header':
         return request.headers[param.name.toLowerCase()];
+
+      case 'file':
+        return request.file;
     }
   }
 
@@ -286,7 +306,7 @@ export class ExpressDriver {
    * Creates middlewares from the given "use"-s.
    */
   private prepareMiddlewares(middlwares: MiddlewareMetadata[]) {
-    const middlewareFunctions: (RequestHandler | ErrorRequestHandler)[] = [];
+    const middlewareFunctions = [] as (RequestHandler | ErrorRequestHandler)[];
     middlwares.forEach((metadata: MiddlewareMetadata) => {
       if (metadata.middleware.prototype && metadata.middleware.prototype.use) {
         // if this is function instance of MiddlewareInterface

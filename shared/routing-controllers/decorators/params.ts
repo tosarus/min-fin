@@ -33,3 +33,7 @@ export function Req() {
 export function Res() {
   return paramFactory('response');
 }
+
+export function UploadedFile(name: string, options?: { required?: boolean }) {
+  return paramFactory('file', name, options?.required);
+}
