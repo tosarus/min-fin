@@ -17,7 +17,7 @@ export const AccountDetails = ({ account, onEdit, onRemove }: AccountDetailsProp
   const isAsset = getAssetAccountTypes().includes(account.type);
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
   const total = useMemo(() => {
-    const flows = cashFlows.filter(getFlowAccountFilter(account.id, isAsset));
+    const flows = cashFlows.filter(getFlowAccountFilter(account));
     return {
       inflow: flows
         .filter(

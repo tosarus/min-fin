@@ -17,4 +17,10 @@ export class TransactionClient extends PrivateClient {
   remove(workbookId: string, id: string): Promise<WorldUpdate> {
     return this.delete(`/api/transactions/${workbookId}/${id}`);
   }
+
+  import(workbookId: string, file: File): Promise<WorldUpdate> {
+    const formData = new FormData();
+    formData.append('trans', file, file.name);
+    return this.postForm(`/api/transactions/${workbookId}/import`, formData);
+  }
 }

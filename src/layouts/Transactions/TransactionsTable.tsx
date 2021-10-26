@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import currency from 'currency.js';
 import dateFormat from 'dateformat';
 import { useSelector } from 'react-redux';
-import { Box, Button, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Box, Button, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { AmountSpan, StyledTable } from '../../common';
 import { Selectors } from '../../store';
 import { Account, Transaction, dateOrderCompare, TransactionType } from '../../types';
@@ -11,29 +11,52 @@ import { getDisplayName } from '../Accounts/utils';
 interface TransactionsTableProps {
   onRemove: (id: string) => void;
   onEdit: (tr: Partial<Transaction>) => void;
-  showDetails?: boolean;
 }
 
-export const TransactionsTable = ({ onRemove, onEdit, showDetails = false }: TransactionsTableProps) => {
+export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const transactions = useSelector(Selectors.currentTransactions) ?? [];
+  const sortedTransactions = useMemo(() => sortTransactions(transactions), [transactions]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(25);
+
+  const onPageChange = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const onRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   return (
-    <StyledTable>
+    <StyledTable
+      pagination={{
+        rowsPerPageOptions: [25, 50, 100],
+        count: sortedTransactions.length,
+        rowsPerPage,
+        page,
+        onPageChange,
+        onRowsPerPageChange,
+      }}>
       <TableHead>
         <TableRow>
-          <TableCell sx={{ width: 140 }}>Date</TableCell>
+          <TableCell sx={{ minWidth: 100 }}>Date</TableCell>
           <TableCell>Description</TableCell>
           <TableCell>From</TableCell>
           <TableCell>To</TableCell>
-          <TableCell sx={{ textAlign: 'right' }}>Amount</TableCell>
+          <TableCell sx={{ maxWidth: 120, textAlign: 'right' }}>Amount</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {sortTransactions(transactions).map((tr) => (
+        {sortedTransactions.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((tr) => (
           <React.Fragment key={tr.id}>
-            <TableRow>
-              <TableCell>{dateFormat(tr.date, 'mediumDate')}</TableCell>
+            <TableRow
+              sx={{
+                '& td:not(:first-child)': { borderBottom: 'none', pb: 0 },
+                '&:hover + tr button': { display: 'block' },
+              }}>
+              <TableCell rowSpan={2}>{dateFormat(tr.date, 'mmm d')}</TableCell>
               <TableCell>{tr.description}</TableCell>
               <TableCell>{buildName(tr.account_from, accountMap)}</TableCell>
               <TableCell>{buildName(tr.account_to, accountMap)}</TableCell>
@@ -41,22 +64,23 @@ export const TransactionsTable = ({ onRemove, onEdit, showDetails = false }: Tra
                 <AmountSpan amount={buildAmount(tr)} />
               </TableCell>
             </TableRow>
-            {showDetails && (
-              <TableRow>
-                <TableCell />
-                <TableCell colSpan={4}>
-                  <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'flex-start' }}>
-                    <Box sx={{ color: 'GrayText' }}>{tr.detail || '<details>'}</Box>
-                    <Button sx={{ m: 0, p: 0, ml: 'auto' }} size="small" onClick={() => onEdit(tr)}>
-                      edit
-                    </Button>
-                    <Button sx={{ m: 0, p: 0 }} size="small" onClick={() => onRemove(tr.id)}>
-                      remove
-                    </Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            )}
+            <TableRow sx={{ '& td': { pt: 0 }, '&:hover button': { display: 'block' } }}>
+              <TableCell colSpan={2}>
+                <Typography variant="body2" color="text.secondary">
+                  {tr.detail}
+                </Typography>
+              </TableCell>
+              <TableCell colSpan={2} sx={{ pb: 0 }}>
+                <Box sx={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'flex-start' }}>
+                  <Button sx={{ display: 'none', m: 0, p: 0, ml: 'auto' }} size="small" onClick={() => onEdit(tr)}>
+                    edit
+                  </Button>
+                  <Button sx={{ display: 'none', m: 0, p: 0 }} size="small" onClick={() => onRemove(tr.id)}>
+                    remove
+                  </Button>
+                </Box>
+              </TableCell>
+            </TableRow>
           </React.Fragment>
         ))}
       </TableBody>
@@ -65,7 +89,7 @@ export const TransactionsTable = ({ onRemove, onEdit, showDetails = false }: Tra
 };
 
 function sortTransactions(transactions: Transaction[]) {
-  return transactions.sort(dateOrderCompare);
+  return [...transactions].sort(dateOrderCompare);
 }
 
 function buildAmount(tr: Transaction) {

@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Workbook, WorldUpdate } from '../../types';
 import { WorkbooksClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
-import { applyWorldUpdate } from './transactions';
+import { applyWorldUpdate } from './actions';
 
 const initialState = null as Workbook[] | null;
 

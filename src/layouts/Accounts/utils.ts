@@ -69,7 +69,7 @@ export function getTotalForAccounts(accounts: Account[], ...types: AccountType[]
     .format();
 }
 
-export function getFlowAccountFilter(accId: string, isAsset: boolean) {
+export function getFlowAccountFilter(account: Account) {
   return (flow: { account_id: string; other_account_id: string }) =>
-    (isAsset ? flow.account_id : flow.other_account_id) === accId;
+    (getAssetAccountTypes().includes(account.type) ? flow.account_id : flow.other_account_id) === account.id;
 }

@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { buildCashFlows, updateAccounts } from '@shared/calcs';
+import { buildCashFlows, getMinDate, updateAccounts } from '@shared/calcs';
 import { Account, CashFlowId, getAssetAccountTypes, Transaction, WorldUpdate } from '@shared/types';
 import { AccountRepository, CashFlowRepository, TransactionRepository } from '../repositories';
 import { BaseService, InTransaction } from './di';
@@ -49,10 +49,11 @@ export class TransactionsService extends BaseService {
     return { ...update, removedTrans: [transId] };
   }
 
+  @InTransaction()
   async generateCashFlows(workbookId: string): Promise<WorldUpdate> {
     const transactionRepo = this.resolve(TransactionRepository);
     const transList = await transactionRepo.getAll(workbookId);
-    return await this.updateAccounts(workbookId, transList, transList);
+    return await this.updateAccounts(workbookId, transList, []);
   }
 
   private async updateAccounts(workbookId: string, newTrans: Transaction[], oldTrans: Transaction[]): Promise<WorldUpdate> {
@@ -83,11 +84,6 @@ export class TransactionsService extends BaseService {
       removedFlows.push([flow.transaction_id, flow.account_id]);
     }
 
-    const getMinDate = (a: string, b: string) => {
-      const dateA = Date.parse(a);
-      const dateB = Date.parse(b);
-      return dateA < dateB ? a : b;
-    };
     const minDate = oldTrans
       .concat(newTrans)
       .map((trans) => trans.date)

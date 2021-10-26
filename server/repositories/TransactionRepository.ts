@@ -55,6 +55,7 @@ export class TransactionRepository extends AbstractRepository {
   async create(workbookId: string, trans: Partial<Transaction>): Promise<Transaction> {
     const { date, type, description, detail, amount, account_from, account_to } = trans;
     const { rows } = await this.qm().query<DbTransaction>({
+      name: 'transactions-create',
       text: `
 insert into transactions(workbook_id, date, type, description, detail, amount_cent, account_from_id, account_to_id)
 values($1, $2, $3, $4, $5, $6, $7, $8)
@@ -89,5 +90,12 @@ returning *`,
       values: [workbookId, id],
     });
     return { id };
+  }
+
+  async removeByWorkbook(workbookId: string) {
+    await this.qm().query({
+      text: 'delete from transactions where workbook_id = $1',
+      values: [workbookId],
+    });
   }
 }

@@ -47,6 +47,7 @@ export class AccountRepository extends AbstractRepository {
   async create(workbookId: string, account: Partial<Account>): Promise<Account> {
     const { name, type, parent_id, is_group = false } = account;
     const { rows } = await this.qm().query<DbAccount>({
+      name: 'accounts-create',
       text: `
 insert into accounts(workbook_id, name, type, parent_id, is_group, balance_cent)
 values($1, $2, $3, $4, $5, 0)
@@ -59,6 +60,7 @@ returning *`,
   async update(workbookId: string, account: Partial<Account>): Promise<Account> {
     const { id, name, type, parent_id, is_group, balance } = account;
     const { rows } = await this.qm().query<DbAccount>({
+      name: 'accounts-update',
       text: `
 update accounts
 set name = coalesce($3, name),
@@ -77,6 +79,13 @@ returning *`,
     await this.qm().query({
       text: 'delete from accounts where workbook_id = $1 and id = $2',
       values: [workbookId, id],
+    });
+  }
+
+  async removeByWorkbook(workbookId: string) {
+    await this.qm().query({
+      text: 'delete from accounts where workbook_id = $1',
+      values: [workbookId],
     });
   }
 }

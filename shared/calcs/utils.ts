@@ -12,3 +12,7 @@ export function dateOrderCompare<T extends { date: string; order: number }>(a: T
   const diff = Date.parse(b.date) - Date.parse(a.date);
   return diff !== 0 ? diff : b.order - a.order;
 }
+
+export function getMinDate(a: string, b: string) {
+  return Date.parse(a) < Date.parse(b) ? a : b;
+}
