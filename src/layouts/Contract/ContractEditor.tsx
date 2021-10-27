@@ -59,7 +59,7 @@ export const ContractEditor = ({ open: initOpen, contract, onClose }: ContractEd
   const sxRight = { mb: 2, flex: '1 0 170px' };
 
   return (
-    <Dialog open={open} onClose={handleCancel} fullWidth>
+    <Dialog open={open} onClose={handleCancel} fullWidth sx={{ alignItems: 'flex-start', pt: '10%' }}>
       <DialogTitle>{contract.id ? 'Edit' : 'Add'} Transaction</DialogTitle>
       <DialogContent sx={{ display: 'flex', flexFlow: 'row wrap', pb: 1 }}>
         <Autocomplete
