@@ -38,12 +38,22 @@ export function getDisplayName(account?: Account) {
   }
 }
 
-export function sortAccounts(accounts: Account[], type?: AccountType): Account[] {
-  return [...accounts.filter((acc) => !type || acc.type === type)].sort((a, b) => a.name.localeCompare(b.name));
+export function getParentedName(account: Account, accMap?: Map<string, Account>) {
+  const parent = accMap?.get(account.parent_id || '');
+  return parent ? `${parent.name}: ${account.name}` : account.name;
+}
+
+export function sortAccounts(accounts: Account[], type?: AccountType, accMap?: Map<string, Account>): Account[] {
+  return accounts
+    .filter((acc) => !type || acc.type === type)
+    .sort((a, b) => getParentedName(a, accMap).localeCompare(getParentedName(b, accMap)));
 }
 
 export function getAccountIds(accounts: Account[], ...types: AccountType[]) {
-  return accounts.filter((acc) => types.includes(acc.type)).map((acc) => acc.id);
+  return accounts
+    .filter((acc) => types.includes(acc.type))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((acc) => acc.id);
 }
 
 export function getAssetAccountIds(accounts: Account[]) {

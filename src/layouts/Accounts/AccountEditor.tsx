@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  Autocomplete,
   Button,
   Dialog,
   DialogActions,
@@ -12,8 +13,8 @@ import {
   ToggleButtonGroup,
 } from '@mui/material';
 import { Actions, Selectors } from '../../store';
-import { Account, AccountType, getPublicAccountTypes } from '../../types';
-import { accountTypeName } from './utils';
+import { Account, AccountType, getBudgetAccountTypes, getPublicAccountTypes } from '../../types';
+import { accountTypeName, sortAccounts } from './utils';
 
 interface AccountEditorProps {
   open: boolean;
@@ -23,21 +24,29 @@ interface AccountEditorProps {
 
 export const AccountEditor = ({
   open: initOpen,
-  account: { id, name = '', type },
+  account: { id, name = '', type, parent_id },
   onClose = () => {},
 }: AccountEditorProps) => {
-  const [open, setOpen] = useState(initOpen);
+  const accountMap = useSelector(Selectors.currentAccountMap);
+  const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const workbook = useSelector(Selectors.activeWorkbook);
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(initOpen);
+  const isGroup = !!accounts.find((acc) => acc.parent_id === id);
 
   const handleCancel = () => {
     setOpen(false);
     onClose();
   };
 
+  const removeParent = '<none>';
+
   const handleSubmit = (account: Partial<Account>) => {
     setOpen(false);
     if (workbook) {
+      if (!account.parent_id || account.parent_id === removeParent) {
+        delete account.parent_id;
+      }
       dispatch(Actions.saveAccount({ workbookId: workbook.id, account }));
     }
 
@@ -45,7 +54,7 @@ export const AccountEditor = ({
   };
 
   const formik = useFormik({
-    initialValues: { id, name, type },
+    initialValues: { id, name, type, parent_id },
     onSubmit: handleSubmit,
     validate: (values) => {
       const errors = {} as Partial<Account>;
@@ -60,11 +69,22 @@ export const AccountEditor = ({
     formik.setFieldValue('type', newType);
   };
 
+  const getParentOptions = () => [
+    '',
+    ...sortAccounts(
+      accounts.filter((acc) => acc.id !== id && !acc.parent_id),
+      formik.values.type
+    ).map((acc) => acc.id),
+  ];
+  const idToAccount = (id: string) => (!id ? removeParent : accountMap.get(id)?.name ?? '');
+
+  const editableParent = !isGroup && formik.values.type && getBudgetAccountTypes().includes(formik.values.type);
+
   const addingNew = !id;
-  const canSubmit = (formik.touched.name || formik.touched.type) && !formik.errors.name;
+  const canSubmit = (formik.touched.name || formik.touched.parent_id || formik.touched.type) && !formik.errors.name;
 
   return (
-    <Dialog open={open} onClose={handleCancel} fullWidth>
+    <Dialog open={open} onClose={handleCancel} fullWidth sx={{ alignItems: 'flex-start', pt: '10%' }}>
       <DialogTitle>
         {addingNew ? 'Add' : 'Edit'} {accountTypeName(formik.values.type!)}
       </DialogTitle>
@@ -83,6 +103,23 @@ export const AccountEditor = ({
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
+        <Autocomplete
+          fullWidth
+          disableClearable
+          disabled={!editableParent}
+          sx={{ mb: 2 }}
+          id="account-parent"
+          options={getParentOptions()}
+          getOptionLabel={idToAccount}
+          value={formik.values.parent_id}
+          onChange={(e, value) => {
+            formik.setFieldValue('parent_id', value);
+            formik.setFieldTouched('parent_id', true);
+          }}
+          renderInput={(params) => (
+            <TextField label="Parent" variant={params.disabled ? 'filled' : 'outlined'} {...params} />
+          )}
+        />
         <TextField
           fullWidth
           id="account-name"
