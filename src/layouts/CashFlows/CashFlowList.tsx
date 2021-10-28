@@ -17,9 +17,9 @@ export const CashFlowList = ({ account }: CashFlowListProps) => {
   const [editable, setEditable] = useState<Partial<CashFlow>>();
   const isAsset = getAssetAccountTypes().includes(account.type);
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (flow: CashFlow) => {
     if (workbook) {
-      dispatch(Actions.removeTransaction({ workbookId: workbook.id, id }));
+      dispatch(Actions.removeTransaction({ workbookId: workbook.id, id: flow.transaction_id }));
     }
   };
 

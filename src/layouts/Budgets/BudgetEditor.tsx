@@ -69,7 +69,7 @@ export const BudgetEditor = ({ open: initOpen, budget, onClose = () => {} }: Bud
   const canSubmit = !!(formik.values.account_id && formik.touched);
 
   return (
-    <Dialog open={open} onClose={handleCancel} fullWidth sx={{ pb: '30%' }}>
+    <Dialog open={open} onClose={handleCancel} fullWidth sx={{ pb: '10%' }}>
       <DialogTitle>
         {(!budget.id ? 'Creating budget' : 'Editing budget') +
           (budget.account_id ? ` for ${idToAccount(budget.account_id)}` : '')}

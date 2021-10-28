@@ -9,4 +9,5 @@ export * from './LoginLogout';
 export * from './ReportSnackbar';
 export * from './StyledTable';
 export * from './Title';
+export * from './makeStyledTable';
 export * from './useDispatchedRender';

@@ -12,13 +12,13 @@ export const Transactions = () => {
   const dispatch = useDispatch();
   const [editable, setEditable] = useState<Partial<Transaction>>();
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (tr: Transaction) => {
     if (workbook) {
-      dispatch(Actions.removeTransaction({ workbookId: workbook.id, id }));
+      dispatch(Actions.removeTransaction({ workbookId: workbook.id, id: tr.id }));
     }
   };
 
-  const handleEdit = (tr: Partial<Transaction>) => {
+  const handleEdit = (tr: Transaction) => {
     setEditable(tr);
   };
 
