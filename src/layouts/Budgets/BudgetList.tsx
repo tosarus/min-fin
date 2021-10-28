@@ -6,9 +6,11 @@ import { BudgetDetails } from './BudgetDetails';
 
 interface BudgetListProps {
   budgets: BudgetAccount[];
+  totals: Map<string, string>;
   onEdit: (budget: BudgetAccount) => void;
 }
-export const BudgetList = ({ budgets, onEdit }: BudgetListProps) => {
+
+export const BudgetList = ({ budgets, totals, onEdit }: BudgetListProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const workbook = useSelector(Selectors.activeWorkbook);
   const dispatch = useDispatch();
@@ -21,7 +23,13 @@ export const BudgetList = ({ budgets, onEdit }: BudgetListProps) => {
   return (
     <>
       {sortBudgets(budgets, accountMap).map((budget) => (
-        <BudgetDetails key={budget.id} budget={budget} onEdit={onEdit} onRemove={handleRemove} />
+        <BudgetDetails
+          key={budget.id}
+          budget={budget}
+          amount={totals.get(budget.account_id) ?? '0'}
+          onEdit={onEdit}
+          onRemove={handleRemove}
+        />
       ))}
     </>
   );

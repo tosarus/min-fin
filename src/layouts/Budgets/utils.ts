@@ -5,20 +5,33 @@ import { Account, CashFlow } from '../../types';
 
 dayjs.extend(isBetween);
 
-export function getCategoryAmout(
-  cashFlows: CashFlow[],
-  accId: string,
-  month: string | undefined,
-  accMap: Map<string, Account>
-) {
-  const from = month ? dayjs(month) : undefined;
-  const to = from?.add(1, 'month');
-  return cashFlows
-    .filter(
-      (flow) =>
-        (flow.other_account_id === accId || accMap.get(flow.other_account_id)?.parent_id === accId) &&
-        (!month || dayjs(flow.date).isBetween(from, to, 'day', '[)'))
-    )
-    .reduce((amount, flow) => amount.add(flow.amount), currency(0))
-    .format();
+function withinMonth(month: string) {
+  const from = dayjs(month);
+  const to = from.add(1, 'month');
+  return ({ date }: { date: string }) => dayjs(date).isBetween(from, to, 'day', '[)');
+}
+
+export function calculateTotals(cashFlows: CashFlow[], month: string, accMap: Map<string, Account>) {
+  const totals = new Map<string, currency>();
+  const updateTotals = (id: string, amount: string | currency) =>
+    totals.set(id, (totals.get(id) ?? currency(0)).add(amount));
+
+  cashFlows.filter(withinMonth(month)).forEach((flow) => updateTotals(flow.other_account_id, flow.amount));
+  for (const accValue of totals) {
+    const acc = accMap.get(accValue[0]);
+    if (acc?.parent_id) {
+      updateTotals(acc.parent_id, accValue[1]);
+    }
+  }
+
+  return new Map<string, string>(Array.from(totals.entries(), (v) => [v[0], v[1].format()]));
+}
+
+export function sameMonthFilter(month: string) {
+  const m = dayjs(month);
+  return (v: { month: string }) => m.isSame(v.month, 'month');
+}
+
+export function getCurrentMonth() {
+  return dayjs().startOf('month').format('YYYY-MM-DD');
 }
