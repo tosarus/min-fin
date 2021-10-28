@@ -2,7 +2,8 @@ import { Service } from 'typedi';
 import { buildCashFlows, getMinDate, updateAccounts } from '@shared/calcs';
 import { Account, CashFlowId, getAssetAccountTypes, Transaction, WorldUpdate } from '@shared/types';
 import { AccountRepository, CashFlowRepository, TransactionRepository } from '../repositories';
-import { BaseService, InTransaction } from './di';
+import { BaseService } from './BaseService';
+import { InTransaction } from './InTransaction';
 
 @Service()
 export class TransactionsService extends BaseService {

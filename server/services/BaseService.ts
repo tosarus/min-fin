@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { Creator, QueryManager } from '../../database';
+import { Creator, QueryManager } from '../database';
 
 @Service()
 export abstract class BaseService {

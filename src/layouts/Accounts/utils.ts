@@ -79,7 +79,8 @@ export function getTotalForAccounts(accounts: Account[], ...types: AccountType[]
     .format();
 }
 
-export function getFlowAccountFilter(account: Account) {
+export function getFlowAccountFilter(type: AccountType, accountIds: string[]) {
+  const isAsset = getAssetAccountTypes().includes(type);
   return (flow: { account_id: string; other_account_id: string }) =>
-    (getAssetAccountTypes().includes(account.type) ? flow.account_id : flow.other_account_id) === account.id;
+    accountIds.includes(isAsset ? flow.account_id : flow.other_account_id);
 }

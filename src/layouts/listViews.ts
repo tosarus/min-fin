@@ -1,10 +1,12 @@
 import AppsIcon from '@mui/icons-material/Apps';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import { SvgIcon } from '@mui/material';
 import { Accounts } from './Accounts';
+import { Budgets } from './Budgets';
 import { Orders } from './Dashboard';
 import { DemoForecast, DemoTransactions } from './Demo';
 import { NewUserWarning } from './NewUserWarning';
@@ -17,6 +19,7 @@ import { WelcomeScreen } from './WelcomeScreen';
 export const Links = {
   accounts: () => '/accounts',
   accountsView: (id: string) => `/accounts/${id}`,
+  budgets: () => '/budgets',
   demoForecast: () => '/demo/forecast',
   demoOrders: () => '/demo/orders',
   demoTrans: () => '/demo/trans',
@@ -29,6 +32,7 @@ export const Links = {
 export const Routes = {
   Accounts: '/accounts/:all*',
   AccountsView: '/accounts/:id',
+  Budgets: '/budgets',
   DemoForecast: Links.demoForecast(),
   DemoOrders: Links.demoOrders(),
   DemoTrans: Links.demoTrans(),
@@ -57,7 +61,8 @@ const _systemPages = [createRoutablePage(Links.settings(), Routes.Settings, Sett
 
 const _privatePages = [
   createRoutablePage(Links.home(), Routes.Home, Overview, 'Overview', AppsIcon),
-  createRoutablePage(Links.accounts(), Routes.Accounts, Accounts, 'Accounts', AssignmentOutlinedIcon),
+  createRoutablePage(Links.accounts(), Routes.Accounts, Accounts, 'Accounts', MenuBookIcon),
+  createRoutablePage(Links.budgets(), Routes.Budgets, Budgets, 'Budgets', AssignmentOutlinedIcon),
   createRoutablePage(Links.transactions(), Routes.Transactions, Transactions, 'Transactions', StorageRoundedIcon),
   createRoutablePage(Links.demoTrans(), Routes.DemoTrans, DemoTransactions, 'Demo/Transactions', StorageRoundedIcon),
   createRoutablePage(Links.demoOrders(), Routes.DemoOrders, Orders, 'Demo/Orders', ReceiptLongOutlinedIcon),

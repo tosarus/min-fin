@@ -1,5 +1,5 @@
 import currency from 'currency.js';
-import dateFormat from 'dateformat';
+import dayjs from 'dayjs';
 import { Account, CashFlow, FlowDirection, Transaction, TransactionType } from '../../types';
 import { getOpeningAccountId } from '../Accounts/utils';
 
@@ -45,7 +45,16 @@ export function fromTransaction(transaction: Partial<Transaction>): Contract {
       otherAccount = '';
       break;
   }
-  return { id, date: dateFormat(date ?? Date.now(), 'isoDate'), type, description, detail, amount, account, otherAccount };
+  return {
+    id,
+    date: dayjs(date ?? Date.now()).format('YYYY-MM-DD'),
+    type,
+    description,
+    detail,
+    amount,
+    account,
+    otherAccount,
+  };
 }
 
 export function fromCashFlow(flow: Partial<CashFlow>): Contract {
@@ -84,7 +93,16 @@ export function fromCashFlow(flow: Partial<CashFlow>): Contract {
       break;
   }
 
-  return { id, date: dateFormat(date ?? Date.now(), 'isoDate'), type, description, detail, amount, account, otherAccount };
+  return {
+    id,
+    date: dayjs(date ?? Date.now()).format('YYYY-MM-DD'),
+    type,
+    description,
+    detail,
+    amount,
+    account,
+    otherAccount,
+  };
 }
 
 export function fromContract(accounts: Account[], { account, otherAccount, ...contract }: Contract): Partial<Transaction> {

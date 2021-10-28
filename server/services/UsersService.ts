@@ -3,12 +3,13 @@ import { AccountType, UserInfo, WorldUpdate } from '@shared/types';
 import { isAdmin } from '../database';
 import {
   AccountRepository,
+  BudgetRepository,
   CashFlowRepository,
   TransactionRepository,
   UserRepository,
   WorkbookRepository,
 } from '../repositories';
-import { BaseService } from './di';
+import { BaseService } from './BaseService';
 
 @Service()
 export class UsersService extends BaseService {
@@ -48,6 +49,7 @@ export class UsersService extends BaseService {
     }
 
     const accountRepo = this.resolve(AccountRepository);
+    const budgetsRepo = this.resolve(BudgetRepository);
     const cashFlowRepo = this.resolve(CashFlowRepository);
     const transRepo = this.resolve(TransactionRepository);
     const userRepo = this.resolve(UserRepository);
@@ -67,9 +69,10 @@ export class UsersService extends BaseService {
       });
       accounts.push(openingAccount);
     }
+    const budgets = await budgetsRepo.getAll(profile.active_workbook);
     const cashFlows = await cashFlowRepo.getAll(profile.active_workbook);
     const transactions = await transRepo.getAll(profile.active_workbook);
     const workbooks = await workbookRepo.getAll(profile.email);
-    return { profile, accounts, cashFlows, transactions, workbooks };
+    return { profile, accounts, budgets, cashFlows, transactions, workbooks };
   }
 }
