@@ -1,13 +1,9 @@
 import React from 'react';
-import dateFormat from 'dateformat';
+import dayjs from 'dayjs';
 import { TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { StyledTable, Title, useDispatchedRender } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { WeatherForecast } from '../../types';
-
-function formatDate(date: string, format = 'mmm dd', gmt = true) {
-  return dateFormat(new Date(date), format, gmt);
-}
 
 interface Props {
   forecast: WeatherForecast[];
@@ -27,7 +23,7 @@ const ForecastTable = ({ forecast }: Props) => {
       <TableBody>
         {forecast.map((wf) => (
           <TableRow key={wf.date}>
-            <TableCell>{formatDate(wf.date, 'default', false)}</TableCell>
+            <TableCell>{dayjs(wf.date).format()}</TableCell>
             <TableCell>{wf.temperatureC}</TableCell>
             <TableCell>{wf.temperatureF}</TableCell>
             <TableCell>{wf.summary}</TableCell>

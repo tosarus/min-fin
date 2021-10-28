@@ -4,7 +4,8 @@ import { parseString } from '@fast-csv/parse';
 import { getMinDate } from '@shared/calcs';
 import { Account, AccountType, Transaction, TransactionType, WorldUpdate } from '@shared/types';
 import { AccountRepository, TransactionRepository } from '../repositories';
-import { BaseService, InTransaction } from './di';
+import { BaseService } from './BaseService';
+import { InTransaction } from './InTransaction';
 
 interface ImportTransaction {
   date: string;

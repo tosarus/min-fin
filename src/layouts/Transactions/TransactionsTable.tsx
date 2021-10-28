@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import currency from 'currency.js';
-import dateFormat from 'dateformat';
+import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { Box, Button, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { AmountSpan, StyledTable } from '../../common';
@@ -56,7 +56,7 @@ export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) 
                 '& td:not(:first-child)': { borderBottom: 'none', pb: 0 },
                 '&:hover + tr button': { display: 'block' },
               }}>
-              <TableCell rowSpan={2}>{dateFormat(tr.date, 'mmm d')}</TableCell>
+              <TableCell rowSpan={2}>{dayjs(tr.date).format('MMM D')}</TableCell>
               <TableCell>{tr.description}</TableCell>
               <TableCell>{buildName(tr.account_from, accountMap)}</TableCell>
               <TableCell>{buildName(tr.account_to, accountMap)}</TableCell>

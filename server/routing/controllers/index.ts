@@ -1,6 +1,17 @@
-export * from './AccountsController';
-export * from './AuthenticateController';
-export * from './DemoController';
-export * from './TransactionsController';
-export * from './UsersController';
-export * from './WorkbooksController';
+import { AccountsController } from './AccountsController';
+import { AuthenticateController } from './AuthenticateController';
+import { BudgetsController } from './BudgetsController';
+import { DemoController } from './DemoController';
+import { TransactionsController } from './TransactionsController';
+import { UsersController } from './UsersController';
+import { WorkbooksController } from './WorkbooksController';
+
+export const controllers = [
+  AccountsController,
+  AuthenticateController,
+  BudgetsController,
+  DemoController,
+  TransactionsController,
+  UsersController,
+  WorkbooksController,
+];

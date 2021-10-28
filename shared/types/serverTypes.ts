@@ -73,9 +73,18 @@ export interface CashFlow {
 
 export type CashFlowId = [transaction_id: string, account_id: string];
 
+export interface BudgetAccount {
+  id: string;
+  workbook_id: string;
+  account_id: string;
+  amount: string;
+  month: string;
+}
+
 interface WorldUpdate_ {
   profile: UserInfo;
   accounts: Account[];
+  budgets: BudgetAccount[];
   cashFlows: CashFlow[];
   transactions: Transaction[];
   workbooks: Workbook[];

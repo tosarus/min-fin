@@ -1,7 +1,14 @@
 import { Service } from 'typedi';
 import { Workbook } from '@shared/types';
-import { AccountRepository, CashFlowRepository, TransactionRepository, WorkbookRepository } from '../repositories';
-import { BaseService, InTransaction } from './di';
+import {
+  AccountRepository,
+  BudgetRepository,
+  CashFlowRepository,
+  TransactionRepository,
+  WorkbookRepository,
+} from '../repositories';
+import { BaseService } from './BaseService';
+import { InTransaction } from './InTransaction';
 
 @Service()
 export class WorkbooksService extends BaseService {
@@ -35,6 +42,7 @@ export class WorkbooksService extends BaseService {
 
   @InTransaction()
   async remove(email: string, id: string) {
+    await this.resolve(BudgetRepository).removeByWorkbook(id);
     await this.resolve(CashFlowRepository).removeByWorkbook(id);
     await this.resolve(TransactionRepository).removeByWorkbook(id);
     await this.resolve(AccountRepository).removeByWorkbook(id);

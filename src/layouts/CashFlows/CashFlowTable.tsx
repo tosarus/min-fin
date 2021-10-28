@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import dateFormat from 'dateformat';
+import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { Box, Button, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { AmountSpan, StyledTable } from '../../common';
@@ -57,7 +57,7 @@ export const CashFlowTable = ({ account, onRemove, onEdit }: CashFlowTableProps)
                 '& td:not(:first-child)': { borderBottom: 'none', pb: 0 },
                 '&:hover + tr button': { display: 'block' },
               }}>
-              <TableCell rowSpan={2}>{dateFormat(flow.date, 'mmm d')}</TableCell>
+              <TableCell rowSpan={2}>{dayjs(flow.date).format('MMM D')}</TableCell>
               <TableCell>{flow.description}</TableCell>
               <TableCell>{buildCategory(flow, accountMap, isAsset)}</TableCell>
               <TableCell sx={{ textAlign: 'right' }}>
@@ -92,7 +92,7 @@ export const CashFlowTable = ({ account, onRemove, onEdit }: CashFlowTableProps)
 };
 
 function sortCashFlows(cashFlows: CashFlow[], account: Account) {
-  return cashFlows.filter(getFlowAccountFilter(account)).sort(dateOrderCompare);
+  return cashFlows.filter(getFlowAccountFilter(account.type, [account.id])).sort(dateOrderCompare);
 }
 
 function buildCategory(flow: CashFlow, accMap: Map<string, Account>, isAsset: boolean) {
