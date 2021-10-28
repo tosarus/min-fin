@@ -84,7 +84,7 @@ export const AccountEditor = ({
   const canSubmit = (formik.touched.name || formik.touched.parent_id || formik.touched.type) && !formik.errors.name;
 
   return (
-    <Dialog open={open} onClose={handleCancel} fullWidth sx={{ alignItems: 'flex-start', pt: '10%' }}>
+    <Dialog open={open} onClose={handleCancel} fullWidth sx={{ pb: '10%' }}>
       <DialogTitle>
         {addingNew ? 'Add' : 'Edit'} {accountTypeName(formik.values.type!)}
       </DialogTitle>
