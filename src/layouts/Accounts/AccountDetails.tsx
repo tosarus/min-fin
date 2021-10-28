@@ -1,11 +1,7 @@
-import React, { useMemo } from 'react';
-import currency from 'currency.js';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { AmountSpan, Title } from '../../common';
-import { Selectors } from '../../store';
-import { Account, FlowDirection, getAssetAccountTypes, TransactionType } from '../../types';
-import { getFlowAccountFilter } from './utils';
+import { Account, getAssetAccountTypes } from '../../types';
 
 interface AccountDetailsProps {
   account: Account;
@@ -15,26 +11,6 @@ interface AccountDetailsProps {
 
 export const AccountDetails = ({ account, onEdit, onRemove }: AccountDetailsProps) => {
   const isAsset = getAssetAccountTypes().includes(account.type);
-  const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
-  const total = useMemo(() => {
-    const flows = cashFlows.filter(getFlowAccountFilter(account.type, [account.id]));
-    return {
-      inflow: flows
-        .filter(
-          (f) =>
-            f.type === TransactionType.Income || (f.type === TransactionType.Transfer && f.direction === FlowDirection.To)
-        )
-        .reduce((t, f) => t.add(f.amount), currency(0))
-        .format(),
-      outflow: flows
-        .filter(
-          (f) =>
-            f.type === TransactionType.Expence || (f.type === TransactionType.Transfer && f.direction === FlowDirection.From)
-        )
-        .reduce((t, f) => t.add(f.amount), currency(0))
-        .format(),
-    };
-  }, [cashFlows, account]);
 
   const handleEdit = () => onEdit(account);
   return (
@@ -46,14 +22,6 @@ export const AccountDetails = ({ account, onEdit, onRemove }: AccountDetailsProp
           <AmountSpan amount={account.balance} />
         </Box>
       )}
-      <Box sx={{ display: 'flex' }}>
-        <Typography sx={{ mr: 2, width: 120 }}>Credits</Typography>
-        <AmountSpan amount={total.inflow} />
-      </Box>
-      <Box sx={{ display: 'flex' }}>
-        <Typography sx={{ mr: 2, width: 120 }}>Debits</Typography>
-        <AmountSpan amount={total.outflow} />
-      </Box>
       <Box sx={{ display: 'flex' }}>
         <Button onClick={handleEdit}>Edit</Button>
         <Button onClick={onRemove}>Remove</Button>

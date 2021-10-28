@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { Title } from '../../common';
 import { Selectors } from '../../store';
@@ -8,18 +7,18 @@ import { BudgetEditor } from './BudgetEditor';
 import { BudgetList } from './BudgetList';
 import { BudgetSuggestions } from './BudgetSuggestions';
 import { MonthSelection } from './MonthSelection';
+import { calculateTotals, getCurrentMonth, sameMonthFilter } from './utils';
 
 export const Budgets = () => {
-  const currentMonth = dayjs().startOf('month').format('YYYY-MM-DD');
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
+  const accountMap = useSelector(Selectors.currentAccountMap);
   const budgets = useSelector(Selectors.currentBudgets) ?? [];
-  const [month, setMonth] = useState(currentMonth);
+  const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
+  const [month, setMonth] = useState(getCurrentMonth());
   const [editable, setEditable] = useState<Partial<BudgetAccount>>();
 
-  const budgeted = useMemo(
-    () => budgets.filter((b) => dayjs(b.month).format('YYYY-MM-DD') === (month ?? currentMonth)),
-    [budgets, month]
-  );
+  const totals = useMemo(() => calculateTotals(cashFlows, month, accountMap), [cashFlows, month, accountMap]);
+  const budgeted = useMemo(() => budgets.filter(sameMonthFilter(month)), [budgets, month]);
   const unbudgeted = useMemo(() => {
     const budgetedAccIds = budgeted.map((b) => b.account_id);
     return accounts.filter(
@@ -28,7 +27,7 @@ export const Budgets = () => {
   }, [accounts, budgeted]);
 
   const handlePlan = (account_id: string, amount: string) => {
-    setEditable({ account_id, month: month ?? currentMonth, amount });
+    setEditable({ account_id, month, amount });
   };
 
   const handleEdit = (budget: BudgetAccount) => {
@@ -39,14 +38,16 @@ export const Budgets = () => {
     setEditable(undefined);
   };
 
+  const handleMonthChange = (m: string) => setMonth(m ?? getCurrentMonth());
+
   return (
     <>
       <Title>Budgets</Title>
-      <MonthSelection value={month} onChange={setMonth} />
+      <MonthSelection value={month} onChange={handleMonthChange} />
       {editable && <BudgetEditor open budget={editable} onClose={handleClose} />}
-      <BudgetList budgets={budgeted} onEdit={handleEdit} />
+      <BudgetList budgets={budgeted} totals={totals} onEdit={handleEdit} />
       <Title>Unplanned</Title>
-      <BudgetSuggestions accounts={unbudgeted} month={month} onPlan={handlePlan} />
+      <BudgetSuggestions accounts={unbudgeted} totals={totals} onPlan={handlePlan} />
     </>
   );
 };
