@@ -38,15 +38,8 @@ export function getDisplayName(account?: Account) {
   }
 }
 
-export function getParentedName(account: Account, accMap?: Map<string, Account>) {
-  const parent = accMap?.get(account.parent_id || '');
-  return parent ? `${parent.name}: ${account.name}` : account.name;
-}
-
-export function sortAccounts(accounts: Account[], type?: AccountType, accMap?: Map<string, Account>): Account[] {
-  return accounts
-    .filter((acc) => !type || acc.type === type)
-    .sort((a, b) => getParentedName(a, accMap).localeCompare(getParentedName(b, accMap)));
+export function sortAccounts(accounts: Account[], type: AccountType): Account[] {
+  return accounts.filter((acc) => acc.type === type).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function getAccountIds(accounts: Account[], ...types: AccountType[]) {

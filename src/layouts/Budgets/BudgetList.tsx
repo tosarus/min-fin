@@ -18,7 +18,7 @@ export const BudgetList = ({ budgets, totals, onEdit, onRemove }: BudgetListProp
   const sortedBudgets = useMemo(() => sortBudgets(budgets, accountMap), [budgets, accountMap]);
 
   const headers = [] as StyledColumn<BudgetAccount>[];
-  headers.push({ value: (b) => getBudgetName(b.account_id, accountMap) });
+  headers.push({ value: (b) => getBudgetName(b, accountMap) });
   headers.push({ sx: { width: 400 }, value: (b) => getBudgetProgress(b, totals, accountMap) });
   headers.push({ sx: { textAlign: 'right' }, value: (b) => getBudgetDescription(b, totals) });
   return makeStyledTable({
@@ -32,13 +32,11 @@ export const BudgetList = ({ budgets, totals, onEdit, onRemove }: BudgetListProp
 };
 
 function sortBudgets(budgets: BudgetAccount[], accMap: Map<string, Account>) {
-  return [...budgets].sort((a, b) => getBudgetName(a.account_id, accMap).localeCompare(getBudgetName(b.account_id, accMap)));
+  return [...budgets].sort((a, b) => getBudgetName(a, accMap).localeCompare(getBudgetName(b, accMap)));
 }
 
-function getBudgetName(accountId: string, accMap: Map<string, Account>) {
-  const account = accMap.get(accountId);
-  const parent = accMap.get(account!.parent_id ?? '');
-  return parent ? `${parent.name}: ${account!.name}` : account!.name;
+function getBudgetName(budget: BudgetAccount, accMap: Map<string, Account>) {
+  return accMap.get(budget.account_id)?.name ?? '';
 }
 
 function getBudgetProgress(budget: BudgetAccount, totals: Map<string, string>, accMap: Map<string, Account>) {

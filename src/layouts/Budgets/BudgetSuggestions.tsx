@@ -1,10 +1,8 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
 import { Button, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import { AmountSpan, StyledTable } from '../../common';
-import { Selectors } from '../../store';
 import { Account, getBudgetAccountTypes } from '../../types';
-import { getParentedName, sortAccounts } from '../Accounts/utils';
+import { sortAccounts } from '../Accounts/utils';
 
 interface BudgetSuggestionsProps {
   accounts: Account[];
@@ -13,23 +11,19 @@ interface BudgetSuggestionsProps {
 }
 
 export const BudgetSuggestions = ({ accounts, totals, onPlan }: BudgetSuggestionsProps) => {
-  const accountMap = useSelector(Selectors.currentAccountMap);
+  const accountsWithTotals = useMemo(() => accounts.filter((acc) => totals.has(acc.id)), [accounts, totals]);
 
   return (
     <StyledTable>
       <TableBody sx={{ '& td': { py: 0 } }}>
         {getBudgetAccountTypes().map((type) => (
           <>
-            {sortAccounts(
-              accounts.filter((acc) => totals.has(acc.id)),
-              type,
-              accountMap
-            ).map((acc, i) => (
+            {sortAccounts(accountsWithTotals, type).map((acc, i) => (
               <TableRow key={acc.id}>
                 <TableCell>
                   <Typography variant="button">{i === 0 ? type : ''}</Typography>
                 </TableCell>
-                <TableCell>{getParentedName(acc, accountMap)}</TableCell>
+                <TableCell>{acc.name}</TableCell>
                 <TableCell sx={{ textAlign: 'right' }}>
                   <AmountSpan amount={totals.get(acc.id)!} />
                 </TableCell>

@@ -33,11 +33,6 @@ export class AccountsService extends BaseService {
     const accountRepo = this.resolve(AccountRepository);
     const transactionRepo = this.resolve(TransactionRepository);
 
-    const children = await accountRepo.getByParentId(workbookId, id);
-    if (children.length !== 0) {
-      return;
-    }
-
     const trans = await transactionRepo.findByAccountId(workbookId, id);
     if (trans.length !== 0) {
       return;
