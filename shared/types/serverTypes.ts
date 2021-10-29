@@ -26,8 +26,6 @@ export interface Account {
   workbook_id: string;
   name: string;
   type: AccountType;
-  parent_id?: string;
-  is_group: boolean;
   balance: string;
 }
 

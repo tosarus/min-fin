@@ -222,6 +222,10 @@ export class ExpressDriver {
    */
   handleError(error: any, action: ActionMetadata | undefined, options: Action): any {
     if (this.isDefaultErrorHandlingEnabled) {
+      if (this.developmentMode) {
+        console.log(error);
+      }
+
       const response = options.response;
 
       // set http code

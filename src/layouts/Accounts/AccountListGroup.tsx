@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { Box, Button, Typography } from '@mui/material';
 import { AmountSpan, RoundedLink } from '../../common';
-import { Selectors } from '../../store';
 import { Account, AccountType, getAssetAccountTypes } from '../../types';
 import { Links } from '../listViews';
-import { accountTypeName, getParentedName, sortAccounts } from './utils';
+import { accountTypeName, sortAccounts } from './utils';
 
 interface AccountListGroupProps {
   accounts: Account[];
@@ -22,7 +20,6 @@ const RoundedLinkWithHover = styled(RoundedLink)({
 });
 
 export const AccountListGroup = ({ accounts, type, onAdd, onEdit }: AccountListGroupProps) => {
-  const accountMap = useSelector(Selectors.currentAccountMap);
   const isAsset = getAssetAccountTypes().includes(type);
   const [open, setOpen] = useState(isAsset);
 
@@ -39,9 +36,9 @@ export const AccountListGroup = ({ accounts, type, onAdd, onEdit }: AccountListG
         </Button>
       </Box>
       {open &&
-        sortAccounts(accounts, type, accountMap).map((acc) => (
+        sortAccounts(accounts, type).map((acc) => (
           <RoundedLinkWithHover key={acc.id} href={Links.accountsView(acc.id)}>
-            <span>{getParentedName(acc, accountMap)}</span>
+            <span>{acc.name}</span>
             {isAsset ? (
               <AmountSpan amount={acc.balance} />
             ) : (

@@ -7,8 +7,6 @@ type DbAccount = {
   workbook_id: string;
   name: string;
   type: AccountType;
-  parent_id: string;
-  is_group: boolean;
   balance_cent: number;
 };
 
@@ -44,40 +42,31 @@ export class AccountRepository extends AbstractRepository {
     return rows.map(convertAccount);
   }
 
-  async getByParentId(workbookId: string, parentId: string): Promise<Account[]> {
-    const { rows } = await this.qm().query<DbAccount>({
-      text: 'select * from accounts where workbook_id = $1 and parent_id = $2',
-      values: [workbookId, parentId],
-    });
-    return rows.map(convertAccount);
-  }
-
   async create(workbookId: string, account: Partial<Account>): Promise<Account> {
-    const { name, type, parent_id } = account;
+    const { name, type } = account;
     const { rows } = await this.qm().query<DbAccount>({
       name: 'accounts-create',
       text: `
-insert into accounts(workbook_id, name, type, parent_id, is_group, balance_cent)
-values($1, $2, $3, $4, False, 0)
+insert into accounts(workbook_id, name, type, balance_cent)
+values($1, $2, $3, 0)
 returning *`,
-      values: [workbookId, name, type, parent_id],
+      values: [workbookId, name, type],
     });
     return convertAccount(rows[0]);
   }
 
   async update(workbookId: string, account: Partial<Account>): Promise<Account> {
-    const { id, name, type, parent_id, balance } = account;
+    const { id, name, type, balance } = account;
     const { rows } = await this.qm().query<DbAccount>({
       name: 'accounts-update',
       text: `
 update accounts
-set name = $3,
-    type = $4,
-    parent_id = $5,
-    balance_cent = coalesce($6, balance_cent)
+set name = coalesce($3, name),
+    type = coalesce($4, type),
+    balance_cent = coalesce($5, balance_cent)
 where workbook_id = $1 and id = $2
 returning *`,
-      values: [workbookId, id, name, type, parent_id, balance && strToCents(balance)],
+      values: [workbookId, id, name, type, balance && strToCents(balance)],
     });
     return convertAccount(rows[0]);
   }

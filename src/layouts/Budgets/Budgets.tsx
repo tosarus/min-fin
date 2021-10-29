@@ -13,7 +13,6 @@ import { calculateTotals, getCurrentMonth, sameMonthFilter } from './utils';
 
 export const Budgets = () => {
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
-  const accountMap = useSelector(Selectors.currentAccountMap);
   const budgets = useSelector(Selectors.currentBudgets) ?? [];
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
   const workbook = useSelector(Selectors.activeWorkbook);
@@ -21,13 +20,11 @@ export const Budgets = () => {
   const [month, setMonth] = useState(getCurrentMonth());
   const [editable, setEditable] = useState<Partial<BudgetAccount>>();
 
-  const totals = useMemo(() => calculateTotals(cashFlows, month, accountMap), [cashFlows, month, accountMap]);
+  const totals = useMemo(() => calculateTotals(cashFlows, month), [cashFlows, month]);
   const budgeted = useMemo(() => budgets.filter(sameMonthFilter(month)), [budgets, month]);
   const unbudgeted = useMemo(() => {
     const budgetedAccIds = budgeted.map((b) => b.account_id);
-    return accounts.filter(
-      (acc) => !budgetedAccIds.includes(acc.id) && (!acc.parent_id || !budgetedAccIds.includes(acc.parent_id))
-    );
+    return accounts.filter((acc) => !budgetedAccIds.includes(acc.id));
   }, [accounts, budgeted]);
 
   const handlePlan = (account_id: string, amount: string) => {

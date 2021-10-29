@@ -114,7 +114,6 @@ export class ImportService extends BaseService {
       workbook_id,
       name,
       type,
-      is_group: false,
       balance: '0',
     });
     const accounts = [] as Account[];
