@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'wouter';
 import { Box } from '@mui/material';
-import { Actions, Selectors } from '../../store';
 import { Account } from '../../types';
 import { CashFlowList } from '../CashFlows';
 import { Links } from '../listViews';
@@ -11,13 +9,13 @@ import { AccountEditor } from './AccountEditor';
 
 interface AccountPageProps {
   account: Account;
+  onRemove: (account: Account) => void;
+  onSubmit: (account: Partial<Account>) => void;
 }
 
-export const AccountPage = ({ account }: AccountPageProps) => {
-  const workbook = useSelector(Selectors.activeWorkbook);
+export const AccountPage = ({ account, onRemove, onSubmit }: AccountPageProps) => {
   const [editable, setEditable] = useState<Partial<Account>>();
   const [, setLocation] = useLocation();
-  const dispatch = useDispatch();
 
   const handleEdit = (acc: Account) => {
     setEditable(acc);
@@ -27,16 +25,19 @@ export const AccountPage = ({ account }: AccountPageProps) => {
     setEditable(undefined);
   };
 
+  const handleSubmit = (account: Partial<Account>) => {
+    onSubmit(account);
+    setEditable(undefined);
+  };
+
   const handleRemove = () => {
-    if (workbook) {
-      dispatch(Actions.removeAccount({ workbookId: workbook.id, id: account.id }));
-      setLocation(Links.accounts());
-    }
+    onRemove(account);
+    setLocation(Links.accounts());
   };
 
   return (
     <Box sx={{ display: 'flex', flexFlow: 'column', overflowY: 'auto' }}>
-      {editable && <AccountEditor open account={editable} onClose={handleClose} />}
+      {editable && <AccountEditor open account={editable} onClose={handleClose} onSubmit={handleSubmit} />}
       {account && <AccountDetails account={account} onEdit={handleEdit} onRemove={handleRemove} />}
       {account && <CashFlowList account={account} />}
     </Box>

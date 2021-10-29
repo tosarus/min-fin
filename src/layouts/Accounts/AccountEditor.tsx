@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   Autocomplete,
   Button,
@@ -12,25 +12,25 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from '@mui/material';
-import { Actions, Selectors } from '../../store';
+import { Selectors } from '../../store';
 import { Account, AccountType, getBudgetAccountTypes, getPublicAccountTypes } from '../../types';
 import { accountTypeName, sortAccounts } from './utils';
 
 interface AccountEditorProps {
   open: boolean;
   account: Partial<Account>;
-  onClose?: () => void;
+  onClose: () => void;
+  onSubmit: (account: Partial<Account>) => void;
 }
 
 export const AccountEditor = ({
   open: initOpen,
   account: { id, name = '', type, parent_id },
-  onClose = () => {},
+  onClose,
+  onSubmit,
 }: AccountEditorProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
-  const workbook = useSelector(Selectors.activeWorkbook);
-  const dispatch = useDispatch();
   const [open, setOpen] = useState(initOpen);
   const isGroup = !!accounts.find((acc) => acc.parent_id === id);
 
@@ -43,14 +43,10 @@ export const AccountEditor = ({
 
   const handleSubmit = (account: Partial<Account>) => {
     setOpen(false);
-    if (workbook) {
-      if (!account.parent_id || account.parent_id === removeParent) {
-        delete account.parent_id;
-      }
-      dispatch(Actions.saveAccount({ workbookId: workbook.id, account }));
+    if (!account.parent_id || account.parent_id === removeParent) {
+      delete account.parent_id;
     }
-
-    onClose();
+    onSubmit(account);
   };
 
   const formik = useFormik({
