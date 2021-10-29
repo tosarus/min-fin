@@ -2,20 +2,23 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { colors } from '@mui/material';
 
-const Span = styled.span(({ amount }: { amount: string }) => ({
+interface SpanProps {
+  amount: string;
+  noColor?: boolean;
+}
+const Span = styled.span(({ amount, noColor = false }: SpanProps) => ({
   fontWeight: 'bolder',
   fontStyle: 'italic',
-  color: amount.includes('-') ? colors.red[500] : colors.green[500],
+  color: noColor ? 'inherit' : amount.includes('-') ? colors.red[500] : colors.green[500],
 }));
 
-interface AmountSpanProps {
-  amount: string;
+interface AmountSpanProps extends SpanProps {
   className?: string;
 }
 
-export const AmountSpan = ({ amount, ...rest }: AmountSpanProps) => {
+export const AmountSpan = ({ amount, noColor, ...rest }: AmountSpanProps) => {
   return (
-    <Span amount={amount} {...rest}>
+    <Span amount={amount} noColor={noColor} {...rest}>
       {amount}
     </Span>
   );

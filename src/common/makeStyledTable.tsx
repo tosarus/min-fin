@@ -6,11 +6,18 @@ import { AmountSpan } from './AmountSpan';
 import { StyledTable } from './StyledTable';
 
 type ColumnType = 'date' | 'amount';
-export type StyledColumn<T> = { name: string; type?: ColumnType; value: (item: T) => any };
+export interface StyledColumn<T> {
+  name?: string;
+  sx?: SxProps;
+  type?: ColumnType;
+  value: (item: T) => any;
+}
 
 interface Props<T> {
   headers: StyledColumn<T>[];
   items: T[];
+  pagination?: boolean;
+  withHeader?: boolean;
   detail?: (item: T) => any;
   onEdit?: (item: T) => void;
   onRemove?: (item: T) => void;
@@ -18,7 +25,15 @@ interface Props<T> {
 
 const NOOP = () => undefined;
 
-export function makeStyledTable<T>({ headers, items, detail = NOOP, onEdit = NOOP, onRemove = NOOP }: Props<T>) {
+export function makeStyledTable<T>({
+  headers,
+  items,
+  pagination = true,
+  withHeader = true,
+  detail = NOOP,
+  onEdit = NOOP,
+  onRemove = NOOP,
+}: Props<T>) {
   // edit menu
   const [menuAnchor, setMenuAnchor] = React.useState<[HTMLElement, T]>();
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, item: T) => {
@@ -50,24 +65,41 @@ export function makeStyledTable<T>({ headers, items, detail = NOOP, onEdit = NOO
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  const paginationProps = pagination
+    ? {
+        rowsPerPageOptions: [25, 50, 100],
+        count: items.length,
+        rowsPerPage,
+        page,
+        onPageChange,
+        onRowsPerPageChange,
+      }
+    : undefined;
+  const slicedItems = pagination ? items.slice(page * rowsPerPage, (page + 1) * rowsPerPage) : items;
 
   const hasDetails = detail !== NOOP;
   const hasMenu = onEdit !== NOOP || onRemove !== NOOP;
 
   // styles
-  const headSx = (type?: ColumnType): SxProps => {
-    if (type === 'date') {
+  const headSx = (header: StyledColumn<T>): SxProps => {
+    if (header.sx) {
+      return header.sx;
+    }
+    if (header.type === 'date') {
       return { maxWidth: 90 };
-    } else if (type === 'amount') {
+    } else if (header.type === 'amount') {
       return { maxWidth: 120, textAlign: 'right' };
     } else {
       return {};
     }
   };
-  const cellSx = (type?: ColumnType): SxProps => {
-    if (type === 'date') {
+  const cellSx = (header: StyledColumn<T>): SxProps => {
+    if (header.sx) {
+      return header.sx;
+    }
+    if (header.type === 'date') {
       return { verticalAlign: 'top' };
-    } else if (type === 'amount') {
+    } else if (header.type === 'amount') {
       return { textAlign: 'right' };
     } else {
       return {};
@@ -81,33 +113,26 @@ export function makeStyledTable<T>({ headers, items, detail = NOOP, onEdit = NOO
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
         <MenuItem onClick={handleRemove}>Remove</MenuItem>
       </Menu>
-      <StyledTable
-        sx={{ '& td': { px: 1 } }}
-        pagination={{
-          rowsPerPageOptions: [25, 50, 100],
-          count: items.length,
-          rowsPerPage,
-          page,
-          onPageChange,
-          onRowsPerPageChange,
-        }}>
-        <TableHead>
-          <TableRow>
-            {headers.map(({ type, name }, i) => (
-              <TableCell key={i} sx={headSx(type)}>
-                {name}
-              </TableCell>
-            ))}
-            {hasMenu && <TableCell />}
-          </TableRow>
-        </TableHead>
+      <StyledTable pagination={paginationProps}>
+        {withHeader && (
+          <TableHead>
+            <TableRow>
+              {headers.map((h, i) => (
+                <TableCell key={i} sx={headSx(h)}>
+                  {h.name}
+                </TableCell>
+              ))}
+              {hasMenu && <TableCell />}
+            </TableRow>
+          </TableHead>
+        )}
         <TableBody>
-          {items.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((item, i) => (
+          {slicedItems.map((item, i) => (
             <React.Fragment key={i}>
               <TableRow sx={firstRow}>
-                {headers.map(({ type, value }, i) => (
-                  <TableCell key={i} rowSpan={hasDetails && type === 'date' ? 2 : 1} sx={cellSx(type)}>
-                    {type === 'amount' ? <AmountSpan amount={value(item)} /> : value(item)}
+                {headers.map((h, i) => (
+                  <TableCell key={i} rowSpan={hasDetails && h.type === 'date' ? 2 : 1} sx={cellSx(h)}>
+                    {h.type === 'amount' ? <AmountSpan amount={h.value(item)} /> : h.value(item)}
                   </TableCell>
                 ))}
                 {hasMenu && (

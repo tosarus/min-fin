@@ -4,7 +4,7 @@ import { Button } from '@mui/material';
 import { Title } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { Account, AccountType, CashFlow, getAssetAccountTypes, TransactionType } from '../../types';
-import { ContractEditor, fromCashFlow } from '../Contract';
+import { Contract, ContractEditor, fromCashFlow, fromContract } from '../Contract';
 import { CashFlowTable } from './CashFlowTable';
 
 interface CashFlowListProps {
@@ -12,16 +12,11 @@ interface CashFlowListProps {
 }
 
 export const CashFlowList = ({ account }: CashFlowListProps) => {
+  const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const workbook = useSelector(Selectors.activeWorkbook);
   const dispatch = useDispatch();
   const [editable, setEditable] = useState<Partial<CashFlow>>();
   const isAsset = getAssetAccountTypes().includes(account.type);
-
-  const handleRemove = (flow: CashFlow) => {
-    if (workbook) {
-      dispatch(Actions.removeTransaction({ workbookId: workbook.id, id: flow.transaction_id }));
-    }
-  };
 
   const handleEdit = (flow: CashFlow) => {
     setEditable(flow);
@@ -41,13 +36,26 @@ export const CashFlowList = ({ account }: CashFlowListProps) => {
     setEditable(undefined);
   };
 
+  const handleSubmit = (contract: Contract) => {
+    if (workbook) {
+      dispatch(Actions.saveTransaction({ workbookId: workbook.id, trans: fromContract(accounts, contract) }));
+    }
+    setEditable(undefined);
+  };
+
+  const handleRemove = (flow: CashFlow) => {
+    if (workbook) {
+      dispatch(Actions.removeTransaction({ workbookId: workbook.id, id: flow.transaction_id }));
+    }
+  };
+
   return (
     <>
       <Title sx={{ display: 'flex', alignItems: 'baseline' }}>
         <span>Transactions</span>
         <Button onClick={handleAdd}>Add</Button>
       </Title>
-      {editable && <ContractEditor open contract={fromCashFlow(editable)} onClose={handleClose} />}
+      {editable && <ContractEditor open contract={fromCashFlow(editable)} onClose={handleClose} onSubmit={handleSubmit} />}
       <CashFlowTable account={account} onRemove={handleRemove} onEdit={handleEdit} />
     </>
   );

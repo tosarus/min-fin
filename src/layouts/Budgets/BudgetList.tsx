@@ -1,48 +1,62 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Actions, Selectors } from '../../store';
-import { Account, BudgetAccount } from '../../types';
-import { BudgetDetails } from './BudgetDetails';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { AmountSpan, makeStyledTable, StyledColumn } from '../../common';
+import { Selectors } from '../../store';
+import { Account, AccountType, BudgetAccount } from '../../types';
+import { BudgetProgress } from './BudgetProgress';
+import { fractionOfMonth } from './utils';
 
 interface BudgetListProps {
   budgets: BudgetAccount[];
   totals: Map<string, string>;
   onEdit: (budget: BudgetAccount) => void;
+  onRemove: (budget: BudgetAccount) => void;
 }
 
-export const BudgetList = ({ budgets, totals, onEdit }: BudgetListProps) => {
+export const BudgetList = ({ budgets, totals, onEdit, onRemove }: BudgetListProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
-  const workbook = useSelector(Selectors.activeWorkbook);
-  const dispatch = useDispatch();
-  const handleRemove = (id: string) => {
-    if (workbook) {
-      dispatch(Actions.removeBudget({ workbookId: workbook.id, id }));
-    }
-  };
+  const sortedBudgets = useMemo(() => sortBudgets(budgets, accountMap), [budgets, accountMap]);
 
-  return (
-    <>
-      {sortBudgets(budgets, accountMap).map((budget) => (
-        <BudgetDetails
-          key={budget.id}
-          budget={budget}
-          amount={totals.get(budget.account_id) ?? '0'}
-          onEdit={onEdit}
-          onRemove={handleRemove}
-        />
-      ))}
-    </>
-  );
+  const headers = [] as StyledColumn<BudgetAccount>[];
+  headers.push({ value: (b) => getBudgetName(b.account_id, accountMap) });
+  headers.push({ sx: { width: 400 }, value: (b) => getBudgetProgress(b, totals, accountMap) });
+  headers.push({ sx: { textAlign: 'right' }, value: (b) => getBudgetDescription(b, totals) });
+  return makeStyledTable({
+    items: sortedBudgets,
+    headers,
+    onEdit,
+    onRemove,
+    pagination: false,
+    withHeader: false,
+  });
 };
 
-function getParentedName(accountId: string, accMap: Map<string, Account>) {
+function sortBudgets(budgets: BudgetAccount[], accMap: Map<string, Account>) {
+  return [...budgets].sort((a, b) => getBudgetName(a.account_id, accMap).localeCompare(getBudgetName(b.account_id, accMap)));
+}
+
+function getBudgetName(accountId: string, accMap: Map<string, Account>) {
   const account = accMap.get(accountId);
   const parent = accMap.get(account!.parent_id ?? '');
   return parent ? `${parent.name}: ${account!.name}` : account!.name;
 }
 
-function sortBudgets(budgets: BudgetAccount[], accMap: Map<string, Account>) {
-  return [...budgets].sort((a, b) =>
-    getParentedName(a.account_id, accMap).localeCompare(getParentedName(b.account_id, accMap))
+function getBudgetProgress(budget: BudgetAccount, totals: Map<string, string>, accMap: Map<string, Account>) {
+  return (
+    <BudgetProgress
+      current={totals.get(budget.account_id) ?? '0'}
+      budgeted={budget.amount}
+      income={accMap.get(budget.account_id)?.type === AccountType.Income}
+      fraction={fractionOfMonth(budget.month)}
+    />
+  );
+}
+
+function getBudgetDescription(budget: BudgetAccount, totals: Map<string, string>) {
+  const amount = totals.get(budget.account_id)?.replace('-', '') ?? '0';
+  return (
+    <>
+      <AmountSpan noColor amount={amount} /> of <AmountSpan noColor amount={budget.amount} />
+    </>
   );
 }

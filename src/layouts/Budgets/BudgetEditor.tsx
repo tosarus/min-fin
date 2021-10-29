@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import currency from 'currency.js';
 import dayjs from 'dayjs';
 import { useFormik } from 'formik';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   Autocomplete,
   Button,
@@ -14,13 +14,14 @@ import {
   Typography,
 } from '@mui/material';
 import { AmountSpan } from '../../common';
-import { Actions, Selectors } from '../../store';
+import { Selectors } from '../../store';
 import { BudgetAccount, getBudgetAccountTypes } from '../../types';
 
 interface BudgetEditorProps {
   open: boolean;
   budget: Partial<BudgetAccount>;
-  onClose?: () => void;
+  onClose: () => void;
+  onSubmit: (budget: Partial<BudgetAccount>) => void;
 }
 
 const makePositive = (amount?: string) => {
@@ -35,10 +36,8 @@ const makePositive = (amount?: string) => {
   return value.format();
 };
 
-export const BudgetEditor = ({ open: initOpen, budget, onClose = () => {} }: BudgetEditorProps) => {
+export const BudgetEditor = ({ open: initOpen, budget, onClose, onSubmit }: BudgetEditorProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
-  const workbook = useSelector(Selectors.activeWorkbook);
-  const dispatch = useDispatch();
   const [open, setOpen] = useState(initOpen);
 
   const handleCancel = () => {
@@ -48,11 +47,7 @@ export const BudgetEditor = ({ open: initOpen, budget, onClose = () => {} }: Bud
 
   const handleSubmit = (budget: Partial<BudgetAccount>) => {
     setOpen(false);
-    if (workbook) {
-      dispatch(Actions.saveBudget({ workbookId: workbook.id, budget }));
-    }
-
-    onClose();
+    onSubmit(budget);
   };
 
   const formik = useFormik({

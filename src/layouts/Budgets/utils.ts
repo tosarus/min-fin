@@ -35,3 +35,12 @@ export function sameMonthFilter(month: string) {
 export function getCurrentMonth() {
   return dayjs().startOf('month').format('YYYY-MM-DD');
 }
+
+export function fractionOfMonth(month: string) {
+  const now = dayjs();
+  if (now.isSame(month, 'month')) {
+    return now.date() / dayjs(month).endOf('month').date();
+  } else {
+    return 0;
+  }
+}
