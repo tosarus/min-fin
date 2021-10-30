@@ -1,4 +1,4 @@
-import { centsToStr, strToCents } from '@shared/calcs';
+import { centsToStr, sanitizeDate, strToCents } from '@shared/calcs';
 import { Transaction, TransactionType } from '@shared/types';
 import { AbstractRepository } from './AbstractRepository';
 
@@ -15,12 +15,13 @@ type DbTransaction = {
   account_to_id: string;
 };
 
-const convertTransaction = ({ amount_cent, account_from_id, account_to_id, ...trans }: DbTransaction): Transaction => {
+const convertTransaction = ({ amount_cent, account_from_id, account_to_id, date, ...trans }: DbTransaction): Transaction => {
   return {
     ...trans,
     amount: centsToStr(amount_cent),
     account_from: account_from_id,
     account_to: account_to_id,
+    date: sanitizeDate(date),
   };
 };
 

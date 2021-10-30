@@ -1,6 +1,6 @@
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, Middleware } from '@reduxjs/toolkit';
 import { reducer, rootSaga } from './slices';
 
 export function createStore<C extends Record<string, unknown>>(
@@ -8,10 +8,14 @@ export function createStore<C extends Record<string, unknown>>(
   preloadedState?: Partial<ReturnType<typeof reducer>>
 ) {
   const sagaMiddleware = createSagaMiddleware({ context });
-  const loggerMiddleware = createLogger({ duration: true });
+  const middlewares = [] as Middleware[];
+  middlewares.push(sagaMiddleware);
+  if (process.env.NODE_ENV !== 'production') {
+    middlewares.push(createLogger({ duration: true }));
+  }
   const store = configureStore({
     reducer,
-    middleware: (getDefault) => getDefault({ thunk: false }).concat([sagaMiddleware, loggerMiddleware]),
+    middleware: (getDefault) => getDefault({ thunk: false }).concat(middlewares),
     preloadedState,
   });
   sagaMiddleware.run(rootSaga);

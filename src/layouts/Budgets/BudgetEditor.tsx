@@ -55,6 +55,13 @@ export const BudgetEditor = ({ open: initOpen, budget, onClose, onSubmit }: Budg
   const formik = useFormik({
     initialValues: { ...budget, amount: makePositive(budget.amount) },
     onSubmit: handleSubmit,
+    validate: (values) => {
+      const errors = {} as Partial<BudgetAccount>;
+      if (!values.account_id) {
+        errors.account_id = 'Required';
+      }
+      return errors;
+    },
   });
 
   const handleAmoutBlur = (e: React.FocusEvent) => {
@@ -63,7 +70,10 @@ export const BudgetEditor = ({ open: initOpen, budget, onClose, onSubmit }: Budg
   };
 
   const idToAccount = (id: string) => accountMap.get(id)?.name ?? '';
-  const canSubmit = !!(formik.values.account_id && formik.touched);
+
+  const hasErrors = () => !!Object.values(formik.errors).find((value) => !!value);
+  const isTouched = () => !!Object.values(formik.touched).find((value) => !!value);
+  const canSubmit = !hasErrors() && isTouched();
 
   return (
     <Dialog open={open} onClose={handleCancel} fullWidth sx={{ pb: '10%' }}>
@@ -86,7 +96,13 @@ export const BudgetEditor = ({ open: initOpen, budget, onClose, onSubmit }: Budg
             formik.setFieldTouched('account_id', true);
           }}
           renderInput={(params) => (
-            <TextField label="Category" variant={params.disabled ? 'filled' : 'outlined'} {...params} />
+            <TextField
+              label="Category"
+              error={!!formik.errors.account_id}
+              placeholder={formik.errors.account_id}
+              variant={params.disabled ? 'filled' : 'outlined'}
+              {...params}
+            />
           )}
         />
         <TextField

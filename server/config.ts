@@ -72,6 +72,7 @@ const createConfig = (): Configuration => {
 
   // postgres
   const pgDatabase = process.env.DATABASE_URL || '';
+  const pgSsl = isProd || process.env.DATABASE_SSL === '1';
 
   const migrationsTable = 'pgmigrations';
   const migrationsFolder = path.resolve(__dirname, 'database/migrations');
@@ -85,7 +86,7 @@ const createConfig = (): Configuration => {
     morgan: { format: morganFormat },
     helmet: { cspDirectives: helmetCspDirectives },
     bodyParser: { json: bodyParserJson },
-    pg: { database: pgDatabase, ssl: isProd },
+    pg: { database: pgDatabase, ssl: pgSsl },
     migrations: { table: migrationsTable, folder: migrationsFolder },
     delay: { ms: delayMs },
   };

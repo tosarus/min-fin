@@ -35,13 +35,25 @@ export const ContractEditor = ({ open: initOpen, contract, onClose, onSubmit }: 
   const formik = useFormik({
     initialValues: contract,
     onSubmit: handleSubmit,
+    validate: (values) => {
+      const errors = {} as Partial<Contract>;
+      if (!values.account) {
+        errors.account = 'Required';
+      }
+      if (!values.description) {
+        errors.description = 'Required';
+      }
+      if (!values.otherAccount && values.type !== TransactionType.Opening) {
+        errors.otherAccount = 'Required';
+      }
+      return errors;
+    },
   });
 
   const handleTypeChange = (e: React.MouseEvent, newType: TransactionType) => {
+    newType = newType ?? TransactionType.Expence;
+    formik.setFieldValue('otherAccount', undefined);
     formik.setFieldValue('type', newType);
-    if (newType === TransactionType.Opening) {
-      formik.setFieldValue('otherAccount', 0);
-    }
   };
 
   const handleAmoutBlur = (e: React.FocusEvent) => {
@@ -53,6 +65,10 @@ export const ContractEditor = ({ open: initOpen, contract, onClose, onSubmit }: 
 
   const sxLeft = { mb: 2, mr: 2, flex: '1 0 350px' };
   const sxRight = { mb: 2, flex: '1 0 170px' };
+
+  const hasErrors = () => !!Object.values(formik.errors).find((value) => !!value);
+  const isTouched = () => !!Object.values(formik.touched).find((value) => !!value);
+  const canSubmit = !hasErrors() && isTouched();
 
   return (
     <Dialog open={open} onClose={handleCancel} fullWidth sx={{ pb: '10%' }}>
@@ -67,7 +83,9 @@ export const ContractEditor = ({ open: initOpen, contract, onClose, onSubmit }: 
           getOptionLabel={idToAccount}
           value={formik.values.account}
           onChange={(e, value) => formik.setFieldValue('account', value)}
-          renderInput={(params) => <TextField label="Account" {...params} />}
+          renderInput={(params) => (
+            <TextField label="Account" placeholder={formik.errors.account} error={!!formik.errors.account} {...params} />
+          )}
         />
         <ToggleButtonGroup
           fullWidth
@@ -83,7 +101,14 @@ export const ContractEditor = ({ open: initOpen, contract, onClose, onSubmit }: 
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
-        <TextField id="contract-description" label="Description" sx={sxLeft} {...formik.getFieldProps('description')} />
+        <TextField
+          id="contract-description"
+          label="Description"
+          placeholder={formik.errors.description}
+          error={!!formik.errors.description}
+          sx={sxLeft}
+          {...formik.getFieldProps('description')}
+        />
         <TextField id="contract-date" type="date" label="Date" sx={sxRight} {...formik.getFieldProps('date')} />
         <Autocomplete
           disableClearable
@@ -98,6 +123,8 @@ export const ContractEditor = ({ open: initOpen, contract, onClose, onSubmit }: 
             <TextField
               label={formik.values.type === TransactionType.Transfer ? 'Destination Account' : 'Category'}
               variant={params.disabled ? 'filled' : 'outlined'}
+              error={!!formik.errors.otherAccount}
+              placeholder={formik.errors.otherAccount}
               {...params}
             />
           )}
@@ -112,7 +139,9 @@ export const ContractEditor = ({ open: initOpen, contract, onClose, onSubmit }: 
         <TextField id="contract-detail" fullWidth multiline rows={2} label="Details" {...formik.getFieldProps('detail')} />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => formik.handleSubmit()}>Save</Button>
+        <Button disabled={!canSubmit} onClick={() => formik.handleSubmit()}>
+          Save
+        </Button>
         <Button onClick={handleCancel}>Cancel</Button>
       </DialogActions>
     </Dialog>
