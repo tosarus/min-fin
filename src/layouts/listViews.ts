@@ -1,14 +1,14 @@
 import AppsIcon from '@mui/icons-material/Apps';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
-import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
+// import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
-import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
+// import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import { SvgIcon } from '@mui/material';
 import { Accounts } from './Accounts';
 import { Budgets } from './Budgets';
-import { Orders } from './Dashboard';
-import { DemoForecast, DemoTransactions } from './Demo';
+// import { Orders } from './Dashboard';
+// import { DemoForecast, DemoTransactions } from './Demo';
 import { NewUserWarning } from './NewUserWarning';
 import { NotFound } from './NotFound';
 import { Overview } from './Overview';
@@ -55,7 +55,7 @@ const createRoutablePage = (
 
 const _newUserPages = [
   createRoutablePage(Links.home(), Routes.Home, NewUserWarning, 'Home', AppsIcon),
-  createRoutablePage(Links.demoForecast(), Routes.DemoForecast, DemoForecast, 'Forecast', WbSunnyOutlinedIcon),
+  // createRoutablePage(Links.demoForecast(), Routes.DemoForecast, DemoForecast, 'Forecast', WbSunnyOutlinedIcon),
 ];
 
 const _systemPages = [createRoutablePage(Links.settings(), Routes.Settings, Settings, 'Settings')];
@@ -65,14 +65,14 @@ const _privatePages = [
   createRoutablePage(Links.accounts(), Routes.Accounts, Accounts, 'Accounts', MenuBookIcon),
   createRoutablePage(Links.budgets(), Routes.Budgets, Budgets, 'Budgets', AssignmentOutlinedIcon),
   createRoutablePage(Links.transactions(), Routes.Transactions, Transactions, 'Transactions', StorageRoundedIcon),
-  createRoutablePage(Links.demoTrans(), Routes.DemoTrans, DemoTransactions, 'Demo/Transactions', StorageRoundedIcon),
-  createRoutablePage(Links.demoOrders(), Routes.DemoOrders, Orders, 'Demo/Orders', ReceiptLongOutlinedIcon),
-  createRoutablePage(Links.demoForecast(), Routes.DemoForecast, DemoForecast, 'Demo/Forecast', WbSunnyOutlinedIcon),
+  // createRoutablePage(Links.demoTrans(), Routes.DemoTrans, DemoTransactions, 'Demo/Transactions', StorageRoundedIcon),
+  // createRoutablePage(Links.demoOrders(), Routes.DemoOrders, Orders, 'Demo/Orders', ReceiptLongOutlinedIcon),
+  // createRoutablePage(Links.demoForecast(), Routes.DemoForecast, DemoForecast, 'Demo/Forecast', WbSunnyOutlinedIcon),
 ];
 
 const _publicPages = [
   createRoutablePage(Links.home(), Routes.Home, WelcomeScreen, 'Home', AppsIcon),
-  createRoutablePage(Links.demoForecast(), Routes.DemoForecast, DemoForecast, 'Forecast', WbSunnyOutlinedIcon),
+  // createRoutablePage(Links.demoForecast(), Routes.DemoForecast, DemoForecast, 'Forecast', WbSunnyOutlinedIcon),
 ];
 
 const _notFound = createRoutablePage(Links.notFound(), Routes.NotFound, NotFound, '404');

@@ -64,7 +64,9 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
               {workbook.id === profile?.active_workbook ? 'Yes' : 'No'}
             </TableCell>
             <TableCell sx={{ textAlign: 'right' }}>
-              <Button onClick={() => handleRemove(workbook)}>Remove</Button>
+              <Button size="small" onClick={() => handleRemove(workbook)}>
+                Remove
+              </Button>
             </TableCell>
           </TableRow>
         ))}
@@ -87,8 +89,10 @@ export const WorkbookListTable = ({ workbooks }: WorkbookListTableProps) => {
       {!adding && (
         <TableFooter>
           <TableRow sx={{ '& td': { border: 0 } }}>
-            <TableCell color="primary" onClick={handleAddNew}>
-              Add new
+            <TableCell>
+              <Button size="small" onClick={handleAddNew}>
+                Add new
+              </Button>
             </TableCell>
             <TableCell />
             <TableCell />
