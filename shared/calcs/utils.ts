@@ -1,4 +1,7 @@
 import currency from 'currency.js';
+import dayjs from 'dayjs';
+
+export const sanitizeDate = (month: string) => dayjs(month).format('YYYY-MM-DD');
 
 export const centsToStr = (cents: number): string => {
   return currency(cents, { fromCents: true }).format();

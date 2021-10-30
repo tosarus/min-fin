@@ -1,4 +1,4 @@
-import { centsToStr, strToCents } from '@shared/calcs';
+import { centsToStr, sanitizeDate, strToCents } from '@shared/calcs';
 import { AccountType, BudgetAccount } from '@shared/types';
 import { AbstractRepository } from './AbstractRepository';
 
@@ -10,9 +10,10 @@ type DbBudget = {
   month: string;
 };
 
-const convertBudget = ({ amount_cent, ...budget }: DbBudget): BudgetAccount => {
+const convertBudget = ({ amount_cent, month, ...budget }: DbBudget): BudgetAccount => {
   return {
     ...budget,
+    month: sanitizeDate(month),
     amount: centsToStr(amount_cent),
   };
 };

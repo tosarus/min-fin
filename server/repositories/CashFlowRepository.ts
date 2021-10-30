@@ -1,4 +1,4 @@
-import { centsToStr, FlatCashFlow, strToCents } from '@shared/calcs';
+import { centsToStr, FlatCashFlow, sanitizeDate, strToCents } from '@shared/calcs';
 import { CashFlow, FlowDirection, TransactionType } from '@shared/types';
 import { AbstractRepository } from './AbstractRepository';
 
@@ -17,11 +17,12 @@ type DbCashFlow = {
   balance_cent: number;
 };
 
-const convertCashFlow = ({ amount_cent, to_flow, balance_cent, ...cashFlow }: DbCashFlow): CashFlow => {
+const convertCashFlow = ({ amount_cent, to_flow, balance_cent, date, ...cashFlow }: DbCashFlow): CashFlow => {
   return {
     amount: centsToStr(amount_cent),
     direction: to_flow ? FlowDirection.To : FlowDirection.From,
     balance: centsToStr(balance_cent),
+    date: sanitizeDate(date),
     ...cashFlow,
   };
 };

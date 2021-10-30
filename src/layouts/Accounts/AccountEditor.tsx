@@ -55,7 +55,10 @@ export const AccountEditor = ({
   };
 
   const addingNew = !id;
-  const canSubmit = (formik.touched.name || formik.touched.type) && !formik.errors.name;
+
+  const hasErrors = () => !!Object.values(formik.errors).find((value) => !!value);
+  const isTouched = () => !!Object.values(formik.touched).find((value) => !!value);
+  const canSubmit = !hasErrors() && isTouched();
 
   return (
     <Dialog open={open} onClose={handleCancel} fullWidth sx={{ pb: '10%' }}>
@@ -81,6 +84,7 @@ export const AccountEditor = ({
           fullWidth
           id="account-name"
           label="Name"
+          placeholder={formik.errors.name}
           error={!!formik.errors.name}
           {...formik.getFieldProps('name')}
           onChange={(e) => {
