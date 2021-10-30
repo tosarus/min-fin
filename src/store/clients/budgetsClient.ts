@@ -1,4 +1,4 @@
-import { BudgetAccount } from '../../types';
+import { AccountType, BudgetAccount, WorldUpdate } from '../../types';
 import { PrivateClient } from './privateClient';
 
 export class BudgetsClient extends PrivateClient {
@@ -12,5 +12,9 @@ export class BudgetsClient extends PrivateClient {
 
   remove(workbookId: string, id: string): Promise<{ id: string }> {
     return this.delete(`/api/budgets/${workbookId}/${id}`);
+  }
+
+  copyFromPrevious(workbookId: string, type: AccountType, month: string): Promise<WorldUpdate> {
+    return this.getJson(`/api/budgets/${workbookId}/copy/${type}/${month}`);
   }
 }

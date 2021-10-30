@@ -10,7 +10,6 @@ interface AccountListGroupProps {
   accounts: Account[];
   type: AccountType;
   onAdd: (type: AccountType) => void;
-  onEdit: (account: Account) => void;
 }
 
 const RoundedLinkWithHover = styled(RoundedLink)({
@@ -19,10 +18,9 @@ const RoundedLinkWithHover = styled(RoundedLink)({
   },
 });
 
-export const AccountListGroup = ({ accounts, type, onAdd, onEdit }: AccountListGroupProps) => {
+export const AccountListGroup = ({ accounts, type, onAdd }: AccountListGroupProps) => {
   const isAsset = getAssetAccountTypes().includes(type);
   const [open, setOpen] = useState(isAsset);
-
   const toggleOpen = () => setOpen(!open);
 
   return (
@@ -39,13 +37,7 @@ export const AccountListGroup = ({ accounts, type, onAdd, onEdit }: AccountListG
         sortAccounts(accounts, type).map((acc) => (
           <RoundedLinkWithHover key={acc.id} href={Links.accountsView(acc.id)}>
             <span>{acc.name}</span>
-            {isAsset ? (
-              <AmountSpan amount={acc.balance} />
-            ) : (
-              <Button onClick={() => onEdit(acc)} sx={{ p: 0, m: 0, display: 'none' }}>
-                edit
-              </Button>
-            )}
+            {isAsset ? <AmountSpan amount={acc.balance} /> : <></>}
           </RoundedLinkWithHover>
         ))}
     </>

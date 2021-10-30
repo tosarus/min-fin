@@ -19,6 +19,7 @@ import { WelcomeScreen } from './WelcomeScreen';
 export const Links = {
   accounts: () => '/accounts',
   accountsView: (id: string) => `/accounts/${id}`,
+  accountsViewMonth: (id: string, month: string) => `/accounts/${id}/${month}`,
   budgets: () => '/budgets',
   demoForecast: () => '/demo/forecast',
   demoOrders: () => '/demo/orders',
@@ -31,7 +32,7 @@ export const Links = {
 
 export const Routes = {
   Accounts: '/accounts/:all*',
-  AccountsView: '/accounts/:id',
+  AccountsView: '/accounts/:id/:month*',
   Budgets: '/budgets',
   DemoForecast: Links.demoForecast(),
   DemoOrders: Links.demoOrders(),

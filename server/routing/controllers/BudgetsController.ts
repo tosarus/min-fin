@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { Body, Controller, Delete, Get, Param, Post } from '@shared/routing-controllers';
-import { BudgetAccount } from '@shared/types';
+import { AccountType, BudgetAccount } from '@shared/types';
 import { BudgetsService } from '../../services';
 import { CheckToken, ValidateWorkbook } from '../middleware';
 
@@ -12,6 +12,15 @@ export class BudgetsController {
   @Get()
   getAllBudgets(@Param('workbookId') workbookId: string) {
     return this.budgets_.getAll(workbookId);
+  }
+
+  @Get('/copy/:type/:month')
+  copyFromPrevious(
+    @Param('workbookId') workbookId: string,
+    @Param('type') type: AccountType,
+    @Param('month') month: string
+  ) {
+    return this.budgets_.copyFromPrevious(workbookId, type, month);
   }
 
   @Post()

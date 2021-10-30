@@ -1,42 +1,59 @@
-import React, { useMemo } from 'react';
-import { Button, TableBody, TableCell, TableRow, Typography } from '@mui/material';
-import { AmountSpan, StyledTable } from '../../common';
-import { Account, getBudgetAccountTypes } from '../../types';
+import React, { useState } from 'react';
+import styled from '@emotion/styled';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { IconButton, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+import { AmountSpan, RoundedLink, StyledTable } from '../../common';
+import { Account, AccountType } from '../../types';
 import { sortAccounts } from '../Accounts/utils';
+import { Links } from '../listViews';
 
 interface BudgetSuggestionsProps {
   accounts: Account[];
+  type: AccountType;
   totals: Map<string, string>;
+  month: string;
   onPlan: (accountId: string, amount: string) => void;
 }
 
-export const BudgetSuggestions = ({ accounts, totals, onPlan }: BudgetSuggestionsProps) => {
-  const accountsWithTotals = useMemo(() => accounts.filter((acc) => totals.has(acc.id)), [accounts, totals]);
+const FitRoundedLink = styled(RoundedLink)({
+  marginBottom: 2,
+});
+
+export const BudgetSuggestions = ({ accounts, totals, type, month, onPlan }: BudgetSuggestionsProps) => {
+  const [open, setOpen] = useState(false);
+  const toggleOpen = () => setOpen(!open);
 
   return (
-    <StyledTable>
-      <TableBody sx={{ '& td': { py: 0 } }}>
-        {getBudgetAccountTypes().map((type) => (
-          <>
-            {sortAccounts(accountsWithTotals, type).map((acc, i) => (
+    <>
+      <Typography
+        sx={{ pl: 2, mt: 2, mb: 1, cursor: 'pointer' }}
+        component="h6"
+        variant="body1"
+        color="primary"
+        onClick={toggleOpen}>
+        {open ? 'hide unplanned' : 'show unplanned'}
+      </Typography>
+      {open && (
+        <StyledTable sx={{ '& td': { px: 1, py: 0 } }}>
+          <TableBody>
+            {sortAccounts(accounts, type).map((acc) => (
               <TableRow key={acc.id}>
                 <TableCell>
-                  <Typography variant="button">{i === 0 ? type : ''}</Typography>
+                  <FitRoundedLink href={Links.accountsViewMonth(acc.id, month)}>
+                    <span>{acc.name}</span>
+                    <AmountSpan amount={totals.get(acc.id)!} />
+                  </FitRoundedLink>
                 </TableCell>
-                <TableCell>{acc.name}</TableCell>
-                <TableCell sx={{ textAlign: 'right' }}>
-                  <AmountSpan amount={totals.get(acc.id)!} />
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
-                  <Button sx={{ py: 0 }} onClick={() => onPlan(acc.id, totals.get(acc.id)!)}>
-                    Plan
-                  </Button>
+                <TableCell sx={{ width: 30 }}>
+                  <IconButton size="small" sx={{ py: 0, m: 0 }} onClick={() => onPlan(acc.id, totals.get(acc.id)!)}>
+                    <AddCircleOutlineIcon fontSize="small" color="primary" />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
-          </>
-        ))}
-      </TableBody>
-    </StyledTable>
+          </TableBody>
+        </StyledTable>
+      )}
+    </>
   );
 };

@@ -16,6 +16,7 @@ import {
 import { AmountSpan } from '../../common';
 import { Selectors } from '../../store';
 import { BudgetAccount, getBudgetAccountTypes } from '../../types';
+import { getAccountIds } from '../Accounts/utils';
 
 interface BudgetEditorProps {
   open: boolean;
@@ -37,17 +38,18 @@ const makePositive = (amount?: string) => {
 };
 
 export const BudgetEditor = ({ open: initOpen, budget, onClose, onSubmit }: BudgetEditorProps) => {
+  const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const accountMap = useSelector(Selectors.currentAccountMap);
   const [open, setOpen] = useState(initOpen);
 
   const handleCancel = () => {
-    setOpen(false);
     onClose();
+    setOpen(false);
   };
 
   const handleSubmit = (budget: Partial<BudgetAccount>) => {
-    setOpen(false);
     onSubmit(budget);
+    setOpen(false);
   };
 
   const formik = useFormik({
@@ -56,7 +58,7 @@ export const BudgetEditor = ({ open: initOpen, budget, onClose, onSubmit }: Budg
   });
 
   const handleAmoutBlur = (e: React.FocusEvent) => {
-    formik.setFieldValue('amount', currency(formik.values.amount ?? '0').format());
+    formik.setFieldValue('amount', formik.values.amount ? currency(formik.values.amount).format() : null);
     formik.handleBlur(e);
   };
 
@@ -69,14 +71,14 @@ export const BudgetEditor = ({ open: initOpen, budget, onClose, onSubmit }: Budg
         {(!budget.id ? 'Creating budget' : 'Editing budget') +
           (budget.account_id ? ` for ${idToAccount(budget.account_id)}` : '')}
       </DialogTitle>
-      <DialogContent sx={{ display: 'flex', flexFlow: 'column', pb: 1 }}>
+      <DialogContent sx={{ display: 'flex', flexFlow: 'column' }}>
         <Autocomplete
           fullWidth
           disableClearable
           disabled={!!budget.account_id}
-          sx={{ mb: 2 }}
+          sx={{ mb: 2, mt: 0.75 }}
           id="budget-account"
-          options={getBudgetAccountTypes()}
+          options={getAccountIds(accounts, ...getBudgetAccountTypes())}
           getOptionLabel={idToAccount}
           value={formik.values.account_id}
           onChange={(e, value) => {

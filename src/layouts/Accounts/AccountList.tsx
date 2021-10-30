@@ -22,10 +22,6 @@ export const AccountList = ({ sx, accounts, onSubmit }: AccountListProps) => {
     setEditable({ type });
   };
 
-  const handleEdit = (account: Account) => {
-    setEditable(account);
-  };
-
   const handleSubmit = (account: Partial<Account>) => {
     onSubmit(account);
     setEditable(undefined);
@@ -46,7 +42,7 @@ export const AccountList = ({ sx, accounts, onSubmit }: AccountListProps) => {
       {getPublicAccountTypes().map((type, i) => (
         <React.Fragment key={i}>
           <Divider sx={{ mb: 1 }} />
-          <AccountListGroup accounts={accounts} type={type} onAdd={handleAdd} onEdit={handleEdit} />
+          <AccountListGroup accounts={accounts} type={type} onAdd={handleAdd} />
         </React.Fragment>
       ))}
     </Box>

@@ -1,14 +1,16 @@
 import React, { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { SxProps } from '@mui/system';
 
 interface MonthSelectionProps {
   count?: number;
   value?: string;
+  sx?: SxProps;
   onChange: (value: string) => void;
 }
 
-export const MonthSelection = ({ count = 12, value, onChange }: MonthSelectionProps) => {
+export const MonthSelection = ({ count = 12, value, onChange, sx }: MonthSelectionProps) => {
   const monthRange = useMemo(
     () =>
       [...Array(count).keys()].map((i) =>
@@ -21,7 +23,7 @@ export const MonthSelection = ({ count = 12, value, onChange }: MonthSelectionPr
   );
 
   return (
-    <ToggleButtonGroup fullWidth exclusive color="primary" sx={{ mb: 2 }} value={value} onChange={(e, m) => onChange(m)}>
+    <ToggleButtonGroup fullWidth exclusive color="primary" value={value} sx={sx} onChange={(e, m) => onChange(m)}>
       {monthRange.map((month, i) => (
         <ToggleButton size="small" key={i} value={month}>
           {dayjs(month).format('MMM, YY')}

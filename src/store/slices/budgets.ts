@@ -1,6 +1,6 @@
 import { createSliceSaga, SagaType } from 'redux-toolkit-saga';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BudgetAccount, WorldUpdate } from '../../types';
+import { AccountType, BudgetAccount, WorldUpdate } from '../../types';
 import { BudgetsClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
 import { applyWorldUpdate } from './actions';
@@ -60,6 +60,13 @@ const { saga, actions } = createSliceSaga({
     },
     *removeBudget({ payload: { workbookId, id } }: PayloadAction<{ workbookId: string; id: string }>) {
       yield callPrivate(removeBudgetDone, 'Removing budget', (auth) => new BudgetsClient(auth).remove(workbookId, id));
+    },
+    *copyFromPrevious({
+      payload: { workbookId, type, month },
+    }: PayloadAction<{ workbookId: string; type: AccountType; month: string }>) {
+      yield callPrivate(applyWorldUpdate, 'Removing budget', (auth) =>
+        new BudgetsClient(auth).copyFromPrevious(workbookId, type, month)
+      );
     },
   },
   sagaType: SagaType.TakeLatest,

@@ -18,6 +18,7 @@ interface Props<T> {
   items: T[];
   pagination?: boolean;
   withHeader?: boolean;
+  sx?: SxProps;
   detail?: (item: T) => any;
   onEdit?: (item: T) => void;
   onRemove?: (item: T) => void;
@@ -30,6 +31,7 @@ export function makeStyledTable<T>({
   items,
   pagination = true,
   withHeader = true,
+  sx,
   detail = NOOP,
   onEdit = NOOP,
   onRemove = NOOP,
@@ -86,7 +88,7 @@ export function makeStyledTable<T>({
       return header.sx;
     }
     if (header.type === 'date') {
-      return { maxWidth: 90 };
+      return { width: 90 };
     } else if (header.type === 'amount') {
       return { maxWidth: 120, textAlign: 'right' };
     } else {
@@ -113,7 +115,7 @@ export function makeStyledTable<T>({
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
         <MenuItem onClick={handleRemove}>Remove</MenuItem>
       </Menu>
-      <StyledTable pagination={paginationProps}>
+      <StyledTable pagination={paginationProps} sx={sx}>
         {withHeader && (
           <TableHead>
             <TableRow>
