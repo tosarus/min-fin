@@ -25,15 +25,15 @@ export const BudgetList = ({ budgets, totals, month, onEdit, onRemove }: BudgetL
   const sortedBudgets = useMemo(() => sortBudgets(budgets, accountMap), [budgets, accountMap]);
 
   const headers = [] as StyledColumn<BudgetAccount>[];
-  headers.push({ sx: { width: 200 }, value: (b) => getBudgetNameLink(b, accountMap, month) });
-  headers.push({ value: (b) => getBudgetProgress(b, totals, accountMap) });
-  headers.push({ sx: { width: 250, textAlign: 'right' }, value: (b) => getBudgetDescription(b, totals) });
+  headers.push({ value: (b) => getBudgetNameLink(b, accountMap, month) });
+  headers.push({ sx: { textAlign: 'right' }, value: (b) => getBudgetDescription(b, totals) });
   return makeStyledTable({
     items: sortedBudgets,
     headers,
+    detail: (b) => getBudgetProgress(b, totals, accountMap),
     onEdit,
     onRemove,
-    sx: { '& td': { px: 1, py: 0.25 }, mt: 1 },
+    sx: { '& td': { px: 1, py: 0.25, borderBottomColor: 'white' }, mt: 1 },
     pagination: false,
     withHeader: false,
   });
