@@ -100,14 +100,13 @@ export function makeStyledTable<T>({
       return header.sx;
     }
     if (header.type === 'date') {
-      return { verticalAlign: 'top' };
+      return { verticalAlign: 'top', borderBottomWidth: '1px !important' };
     } else if (header.type === 'amount') {
       return { textAlign: 'right' };
     } else {
       return {};
     }
   };
-  const firstRow: SxProps = hasDetails ? { '& td:not(:first-child)': { borderBottom: 'none', pb: 0 } } : {};
 
   return (
     <>
@@ -131,7 +130,7 @@ export function makeStyledTable<T>({
         <TableBody>
           {slicedItems.map((item, i) => (
             <React.Fragment key={i}>
-              <TableRow sx={firstRow}>
+              <TableRow sx={hasDetails ? { '& td': { borderBottomWidth: 0, pb: 0 } } : {}}>
                 {headers.map((h, i) => (
                   <TableCell key={i} rowSpan={hasDetails && h.type === 'date' ? 2 : 1} sx={cellSx(h)}>
                     {h.type === 'amount' ? <AmountSpan amount={h.value(item)} /> : h.value(item)}
