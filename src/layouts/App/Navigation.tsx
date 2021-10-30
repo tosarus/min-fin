@@ -34,9 +34,9 @@ export const Navigation = ({ expanded, toggleExpanded }: NavigationProps) => {
   const fullContent = profile?.allowed ?? false;
   const viewPages = listViewPages(isAuthenticated, fullContent);
 
-  // if (!fullContent) {
-  //   return <></>;
-  // }
+  if (!fullContent) {
+    return <></>;
+  }
 
   return (
     <NavigationBox component="nav" expanded={expanded}>
