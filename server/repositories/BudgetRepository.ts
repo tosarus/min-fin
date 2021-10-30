@@ -1,5 +1,5 @@
 import { centsToStr, strToCents } from '@shared/calcs';
-import { BudgetAccount } from '@shared/types';
+import { AccountType, BudgetAccount } from '@shared/types';
 import { AbstractRepository } from './AbstractRepository';
 
 type DbBudget = {
@@ -26,10 +26,13 @@ export class BudgetRepository extends AbstractRepository {
     return rows.map(convertBudget);
   }
 
-  async getAllByMonth(workbookId: string, month: string): Promise<BudgetAccount[]> {
+  async getAllByMonth(workbookId: string, type: AccountType, month: string): Promise<BudgetAccount[]> {
     const { rows } = await this.qm().query<DbBudget>({
-      text: 'select * from budget_accounts where workbook_id = $1 and month = $2',
-      values: [workbookId, month],
+      text: `
+select ba.*
+from budget_accounts ba join accounts a on ba.account_id = a.id
+where ba.workbook_id = $1 and ba.month = $2 and a.type = $3`,
+      values: [workbookId, month, type],
     });
     return rows.map(convertBudget);
   }

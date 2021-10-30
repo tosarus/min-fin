@@ -1,7 +1,9 @@
+import dayjs from 'dayjs';
 import { Service } from 'typedi';
-import { BudgetAccount } from '@shared/types';
+import { AccountType, BudgetAccount, WorldUpdate } from '@shared/types';
 import { BudgetRepository } from '../repositories';
 import { BaseService } from './BaseService';
+import { InTransaction } from './InTransaction';
 
 @Service()
 export class BudgetsService extends BaseService {
@@ -9,8 +11,22 @@ export class BudgetsService extends BaseService {
     return this.resolve(BudgetRepository).getAll(workbookId);
   }
 
-  getAllByMonth(workbookId: string, month: string) {
-    return this.resolve(BudgetRepository).getAllByMonth(workbookId, month);
+  @InTransaction()
+  async copyFromPrevious(workbookId: string, type: AccountType, month: string): Promise<WorldUpdate> {
+    if (!dayjs(month).startOf('month').isSame(month)) {
+      throw 'CopyFromPrevious: wrong month format';
+    }
+
+    const repo = this.resolve(BudgetRepository);
+    const prevMonth = dayjs(month).subtract(1, 'month').format('YYYY-MM-DD');
+
+    const previous = await repo.getAllByMonth(workbookId, type, prevMonth);
+    const budgets = [] as BudgetAccount[];
+    for (const budget of previous) {
+      budget.month = month;
+      budgets.push(await repo.create(workbookId, budget));
+    }
+    return { budgets };
   }
 
   async save(workbookId: string, budget: Partial<BudgetAccount>) {

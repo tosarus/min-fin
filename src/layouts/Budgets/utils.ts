@@ -1,23 +1,29 @@
 import currency from 'currency.js';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import { CashFlow } from '../../types';
+import { CashFlow, TransactionType } from '../../types';
 
 dayjs.extend(isBetween);
 
-function withinMonth(month: string) {
+export function withinMonthFilter(month: string) {
   const from = dayjs(month);
   const to = from.add(1, 'month');
   return ({ date }: { date: string }) => dayjs(date).isBetween(from, to, 'day', '[)');
 }
 
-export function calculateTotals(cashFlows: CashFlow[], month: string) {
+export function calculateTotals(cashFlows: CashFlow[], type: TransactionType) {
   const totals = new Map<string, currency>();
-  const updateTotals = (id: string, amount: string | currency) =>
-    totals.set(id, (totals.get(id) ?? currency(0)).add(amount));
+  const updateTotals = (id: string, amount: string) => totals.set(id, (totals.get(id) ?? currency(0)).add(amount));
 
-  cashFlows.filter(withinMonth(month)).forEach((flow) => updateTotals(flow.other_account_id, flow.amount));
+  cashFlows.filter((flow) => flow.type === type).forEach((flow) => updateTotals(flow.other_account_id, flow.amount));
   return new Map<string, string>(Array.from(totals.entries(), (v) => [v[0], v[1].format()]));
+}
+
+export function calcucateSum(values: string[], options?: { makeNegative?: boolean }) {
+  return values
+    .reduce((summ, v) => summ.add(v), currency(0))
+    .multiply(options?.makeNegative ? -1 : 1)
+    .format();
 }
 
 export function sameMonthFilter(month: string) {

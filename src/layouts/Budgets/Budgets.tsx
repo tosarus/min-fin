@@ -1,18 +1,18 @@
 import React, { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
-import { Container } from '@mui/material';
+import { Box } from '@mui/material';
 import { Title } from '../../common';
 import { Actions, Selectors } from '../../store';
-import { BudgetAccount } from '../../types';
+import { AccountType, BudgetAccount } from '../../types';
 import { BudgetEditor } from './BudgetEditor';
-import { BudgetList } from './BudgetList';
-import { BudgetSuggestions } from './BudgetSuggestions';
+import { BudgetGroup } from './BudgetGroup';
+import { BudgetPlanningInfo } from './BudgetPlaningInfo';
 import { MonthSelection } from './MonthSelection';
-import { calculateTotals, getCurrentMonth, sameMonthFilter } from './utils';
+import { getCurrentMonth, sameMonthFilter, withinMonthFilter } from './utils';
 
 export const Budgets = () => {
-  const accounts = useSelector(Selectors.currentAccounts) ?? [];
+  // const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const budgets = useSelector(Selectors.currentBudgets) ?? [];
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
   const workbook = useSelector(Selectors.activeWorkbook);
@@ -20,12 +20,12 @@ export const Budgets = () => {
   const [month, setMonth] = useState(getCurrentMonth());
   const [editable, setEditable] = useState<Partial<BudgetAccount>>();
 
-  const totals = useMemo(() => calculateTotals(cashFlows, month), [cashFlows, month]);
-  const budgeted = useMemo(() => budgets.filter(sameMonthFilter(month)), [budgets, month]);
-  const unbudgeted = useMemo(() => {
-    const budgetedAccIds = budgeted.map((b) => b.account_id);
-    return accounts.filter((acc) => !budgetedAccIds.includes(acc.id));
-  }, [accounts, budgeted]);
+  const monthBudgets = useMemo(() => budgets.filter(sameMonthFilter(month)), [budgets, month]);
+  const monthFlows = useMemo(() => cashFlows.filter(withinMonthFilter(month)), [cashFlows, month]);
+
+  const handleAdd = () => {
+    setEditable({ month });
+  };
 
   const handlePlan = (account_id: string, amount: string) => {
     setEditable({ account_id, month, amount });
@@ -53,16 +53,40 @@ export const Budgets = () => {
     }
   };
 
+  const handleCopy = (type: AccountType) => {
+    if (workbook) {
+      dispatch(Actions.copyFromPrevious({ workbookId: workbook.id, type, month }));
+    }
+  };
+
   const handleMonthChange = (m: string) => setMonth(m ?? getCurrentMonth());
 
   return (
-    <Container maxWidth="md" sx={{ display: 'flex', flexFlow: 'column', overflow: 'hidden' }}>
-      <Title>{dayjs(month).format('MMMM YYYY')}</Title>
-      <MonthSelection value={month} onChange={handleMonthChange} />
+    <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'auto', pr: 3 }}>
+      <Title sx={{ pl: '20%' }}>Budgets</Title>
+      <MonthSelection sx={{ pl: '20%', mb: 3 }} value={month} onChange={handleMonthChange} />
       {editable && <BudgetEditor open budget={editable} onClose={handleClose} onSubmit={handleSubmit} />}
-      <BudgetList budgets={budgeted} totals={totals} onEdit={handleEdit} onRemove={handleRemove} />
-      <Title>Unplanned</Title>
-      <BudgetSuggestions accounts={unbudgeted} totals={totals} onPlan={handlePlan} />
-    </Container>
+      <BudgetPlanningInfo budgets={monthBudgets} month={dayjs(month).format('MMMM, YYYY')} onAdd={handleAdd} />
+      <BudgetGroup
+        budgets={monthBudgets}
+        cashFlows={monthFlows}
+        type={AccountType.Income}
+        month={month}
+        onEdit={handleEdit}
+        onRemove={handleRemove}
+        onPlan={handlePlan}
+        onCopy={handleCopy}
+      />
+      <BudgetGroup
+        budgets={monthBudgets}
+        cashFlows={monthFlows}
+        type={AccountType.Expence}
+        month={month}
+        onEdit={handleEdit}
+        onRemove={handleRemove}
+        onPlan={handlePlan}
+        onCopy={handleCopy}
+      />
+    </Box>
   );
 };
