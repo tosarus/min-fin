@@ -30,7 +30,25 @@ const convertCashFlow = ({ amount_cent, to_flow, balance_cent, date, ...cashFlow
 export class CashFlowRepository extends AbstractRepository {
   async getAll(workbookId: string) {
     const { rows } = await this.qm().query<DbCashFlow>({
-      text: 'select * from cash_flows_balance where workbook_id = $1',
+      text: `
+with
+  flows as (select * from cash_flows where workbook_id = $1),
+  trans as (select * from transactions where workbook_id = $1),
+  flows_balance as (
+SELECT flows.workbook_id,
+  flows.transaction_id,
+  flows.account_id,
+  flows.other_account_id,
+  flows.to_flow,
+  flows.amount_cent,
+  trans.date,
+  trans.type,
+  trans.description,
+  trans.detail,
+  trans."order",
+  sum(flows.amount_cent) OVER (PARTITION BY flows.account_id ORDER BY trans.date, trans."order") AS balance_cent
+FROM flows JOIN trans ON flows.transaction_id = trans.id)
+select * from flows_balance`,
       values: [workbookId],
     });
     return rows.map(convertCashFlow);
@@ -38,7 +56,26 @@ export class CashFlowRepository extends AbstractRepository {
 
   async findAfterDate(workbook_id: string, accountIds: string[], date: string) {
     const { rows } = await this.qm().query<DbCashFlow>({
-      text: 'select * from cash_flows_balance where workbook_id = $1 and account_id = ANY($2::uuid[]) and date >= $3',
+      text: `
+with
+  flows as (select * from cash_flows where workbook_id = $1 and account_id = ANY($2::uuid[])),
+  trans as (select * from transactions where workbook_id = $1),
+  flows_balance as (
+SELECT flows.workbook_id,
+  flows.transaction_id,
+  flows.account_id,
+  flows.other_account_id,
+  flows.to_flow,
+  flows.amount_cent,
+  trans.date,
+  trans.type,
+  trans.description,
+  trans.detail,
+  trans."order",
+  sum(flows.amount_cent) OVER (PARTITION BY flows.account_id ORDER BY trans.date, trans."order") AS balance_cent
+FROM flows JOIN trans ON flows.transaction_id = trans.id)
+select * from flows_balance
+where date >= $3`,
       values: [workbook_id, accountIds, date],
     });
     return rows.map(convertCashFlow);
