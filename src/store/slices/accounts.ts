@@ -1,4 +1,4 @@
-import { createSliceSaga, SagaType } from 'redux-toolkit-saga/lib/createSliceSaga';
+import { createSliceSaga, SagaType } from 'redux-toolkit-saga';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Account, WorldUpdate } from '../../types';
 import { AccountsClient } from '../clients';

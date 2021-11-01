@@ -1,4 +1,4 @@
-import { createSliceSaga, SagaType } from 'redux-toolkit-saga/lib/createSliceSaga';
+import { createSliceSaga, SagaType } from 'redux-toolkit-saga';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CashFlow, Transaction, WorldUpdate } from '../../types';
 import { TransactionClient } from '../clients';

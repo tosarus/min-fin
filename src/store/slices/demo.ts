@@ -1,4 +1,4 @@
-import { createSliceSaga, SagaType } from 'redux-toolkit-saga/lib/createSliceSaga';
+import { createSliceSaga, SagaType } from 'redux-toolkit-saga';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { WeatherForecast, CsvTrans } from '../../types';
 import { ForecastClient, TransClient } from '../clients';

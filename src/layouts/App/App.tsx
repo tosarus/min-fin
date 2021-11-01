@@ -15,12 +15,12 @@ export const App = () => {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
+      <ReportSnackbar />
       <Header expanded={expanded} title="Min-Fin" />
       <Navigation expanded={expanded} toggleExpanded={toggleExpanded} />
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', flexGrow: 1, pt: 9 }}>
         {isReady ? <RoutedContent /> : <LinearProgress />}
         <Footer copyname="Vlad-Dev" link="https://vlad-k.dev/" />
-        <ReportSnackbar />
       </Box>
     </Box>
   );
