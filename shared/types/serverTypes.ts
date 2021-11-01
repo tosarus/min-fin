@@ -91,3 +91,13 @@ interface WorldUpdate_ {
 }
 
 export type WorldUpdate = Partial<WorldUpdate_>;
+
+export interface ImportTransaction {
+  date: string;
+  descr: string;
+  detail: string;
+  amount: number;
+  type: string;
+  category: string;
+  account: string;
+}

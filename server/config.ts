@@ -68,6 +68,7 @@ const createConfig = (): Configuration => {
   // express body parser
   const bodyParserJson = {
     type: ['application/json', 'application/csp-report'],
+    limit: '5mb',
   };
 
   // postgres
