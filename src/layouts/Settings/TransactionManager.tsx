@@ -1,7 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Typography } from '@mui/material';
+import { DownloadButton, OpenFileButton } from '../../common';
 import { Actions, Selectors } from '../../store';
+import { ImportTransaction } from '../../types';
 
 export const TransactionManager = () => {
   const workbook = useSelector(Selectors.activeWorkbook);
@@ -13,30 +15,46 @@ export const TransactionManager = () => {
     }
   };
 
-  const handleImport = (files: FileList | null) => {
-    if (workbook && files?.length) {
-      dispatch(Actions.importTransactions({ workbookId: workbook.id, file: files[0] }));
+  const handleCsv = (file: File) => {
+    if (workbook) {
+      dispatch(Actions.importTransactionsCsv({ workbookId: workbook.id, file }));
     }
   };
 
+  const handleJson = (result?: string) => {
+    if (workbook && result) {
+      const raw = JSON.parse(result) as ImportTransaction[];
+      dispatch(Actions.importTransactions({ workbookId: workbook.id, raw }));
+    }
+  };
+
+  const handleExport = () => {
+    if (workbook) {
+      dispatch(Actions.exportTransactions(workbook.id));
+    }
+  };
+
+  const sxProps = { px: 0, mb: 2 };
+
   return (
     <Box sx={{ display: 'flex', flexFlow: 'column', alignItems: 'flex-start', px: 2 }}>
-      <Typography>Active Workbook: {workbook?.name ?? 'none'}</Typography>
-      <Button sx={{ px: 0, mb: 2 }} onClick={handleUpdateCashFlows}>
+      <Typography sx={sxProps}>Active Workbook: {workbook?.name ?? 'none'}</Typography>
+      <Button sx={sxProps} onClick={handleUpdateCashFlows}>
         Update Cash Flows
       </Button>
-      <Button sx={{ px: 0, mb: 2 }} component="label">
+      <OpenFileButton sx={sxProps} accept=".csv" onFile={handleCsv}>
+        Import Transactions from Mint CSV
+      </OpenFileButton>
+      <OpenFileButton sx={sxProps} accept=".json" onText={handleJson}>
         Import Transactions
-        <input
-          onChange={(e) => {
-            e.preventDefault();
-            handleImport(e.target.files);
-            e.target.value = '';
-          }}
-          type="file"
-          hidden
-        />
-      </Button>
+      </OpenFileButton>
+      <DownloadButton
+        sx={sxProps}
+        onClick={handleExport}
+        target={Selectors.exportedTransactions}
+        filename="transactions.json">
+        Export Transactions
+      </DownloadButton>
     </Box>
   );
 };

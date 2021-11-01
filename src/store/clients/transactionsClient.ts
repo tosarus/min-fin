@@ -1,4 +1,4 @@
-import { Transaction, WorldUpdate } from '../../types';
+import { ImportTransaction, Transaction, WorldUpdate } from '../../types';
 import { PrivateClient } from './privateClient';
 
 export class TransactionClient extends PrivateClient {
@@ -18,9 +18,17 @@ export class TransactionClient extends PrivateClient {
     return this.delete(`/api/transactions/${workbookId}/${id}`);
   }
 
-  import(workbookId: string, file: File): Promise<WorldUpdate> {
+  export(workbookId: string): Promise<ImportTransaction[]> {
+    return this.getJson(`/api/transactions/${workbookId}/export`);
+  }
+
+  import(workbookId: string, raw: ImportTransaction[]): Promise<WorldUpdate> {
+    return this.postJson(`/api/transactions/${workbookId}/import`, raw);
+  }
+
+  importCsv(workbookId: string, file: File): Promise<WorldUpdate> {
     const formData = new FormData();
     formData.append('trans', file, file.name);
-    return this.postForm(`/api/transactions/${workbookId}/import`, formData);
+    return this.postForm(`/api/transactions/${workbookId}/importCsv`, formData);
   }
 }

@@ -1,6 +1,6 @@
 import { createSliceSaga, SagaType } from 'redux-toolkit-saga';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CashFlow, Transaction, WorldUpdate } from '../../types';
+import { CashFlow, ImportTransaction, Transaction, WorldUpdate } from '../../types';
 import { TransactionClient } from '../clients';
 import { callPrivate } from '../sagaCallers';
 import { applyWorldUpdate } from './actions';
@@ -55,9 +55,14 @@ const { saga, actions } = createSliceSaga({
         new TransactionClient(auth).remove(workbookId, id)
       );
     },
-    *importTransactions({ payload: { workbookId, file } }: PayloadAction<{ workbookId: string; file: File }>) {
+    *importTransactionsCsv({ payload: { workbookId, file } }: PayloadAction<{ workbookId: string; file: File }>) {
       yield callPrivate(applyWorldUpdate, 'Importing transactions', (auth) =>
-        new TransactionClient(auth).import(workbookId, file)
+        new TransactionClient(auth).importCsv(workbookId, file)
+      );
+    },
+    *importTransactions({ payload: { workbookId, raw } }: PayloadAction<{ workbookId: string; raw: ImportTransaction[] }>) {
+      yield callPrivate(applyWorldUpdate, 'Importing transactions', (auth) =>
+        new TransactionClient(auth).import(workbookId, raw)
       );
     },
   },

@@ -1,29 +1,97 @@
 import currency from 'currency.js';
 import { Service } from 'typedi';
 import { parseString } from '@fast-csv/parse';
-import { getMinDate } from '@shared/calcs';
-import { Account, AccountType, Transaction, TransactionType, WorldUpdate } from '@shared/types';
+import { getMinDate, sanitizeDate } from '@shared/calcs';
+import { Account, AccountType, ImportTransaction, Transaction, TransactionType, WorldUpdate } from '@shared/types';
 import { AccountRepository, TransactionRepository } from '../repositories';
 import { BaseService } from './BaseService';
 import { InTransaction } from './InTransaction';
 
-interface ImportTransaction {
-  date: string;
-  descr: string;
-  detail: string;
-  amount: number;
-  type: string;
-  category: string;
-  account: string;
-}
-
 @Service()
-export class ImportService extends BaseService {
-  async importTransactions(workbookId: string, importName: string, importString: string): Promise<WorldUpdate> {
-    const rawTransactions = await parseTransString(importString);
-    console.log(`Importing ${rawTransactions.length} transactions from ${importName}`);
-    const imported = this.processImport(workbookId, rawTransactions);
-    return await this.saveImport(workbookId, imported);
+export class StorageService extends BaseService {
+  parseTransactions(importString: string): Promise<ImportTransaction[]> {
+    return parseTransString(importString);
+  }
+
+  importTransactions(workbookId: string, transactions: ImportTransaction[]): Promise<WorldUpdate> {
+    const imported = this.processImport(workbookId, transactions);
+    return this.saveImport(workbookId, imported);
+  }
+
+  async exportTransactions(workbookId: string): Promise<ImportTransaction[]> {
+    const accountRepo = this.resolve(AccountRepository);
+    const transactionRepo = this.resolve(TransactionRepository);
+
+    const accounts = await accountRepo.getForWorkbook(workbookId);
+    const accountMap = new Map<string, Account>(accounts.map((acc) => [acc.id, acc]));
+    const transactions = await transactionRepo.getAll(workbookId);
+
+    const output = [] as ImportTransaction[];
+    for (const trans of transactions) {
+      const out = {
+        date: sanitizeDate(trans.date),
+        descr: trans.description,
+        detail: trans.detail || '',
+        amount: currency(trans.amount).value,
+      };
+      switch (trans.type) {
+        case TransactionType.Expence:
+          output.push({
+            ...out,
+            type: 'debit',
+            category: accountMap.get(trans.account_to)?.name || '',
+            account: accountMap.get(trans.account_from)?.name || '',
+          });
+          break;
+
+        case TransactionType.Income:
+          output.push({
+            ...out,
+            type: 'credit',
+            category: accountMap.get(trans.account_from)?.name || '',
+            account: accountMap.get(trans.account_to)?.name || '',
+          });
+          break;
+
+        case TransactionType.Transfer:
+          output.push({
+            ...out,
+            type: 'debit',
+            category: 'Transfer',
+            account: accountMap.get(trans.account_from)?.name || '',
+          });
+          output.push({
+            ...out,
+            amount: currency(trans.amount).value,
+            type: 'credit',
+            category: 'Transfer',
+            account: accountMap.get(trans.account_to)?.name || '',
+          });
+          break;
+
+        case TransactionType.Opening:
+          {
+            let amount = currency(trans.amount).value;
+            let type;
+            if (amount < 0) {
+              amount *= -1;
+              type = 'debit';
+            } else {
+              type = 'credit';
+            }
+
+            output.push({
+              ...out,
+              amount,
+              type,
+              category: 'Transfer',
+              account: accountMap.get(trans.account_to)?.name || '',
+            });
+          }
+          break;
+      }
+    }
+    return output;
   }
 
   @InTransaction()
