@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import { all, fork } from 'redux-saga/effects';
 import accounts from './accounts';
+import ajax from './ajaxState';
 import budgets from './budgets';
 import demo from './demo';
 import reports from './reports';
@@ -8,7 +9,9 @@ import transactions from './transactions';
 import users from './users';
 import workbooks from './workbooks';
 
-const slices = { accounts, budgets, demo, reports, transactions, users, workbooks };
+export type { AjaxState } from './ajaxState';
+
+const slices = { accounts, ajax, budgets, demo, reports, transactions, users, workbooks };
 
 type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (x: infer R) => any ? R : never;
 const intersect = <T>(t: T) => t as UnionToIntersection<T>;

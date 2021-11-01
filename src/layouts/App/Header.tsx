@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 import { AppBar, Toolbar, Typography } from '@mui/material';
 import { useAuth } from '../../auth';
-import { ButtonLink, FlexLink, LoginLogout } from '../../common';
+import { AjaxBackdrop, ButtonLink, FlexLink, LoginLogout } from '../../common';
 import { listSystemPages } from '../listViews';
 
 const BrandLink = styled(FlexLink)({
@@ -28,6 +28,7 @@ export const Header = ({ expanded, title }: HeaderProps) => {
 
   return (
     <AppBar position="fixed">
+      <AjaxBackdrop />
       <Toolbar disableGutters sx={{ alignItems: 'stretch' }}>
         <BrandLink href="/" noActive>
           <CalculateOutlinedIcon sx={{ color: 'white', px: 1, width: 48, boxSizing: 'content-box' }} />
