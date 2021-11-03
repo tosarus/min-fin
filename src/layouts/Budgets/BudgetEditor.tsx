@@ -15,12 +15,13 @@ import {
 } from '@mui/material';
 import { AmountSpan } from '../../common';
 import { Selectors } from '../../store';
-import { BudgetAccount, getBudgetAccountTypes } from '../../types';
-import { getAccountIds } from '../Accounts/utils';
+import { Account, BudgetAccount } from '../../types';
+import { getExenceAccountIds, getIncomeAccountIds } from '../Accounts/utils';
 
 interface BudgetEditorProps {
   open: boolean;
   budget: Partial<BudgetAccount>;
+  planned: BudgetAccount[];
   onClose: () => void;
   onSubmit: (budget: Partial<BudgetAccount>) => void;
 }
@@ -37,7 +38,7 @@ const makePositive = (amount?: string) => {
   return value.format();
 };
 
-export const BudgetEditor = ({ open: initOpen, budget, onClose, onSubmit }: BudgetEditorProps) => {
+export const BudgetEditor = ({ open: initOpen, budget, planned, onClose, onSubmit }: BudgetEditorProps) => {
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const accountMap = useSelector(Selectors.currentAccountMap);
   const [open, setOpen] = useState(initOpen);
@@ -88,7 +89,8 @@ export const BudgetEditor = ({ open: initOpen, budget, onClose, onSubmit }: Budg
           disabled={!!budget.account_id}
           sx={{ mb: 2, mt: 0.75 }}
           id="budget-account"
-          options={getAccountIds(accounts, ...getBudgetAccountTypes())}
+          options={getUnplannedAccountIds(accounts, planned)}
+          groupBy={(id) => accountMap.get(id)!.type}
           getOptionLabel={idToAccount}
           value={formik.values.account_id}
           onChange={(e, value) => {
@@ -129,3 +131,11 @@ export const BudgetEditor = ({ open: initOpen, budget, onClose, onSubmit }: Budg
     </Dialog>
   );
 };
+
+function getUnplannedAccountIds(accounts: Account[], planned: BudgetAccount[]) {
+  const plannedIds = new Set(planned.map((b) => b.account_id));
+  return Array.prototype.concat(
+    getIncomeAccountIds(accounts).filter((id) => !plannedIds.has(id)),
+    getExenceAccountIds(accounts).filter((id) => !plannedIds.has(id))
+  );
+}
