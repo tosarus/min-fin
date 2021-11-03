@@ -33,7 +33,7 @@ export const BudgetList = ({ budgets, totals, month, onEdit, onRemove }: BudgetL
     detail: (b) => getBudgetProgress(b, totals, accountMap),
     onEdit,
     onRemove,
-    sx: { '& td': { px: 1, py: 0.25, borderBottomColor: 'white' }, mt: 1 },
+    sx: { '& td': { px: 1, py: 0.25, borderBottomColor: 'white' } },
     pagination: false,
     withHeader: false,
   });

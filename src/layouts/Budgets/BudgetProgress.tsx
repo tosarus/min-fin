@@ -47,7 +47,9 @@ export const BudgetProgress = ({ current, budgeted, fraction = 0, income = false
         borderRadius: height / 16,
         border: `1px solid ${borderColor}`,
         position: 'relative',
-        zIndex: 0,
+        ml: 1,
+        mt: -0.5,
+        mb: 0.5,
       }}>
       <Box
         sx={{
@@ -67,7 +69,6 @@ export const BudgetProgress = ({ current, budgeted, fraction = 0, income = false
             top: -2,
             left: `${fraction}%`,
             backgroundColor: borderColor,
-            zIndex: 1,
           }}
         />
       )}
