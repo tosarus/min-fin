@@ -11,7 +11,7 @@ export const StyledTable = ({ pagination, ...props }: StyledTableProps) => (
       <Table stickyHeader size="small" {...props} sx={{ '& td, & th': { fontSize: '0.95rem' }, ...props.sx }} />
     </TableContainer>
     {pagination && pagination.count > pagination.rowsPerPage && (
-      <TablePagination component="div" sx={{ flexShrink: 0 }} {...pagination} />
+      <TablePagination component="div" sx={{ flexShrink: 0, mr: 2 }} {...pagination} />
     )}
   </Box>
 );

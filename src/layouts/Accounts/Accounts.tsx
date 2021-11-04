@@ -27,8 +27,8 @@ export const Accounts = () => {
     }
   };
 
-  const sxLeft: SxProps = { flex: '1 0 22.5%', minWidth: 300, overflowY: 'auto' };
-  const sxRight: SxProps = { pl: 3, flex: '1 1 77.5%', display: 'flex', flexFlow: 'column' };
+  const sxLeft: SxProps = { pl: 2, flex: '1 0 22.5%', minWidth: 300, overflowY: 'auto' };
+  const sxRight: SxProps = { pl: 2, flex: '1 1 77.5%', display: 'flex', flexFlow: 'column' };
 
   return (
     <>

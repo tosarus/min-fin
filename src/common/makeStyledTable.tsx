@@ -26,6 +26,14 @@ interface Props<T> {
 
 const NOOP = () => undefined;
 
+export function renderDetails(text: string) {
+  return (
+    <Typography variant="body2" sx={{ pt: 0.25 }} color="text.secondary">
+      {text}
+    </Typography>
+  );
+}
+
 export function makeStyledTable<T>({
   headers,
   items,
@@ -146,11 +154,7 @@ export function makeStyledTable<T>({
               </TableRow>
               {hasDetails && (
                 <TableRow sx={{ '& td': { pt: 0, pb: 0.25 }, '&:hover button': { display: 'block' } }}>
-                  <TableCell colSpan={headers.length - (hasMenu ? 0 : 1)}>
-                    <Typography variant="body2" sx={{ pt: 0.25 }} color="text.secondary">
-                      {detail(item)}
-                    </Typography>
-                  </TableCell>
+                  <TableCell colSpan={headers.length - (hasMenu ? 0 : 1)}>{detail(item)}</TableCell>
                 </TableRow>
               )}
             </React.Fragment>
