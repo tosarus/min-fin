@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import currency from 'currency.js';
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
-import { makeStyledTable, StyledColumn } from '../../common';
+import { makeStyledTable, renderDetails, StyledColumn } from '../../common';
 import { Selectors } from '../../store';
 import { Account, Transaction, dateOrderCompare, TransactionType } from '../../types';
 import { getDisplayName } from '../Accounts/utils';
@@ -27,7 +27,7 @@ export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) 
   return makeStyledTable({
     items: sortedTransactions,
     headers,
-    detail: (tr) => tr.detail,
+    detail: (tr) => renderDetails(tr.detail || ''),
     onEdit,
     onRemove,
   });

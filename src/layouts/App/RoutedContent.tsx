@@ -14,7 +14,7 @@ export const RoutedContent = () => {
   const routedPages = listRoutedPages(isAuthenticated, fullContent);
 
   return (
-    <Box component="main" sx={{ display: 'flex', flexDirection: 'column', minHeight: '0%', width: '100%', px: 3 }}>
+    <Box component="main" sx={{ display: 'flex', flexDirection: 'column', minHeight: '0%', width: '100%' }}>
       {error && <Error error={error} />}
       <Switch>
         {routedPages.map(({ link, route, component: Page }, i) => (

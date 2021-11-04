@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { useRoute } from 'wouter';
-import { makeStyledTable, StyledColumn } from '../../common';
+import { makeStyledTable, renderDetails, StyledColumn } from '../../common';
 import { Selectors } from '../../store';
 import { Account, CashFlow, dateOrderCompare, getAssetAccountTypes } from '../../types';
 import { getDisplayName, getFlowAccountFilter } from '../Accounts/utils';
@@ -34,7 +34,7 @@ export const CashFlowTable = ({ account, onRemove, onEdit }: CashFlowTableProps)
   return makeStyledTable({
     items: sortedCashFlows,
     headers,
-    detail: (flow) => flow.detail,
+    detail: (flow) => renderDetails(flow.detail),
     onEdit,
     onRemove,
   });
