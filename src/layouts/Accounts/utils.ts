@@ -50,7 +50,7 @@ export function getAccountIds(accounts: Account[], ...types: AccountType[]) {
 }
 
 export function getAssetAccountIds(accounts: Account[]) {
-  return getAccountIds(accounts, ...getAssetAccountTypes());
+  return Array.prototype.concat(getAccountIds(accounts, AccountType.Banking), getAccountIds(accounts, AccountType.Credit));
 }
 
 export function getExenceAccountIds(accounts: Account[]) {
