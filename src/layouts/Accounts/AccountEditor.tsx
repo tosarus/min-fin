@@ -1,46 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useFormik } from 'formik';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-} from '@mui/material';
+import { TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { EditorDialog } from '../../common';
 import { Account, AccountType, getPublicAccountTypes } from '../../types';
-import { accountTypeName } from './utils';
+import { accountTypeName } from '../utils';
 
 interface AccountEditorProps {
-  open: boolean;
   account: Partial<Account>;
   onClose: () => void;
   onSubmit: (account: Partial<Account>) => void;
 }
 
-export const AccountEditor = ({
-  open: initOpen,
-  account: { id, name = '', type },
-  onClose,
-  onSubmit,
-}: AccountEditorProps) => {
-  const [open, setOpen] = useState(initOpen);
-
-  const handleCancel = () => {
-    setOpen(false);
-    onClose();
-  };
-
-  const handleSubmit = (account: Partial<Account>) => {
-    setOpen(false);
-    onSubmit(account);
-  };
-
+export const AccountEditor = ({ account: { id, name = '', type }, onClose, onSubmit }: AccountEditorProps) => {
   const formik = useFormik({
     initialValues: { id, name, type },
-    onSubmit: handleSubmit,
+    onSubmit,
     validate: (values) => {
       const errors = {} as Partial<Account>;
       if (!values.name) {
@@ -54,51 +28,41 @@ export const AccountEditor = ({
     formik.setFieldValue('type', newType);
   };
 
-  const addingNew = !id;
-
   const hasErrors = () => !!Object.values(formik.errors).find((value) => !!value);
   const isTouched = () => !!Object.values(formik.touched).find((value) => !!value);
   const canSubmit = !hasErrors() && isTouched();
 
   return (
-    <Dialog open={open} onClose={handleCancel} fullWidth sx={{ pb: '10%' }}>
-      <DialogTitle>
-        {addingNew ? 'Add' : 'Edit'} {accountTypeName(formik.values.type!)}
-      </DialogTitle>
-      <DialogContent sx={{ display: 'flex', flexFlow: 'column', pb: 1 }}>
-        <ToggleButtonGroup
-          fullWidth
-          exclusive
-          color="primary"
-          sx={{ mb: 2 }}
-          value={formik.values.type}
-          onChange={handleTypeChange}
-          id="account-type">
-          {getPublicAccountTypes().map((type, i) => (
-            <ToggleButton key={i} value={type}>
-              {type}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-        <TextField
-          fullWidth
-          id="account-name"
-          label="Name"
-          placeholder={formik.errors.name}
-          error={!!formik.errors.name}
-          {...formik.getFieldProps('name')}
-          onChange={(e) => {
-            formik.setFieldTouched('name');
-            formik.handleChange(e);
-          }}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button disabled={!canSubmit} onClick={() => formik.handleSubmit()}>
-          Save
-        </Button>
-        <Button onClick={handleCancel}>Cancel</Button>
-      </DialogActions>
-    </Dialog>
+    <EditorDialog
+      title={`${id ? 'Edit' : 'Add'}  ${accountTypeName(formik.values.type!)}`}
+      sx={{ display: 'flex', flexFlow: 'column', pb: 1 }}
+      canSubmit={canSubmit}
+      onClose={onClose}
+      onSubmit={() => formik.handleSubmit()}>
+      <ToggleButtonGroup
+        fullWidth
+        exclusive
+        color="primary"
+        sx={{ mb: 2 }}
+        value={formik.values.type}
+        onChange={handleTypeChange}>
+        {getPublicAccountTypes().map((type, i) => (
+          <ToggleButton key={i} value={type}>
+            {type}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+      <TextField
+        fullWidth
+        label="Name"
+        placeholder={formik.errors.name}
+        error={!!formik.errors.name}
+        {...formik.getFieldProps('name')}
+        onChange={(e) => {
+          formik.setFieldTouched('name');
+          formik.handleChange(e);
+        }}
+      />
+    </EditorDialog>
   );
 };

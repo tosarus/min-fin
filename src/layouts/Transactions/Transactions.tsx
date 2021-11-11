@@ -44,9 +44,7 @@ export const Transactions = () => {
         <span>Transactions</span>
         <Button onClick={handleAdd}>Add</Button>
       </Title>
-      {editable && (
-        <ContractEditor open contract={fromTransaction(editable)} onClose={handleClose} onSubmit={handleSubmit} />
-      )}
+      {editable && <ContractEditor contract={fromTransaction(editable)} onClose={handleClose} onSubmit={handleSubmit} />}
       <TransactionsTable onRemove={handleRemove} onEdit={handleEdit} />
     </>
   );

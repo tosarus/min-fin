@@ -55,7 +55,7 @@ export const CashFlowList = ({ account }: CashFlowListProps) => {
         <span>Transactions</span>
         <Button onClick={handleAdd}>Add</Button>
       </Title>
-      {editable && <ContractEditor open contract={fromCashFlow(editable)} onClose={handleClose} onSubmit={handleSubmit} />}
+      {editable && <ContractEditor contract={fromCashFlow(editable)} onClose={handleClose} onSubmit={handleSubmit} />}
       <CashFlowTable account={account} onRemove={handleRemove} onEdit={handleEdit} />
     </>
   );

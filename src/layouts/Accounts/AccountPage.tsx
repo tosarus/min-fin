@@ -37,7 +37,7 @@ export const AccountPage = ({ account, onRemove, onSubmit }: AccountPageProps) =
 
   return (
     <Box sx={{ display: 'flex', flexFlow: 'column', overflowY: 'auto' }}>
-      {editable && <AccountEditor open account={editable} onClose={handleClose} onSubmit={handleSubmit} />}
+      {editable && <AccountEditor account={editable} onClose={handleClose} onSubmit={handleSubmit} />}
       {account && <AccountDetails account={account} onEdit={handleEdit} onRemove={handleRemove} />}
       {account && <CashFlowList account={account} />}
     </Box>
