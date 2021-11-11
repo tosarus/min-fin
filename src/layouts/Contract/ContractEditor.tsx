@@ -81,6 +81,7 @@ export const ContractEditor = ({ open: initOpen, contract, onClose, onSubmit }: 
           id="contract-account"
           options={getAssetAccountIds(accounts)}
           getOptionLabel={idToAccount}
+          groupBy={(id) => accountMap.get(id)!.type}
           value={formik.values.account}
           onChange={(e, value) => formik.setFieldValue('account', value)}
           renderInput={(params) => (
@@ -117,6 +118,7 @@ export const ContractEditor = ({ open: initOpen, contract, onClose, onSubmit }: 
           id="contract-category"
           options={getAccountIdsByCategory(accounts, formik.values.account ?? 0, formik.values.type)}
           getOptionLabel={idToAccount}
+          groupBy={(id) => accountMap.get(id)!.type}
           value={formik.values.otherAccount}
           onChange={(e, value) => formik.setFieldValue('otherAccount', value)}
           renderInput={(params) => (
