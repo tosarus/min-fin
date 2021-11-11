@@ -34,7 +34,7 @@ export const AccountList = ({ sx, accounts, onSubmit }: AccountListProps) => {
   return (
     <Box sx={{ ...sx, display: 'flex', flexDirection: 'column', borderRight: '1px solid rgb(0, 0, 0, 0.1)' }}>
       <Title>Accounts</Title>
-      {editable && <AccountEditor open account={editable} onClose={handleClose} onSubmit={handleSubmit} />}
+      {editable && <AccountEditor account={editable} onClose={handleClose} onSubmit={handleSubmit} />}
       <RoundedLink href={Links.accounts()} route="">
         <span>Net Worth</span>
         <AmountSpan amount={total} />

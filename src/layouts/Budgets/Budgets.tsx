@@ -64,9 +64,7 @@ export const Budgets = () => {
     <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'auto', pr: 3 }}>
       <Title sx={{ pl: '20%' }}>Budgets</Title>
       <MonthSelection sx={{ pl: '20%', mb: 3 }} value={month} onChange={handleMonthChange} />
-      {editable && (
-        <BudgetEditor open budget={editable} planned={monthBudgets} onClose={handleClose} onSubmit={handleSubmit} />
-      )}
+      {editable && <BudgetEditor budget={editable} planned={monthBudgets} onClose={handleClose} onSubmit={handleSubmit} />}
       <BudgetPlanningInfo budgets={monthBudgets} month={dayjs(month).format('MMMM, YYYY')} onAdd={handleAdd} />
       <BudgetGroup
         budgets={monthBudgets}
