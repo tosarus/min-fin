@@ -1,15 +1,14 @@
 import React, { useMemo, useState } from 'react';
-import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box } from '@mui/material';
 import { Title } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { AccountType, BudgetAccount } from '../../types';
+import { formatMonth, getCurrentMonth, sameMonthFilter, withinMonthFilter } from '../utils';
 import { BudgetEditor } from './BudgetEditor';
 import { BudgetGroup } from './BudgetGroup';
 import { BudgetPlanningInfo } from './BudgetPlaningInfo';
 import { MonthSelection } from './MonthSelection';
-import { getCurrentMonth, sameMonthFilter, withinMonthFilter } from './utils';
 
 export const Budgets = () => {
   const budgets = useSelector(Selectors.currentBudgets) ?? [];
@@ -65,7 +64,7 @@ export const Budgets = () => {
       <Title sx={{ pl: '20%' }}>Budgets</Title>
       <MonthSelection sx={{ pl: '20%', mb: 3 }} value={month} onChange={handleMonthChange} />
       {editable && <BudgetEditor budget={editable} planned={monthBudgets} onClose={handleClose} onSubmit={handleSubmit} />}
-      <BudgetPlanningInfo budgets={monthBudgets} month={dayjs(month).format('MMMM, YYYY')} onAdd={handleAdd} />
+      <BudgetPlanningInfo budgets={monthBudgets} month={formatMonth(month)} onAdd={handleAdd} />
       <BudgetGroup
         budgets={monthBudgets}
         cashFlows={monthFlows}

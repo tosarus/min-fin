@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, BoxProps, Typography } from '@mui/material';
 import { AmountSpan } from '../../common';
 import { AccountType, BudgetAccount } from '../../types';
-import { calcucateSum } from './utils';
+import { calcucateSum } from '../utils';
 
 interface BudgetSummaryProps {
   type: AccountType;

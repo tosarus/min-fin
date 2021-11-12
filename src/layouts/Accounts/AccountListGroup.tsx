@@ -4,7 +4,7 @@ import { Box, Button, Typography } from '@mui/material';
 import { AmountSpan, RoundedLink } from '../../common';
 import { Account, AccountType, getAssetAccountTypes } from '../../types';
 import { Links } from '../listViews';
-import { accountTypeName, sortAccounts } from './utils';
+import { accountTypeName, sortAccounts } from '../utils';
 
 interface AccountListGroupProps {
   accounts: Account[];

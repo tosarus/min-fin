@@ -5,8 +5,8 @@ import { AmountSpan, makeStyledTable, RoundedLink, StyledColumn } from '../../co
 import { Selectors } from '../../store';
 import { Account, AccountType, BudgetAccount } from '../../types';
 import { Links } from '../listViews';
+import { fractionOfMonth } from '../utils';
 import { BudgetProgress } from './BudgetProgress';
-import { fractionOfMonth } from './utils';
 
 interface BudgetListProps {
   budgets: BudgetAccount[];

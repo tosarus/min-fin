@@ -1,14 +1,12 @@
 import React from 'react';
-import currency from 'currency.js';
 import { useFormik } from 'formik';
 import { useSelector } from 'react-redux';
 import { TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { AccountSelect, EditorDialog } from '../../common';
 import { Selectors } from '../../store';
 import { TransactionType } from '../../types';
-import { getAssetAccountIds } from '../Accounts/utils';
+import { amountOrZero, getAccountIdsByCategory, getAssetAccountIds, transactionTypes } from '../utils';
 import { Contract } from './Contract';
-import { getAccountIdsByCategory, transactionTypes } from './utils';
 
 interface ContractEditorProps {
   contract: Contract;
@@ -44,7 +42,7 @@ export const ContractEditor = ({ contract, onClose, onSubmit }: ContractEditorPr
   };
 
   const handleAmoutBlur = (e: React.FocusEvent) => {
-    formik.setFieldValue('amount', currency(formik.values.amount ?? '0').format());
+    formik.setFieldValue('amount', amountOrZero(formik.values.amount));
     formik.handleBlur(e);
   };
 
@@ -63,45 +61,45 @@ export const ContractEditor = ({ contract, onClose, onSubmit }: ContractEditorPr
       onClose={onClose}
       onSubmit={() => formik.handleSubmit()}>
       <AccountSelect
-          fullWidth
-          sx={{ mb: 2, mt: 0.75 }}
-          options={getAssetAccountIds(accounts)}
-          value={formik.values.account}
+        fullWidth
+        sx={{ mb: 2, mt: 0.75 }}
+        options={getAssetAccountIds(accounts)}
+        value={formik.values.account}
         onChange={(value) => formik.setFieldValue('account', value)}
         label="Account"
         error={formik.errors.account}
-        />
-        <ToggleButtonGroup
-          fullWidth
-          exclusive
-          color="primary"
-          sx={{ mb: 2 }}
-          value={formik.values.type}
-          onChange={handleTypeChange}
-          id="contract-type">
-          {transactionTypes().map((type, i) => (
-            <ToggleButton key={i} value={type}>
-              {type}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-        <TextField
-          label="Description"
-          placeholder={formik.errors.description}
-          error={!!formik.errors.description}
-          sx={sxLeft}
-          {...formik.getFieldProps('description')}
-        />
-        <TextField id="contract-date" type="date" label="Date" sx={sxRight} {...formik.getFieldProps('date')} />
+      />
+      <ToggleButtonGroup
+        fullWidth
+        exclusive
+        color="primary"
+        sx={{ mb: 2 }}
+        value={formik.values.type}
+        onChange={handleTypeChange}
+        id="contract-type">
+        {transactionTypes().map((type, i) => (
+          <ToggleButton key={i} value={type}>
+            {type}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+      <TextField
+        label="Description"
+        placeholder={formik.errors.description}
+        error={!!formik.errors.description}
+        sx={sxLeft}
+        {...formik.getFieldProps('description')}
+      />
+      <TextField id="contract-date" type="date" label="Date" sx={sxRight} {...formik.getFieldProps('date')} />
       <AccountSelect
-          disabled={formik.values.type === TransactionType.Opening}
-          sx={sxLeft}
-          options={getAccountIdsByCategory(accounts, formik.values.account ?? 0, formik.values.type)}
-          value={formik.values.otherAccount}
+        disabled={formik.values.type === TransactionType.Opening}
+        sx={sxLeft}
+        options={getAccountIdsByCategory(accounts, formik.values.account ?? 0, formik.values.type)}
+        value={formik.values.otherAccount}
         onChange={(value) => formik.setFieldValue('otherAccount', value)}
-              label={formik.values.type === TransactionType.Transfer ? 'Destination Account' : 'Category'}
+        label={formik.values.type === TransactionType.Transfer ? 'Destination Account' : 'Category'}
         error={formik.errors.otherAccount}
-            />
+      />
       <TextField label="Amount" sx={sxRight} {...formik.getFieldProps('amount')} onBlur={handleAmoutBlur} />
       <TextField fullWidth multiline rows={2} label="Details" {...formik.getFieldProps('detail')} />
     </EditorDialog>

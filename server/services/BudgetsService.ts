@@ -1,5 +1,5 @@
-import dayjs from 'dayjs';
 import { Service } from 'typedi';
+import { isValidMonth, previuosMonth } from '@shared/calcs';
 import { AccountType, BudgetAccount, WorldUpdate } from '@shared/types';
 import { BudgetRepository } from '../repositories';
 import { BaseService } from './BaseService';
@@ -13,12 +13,12 @@ export class BudgetsService extends BaseService {
 
   @InTransaction()
   async copyFromPrevious(workbookId: string, type: AccountType, month: string): Promise<WorldUpdate> {
-    if (!dayjs(month).startOf('month').isSame(month)) {
+    if (!isValidMonth(month)) {
       throw 'CopyFromPrevious: wrong month format';
     }
 
     const repo = this.resolve(BudgetRepository);
-    const prevMonth = dayjs(month).subtract(1, 'month').format('YYYY-MM-DD');
+    const prevMonth = previuosMonth(month);
 
     const previous = await repo.getAllByMonth(workbookId, type, prevMonth);
     const budgets = [] as BudgetAccount[];

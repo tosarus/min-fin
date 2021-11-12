@@ -1,6 +1,6 @@
 import React from 'react';
-import currency from 'currency.js';
 import { Box, colors } from '@mui/material';
+import { positiveValue } from '../utils';
 
 interface Props {
   current: string;
@@ -17,8 +17,8 @@ export const BudgetProgress = ({ current, budgeted, fraction = 0, income = false
   const borderColor = colors.grey[600];
   const height = 15;
 
-  const position = Math.abs(currency(current).value);
-  const total = Math.abs(currency(budgeted).value);
+  const position = positiveValue(current);
+  const total = positiveValue(budgeted);
 
   const completed = Math.max(0, Math.min(position / total, 1)) * 100;
   fraction = fraction * 100;

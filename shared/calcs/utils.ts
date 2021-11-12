@@ -11,6 +11,14 @@ export const strToCents = (str: string): number => {
   return currency(str).intValue;
 };
 
+export const amountToValue = (amount: string): number => {
+  return currency(amount).value;
+};
+
+export const valueToAmount = (value: number): string => {
+  return currency(value).format();
+};
+
 export function dateOrderCompare<T extends { date: string; order: number }>(a: T, b: T) {
   const diff = Date.parse(b.date) - Date.parse(a.date);
   return diff !== 0 ? diff : b.order - a.order;
@@ -18,4 +26,12 @@ export function dateOrderCompare<T extends { date: string; order: number }>(a: T
 
 export function getMinDate(a: string, b: string) {
   return Date.parse(a) < Date.parse(b) ? a : b;
+}
+
+export function isValidMonth(month: string) {
+  return dayjs(month).startOf('month').isSame(month);
+}
+
+export function previuosMonth(month: string) {
+  return dayjs(month).subtract(1, 'month').format('YYYY-MM-DD');
 }

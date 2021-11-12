@@ -4,7 +4,7 @@ import { Box, Button, Typography } from '@mui/material';
 import { AmountSpan } from '../../common';
 import { Selectors } from '../../store';
 import { AccountType, BudgetAccount } from '../../types';
-import { calcucateSum } from './utils';
+import { calcucateSum, negateAmount } from '../utils';
 
 interface Props {
   budgets: BudgetAccount[];
@@ -18,11 +18,10 @@ export const BudgetPlanningInfo = ({ budgets, month, onAdd }: Props) => {
     budgets.filter((b) => accountMap.get(b.account_id)?.type === AccountType.Income).map((b) => b.amount)
   );
   const expence = calcucateSum(
-    budgets.filter((b) => accountMap.get(b.account_id)?.type === AccountType.Expence).map((b) => b.amount),
-    { makeNegative: true }
+    budgets.filter((b) => accountMap.get(b.account_id)?.type === AccountType.Expence).map((b) => b.amount)
   );
 
-  const balance = calcucateSum([income, expence]);
+  const balance = calcucateSum([income, negateAmount(expence)]);
 
   return (
     <Box sx={{ pl: 'calc(20% + 16px)', pr: 2, display: 'flex', flexFlow: 'row nowrap', justifyContent: 'space-between' }}>

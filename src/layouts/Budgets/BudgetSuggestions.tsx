@@ -4,8 +4,8 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { IconButton, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import { AmountSpan, RoundedLink, StyledTable } from '../../common';
 import { Account, AccountType } from '../../types';
-import { sortAccounts } from '../Accounts/utils';
 import { Links } from '../listViews';
+import { sortAccounts } from '../utils';
 
 interface BudgetSuggestionsProps {
   accounts: Account[];

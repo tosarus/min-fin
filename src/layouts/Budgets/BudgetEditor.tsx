@@ -1,13 +1,11 @@
 import React from 'react';
-import currency from 'currency.js';
-import dayjs from 'dayjs';
 import { useFormik } from 'formik';
 import { useSelector } from 'react-redux';
 import { TextField, Typography } from '@mui/material';
 import { AccountSelect, AmountSpan, EditorDialog } from '../../common';
 import { Selectors } from '../../store';
 import { Account, BudgetAccount } from '../../types';
-import { getExenceAccountIds, getIncomeAccountIds } from '../Accounts/utils';
+import { amountOrZero, formatMonth, getBudgetAccountIds, positiveAmount } from '../utils';
 
 interface BudgetEditorProps {
   budget: Partial<BudgetAccount>;
@@ -16,24 +14,12 @@ interface BudgetEditorProps {
   onSubmit: (budget: Partial<BudgetAccount>) => void;
 }
 
-const makePositive = (amount?: string) => {
-  if (!amount) {
-    return amount;
-  }
-
-  let value = currency(amount);
-  if (value.intValue < 0) {
-    value = value.multiply(-1);
-  }
-  return value.format();
-};
-
 export const BudgetEditor = ({ budget, planned, onClose, onSubmit }: BudgetEditorProps) => {
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const accountMap = useSelector(Selectors.currentAccountMap);
 
   const formik = useFormik({
-    initialValues: { ...budget, amount: makePositive(budget.amount) },
+    initialValues: { ...budget, amount: positiveAmount(budget.amount ?? '') },
     onSubmit,
     validate: (values) => {
       const errors = {} as Partial<BudgetAccount>;
@@ -45,7 +31,7 @@ export const BudgetEditor = ({ budget, planned, onClose, onSubmit }: BudgetEdito
   });
 
   const handleAmoutBlur = (e: React.FocusEvent) => {
-    formik.setFieldValue('amount', formik.values.amount ? currency(formik.values.amount).format() : null);
+    formik.setFieldValue('amount', amountOrZero(formik.values.amount));
     formik.handleBlur(e);
   };
 
@@ -66,34 +52,31 @@ export const BudgetEditor = ({ budget, planned, onClose, onSubmit }: BudgetEdito
       onClose={onClose}
       onSubmit={() => formik.handleSubmit()}>
       <AccountSelect
-          fullWidth
-          disabled={!!budget.account_id}
-          sx={{ mb: 2, mt: 0.75 }}
-          options={getUnplannedAccountIds(accounts, planned)}
-          value={formik.values.account_id}
+        fullWidth
+        disabled={!!budget.account_id}
+        sx={{ mb: 2, mt: 0.75 }}
+        options={getUnplannedAccountIds(accounts, planned)}
+        value={formik.values.account_id}
         onChange={(value) => {
-            formik.setFieldValue('account_id', value);
-            formik.setFieldTouched('account_id', true);
-          }}
-              label="Category"
+          formik.setFieldValue('account_id', value);
+          formik.setFieldTouched('account_id', true);
+        }}
+        label="Category"
         error={formik.errors.account_id}
-            />
+      />
       <TextField sx={{ mb: 2 }} label="Amount" {...formik.getFieldProps('amount')} onBlur={handleAmoutBlur} />
-        {!budget.id && budget.amount && (
-          <Typography>
-            <span>{budget.amount.includes('-') ? 'Spent ' : 'Earned '}</span>
-            <AmountSpan amount={budget.amount} />
-            {dayjs(budget.month).format(' in MMMM, YYYY')}
-          </Typography>
-        )}
+      {!budget.id && budget.amount && (
+        <Typography>
+          <span>{budget.amount.includes('-') ? 'Spent ' : 'Earned '}</span>
+          <AmountSpan amount={budget.amount} />
+          <span> in {formatMonth(budget.month)}</span>
+        </Typography>
+      )}
     </EditorDialog>
   );
 };
 
 function getUnplannedAccountIds(accounts: Account[], planned: BudgetAccount[]) {
   const plannedIds = new Set(planned.map((b) => b.account_id));
-  return Array.prototype.concat(
-    getIncomeAccountIds(accounts).filter((id) => !plannedIds.has(id)),
-    getExenceAccountIds(accounts).filter((id) => !plannedIds.has(id))
-  );
+  return getBudgetAccountIds(accounts).filter((id) => !plannedIds.has(id));
 }
