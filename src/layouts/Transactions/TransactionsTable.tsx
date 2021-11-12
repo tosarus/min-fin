@@ -1,11 +1,9 @@
 import { useMemo } from 'react';
-import currency from 'currency.js';
-import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { makeStyledTable, renderDetails, StyledColumn } from '../../common';
 import { Selectors } from '../../store';
 import { Account, Transaction, dateOrderCompare, TransactionType } from '../../types';
-import { getDisplayName } from '../Accounts/utils';
+import { formatShortDate, getDisplayName, negateAmount } from '../utils';
 
 interface TransactionsTableProps {
   onRemove: (tr: Transaction) => void;
@@ -18,7 +16,7 @@ export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) 
   const sortedTransactions = useMemo(() => sortTransactions(transactions), [transactions]);
 
   const headers = [] as StyledColumn<Transaction>[];
-  headers.push({ name: 'Date', value: (tr) => dayjs(tr.date).format('MMM D'), type: 'date' });
+  headers.push({ name: 'Date', value: (tr) => formatShortDate(tr.date), type: 'date' });
   headers.push({ name: 'Description', value: (tr) => tr.description });
   headers.push({ name: 'From', value: (tr) => buildName(tr.account_from, accountMap) });
   headers.push({ name: 'To', value: (tr) => buildName(tr.account_to, accountMap) });
@@ -39,7 +37,7 @@ function sortTransactions(transactions: Transaction[]) {
 
 function buildAmount(tr: Transaction) {
   if (tr.type === TransactionType.Expence) {
-    return currency(tr.amount).multiply(-1).format();
+    return negateAmount(tr.amount);
   }
   return tr.amount;
 }

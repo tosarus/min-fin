@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import { Box, Button } from '@mui/material';
 import { Selectors } from '../../store';
 import { AccountType, BudgetAccount, CashFlow, TransactionType } from '../../types';
+import { calculateTotals } from '../utils';
 import { BudgetList } from './BudgetList';
 import { BudgetSuggestions } from './BudgetSuggestions';
 import { BudgetSummary } from './BudgetSummary';
-import { calculateTotals } from './utils';
 
 interface BudgetGroupProps {
   budgets: BudgetAccount[];

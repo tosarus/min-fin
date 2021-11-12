@@ -1,8 +1,8 @@
 import React from 'react';
-import currency from 'currency.js';
 import { makeStyledTable, Title, StyledColumn, useDispatchedRender } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { CsvTrans } from '../../types';
+import { negateAmount, positiveAmount } from '../utils';
 
 const Trans = ({ trans }: { trans: CsvTrans[] }) => {
   const headers = [] as StyledColumn<CsvTrans>[];
@@ -12,10 +12,7 @@ const Trans = ({ trans }: { trans: CsvTrans[] }) => {
   headers.push({ name: 'Account', value: (t) => t.account });
   headers.push({
     name: 'Amount',
-    value: (t) =>
-      currency(t.amount)
-        .multiply(t.type === 'credit' ? 1 : -1)
-        .format(),
+    value: (t) => (t.type === 'credit' ? positiveAmount(t.amount) : negateAmount(t.amount)),
     type: 'amount',
   });
 

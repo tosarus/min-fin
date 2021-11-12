@@ -1,10 +1,10 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { useRoute } from 'wouter';
 import { Box, Button, Typography } from '@mui/material';
 import { AmountSpan, Title } from '../../common';
 import { Account, getAssetAccountTypes } from '../../types';
 import { Routes } from '../listViews';
+import { formatMonth } from '../utils';
 
 interface AccountDetailsProps {
   account: Account;
@@ -17,7 +17,7 @@ function formatTitle(name: string, month?: string) {
     return name;
   }
 
-  return name + dayjs(month).format('[ in ]MMMM, YYYY');
+  return `${name} in ${formatMonth(month)}`;
 }
 
 export const AccountDetails = ({ account, onEdit, onRemove }: AccountDetailsProps) => {

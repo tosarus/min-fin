@@ -4,9 +4,9 @@ import { SxProps } from '@mui/system';
 import { AmountSpan, RoundedLink, Title } from '../../common';
 import { Account, AccountType, getAssetAccountTypes, getPublicAccountTypes } from '../../types';
 import { Links } from '../listViews';
+import { getTotalForAccounts } from '../utils';
 import { AccountEditor } from './AccountEditor';
 import { AccountListGroup } from './AccountListGroup';
-import { getTotalForAccounts } from './utils';
 
 interface AccountListProps {
   accounts: Account[];
