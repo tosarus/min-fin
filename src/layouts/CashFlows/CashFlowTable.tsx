@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useRoute } from 'wouter';
 import { makeStyledTable, renderDetails, StyledColumn } from '../../common';
 import { Selectors } from '../../store';
-import { Account, CashFlow, dateOrderCompare, getAssetAccountTypes } from '../../types';
+import { Account, CashFlow, dateOrderPendingCompare, getAssetAccountTypes } from '../../types';
 import { Routes } from '../listViews';
 import { formatShortDate, getDisplayName, getFlowAccountFilter, withinMonthFilter } from '../utils';
 
@@ -33,6 +33,8 @@ export const CashFlowTable = ({ account, onRemove, onEdit }: CashFlowTableProps)
     items: sortedCashFlows,
     headers,
     detail: (flow) => renderDetails(flow.detail),
+    accent: (flow) => flow.pending,
+    accentSx: { fontStyle: 'italic', bgcolor: 'rgba(0,0,0,0.03)' },
     onEdit,
     onRemove,
   });
@@ -42,7 +44,7 @@ function sortCashFlows(cashFlows: CashFlow[], account: Account, month?: string) 
   if (month) {
     cashFlows = cashFlows.filter(withinMonthFilter(month));
   }
-  return cashFlows.filter(getFlowAccountFilter(account.type, account.id)).sort(dateOrderCompare);
+  return cashFlows.filter(getFlowAccountFilter(account.type, account.id)).sort(dateOrderPendingCompare);
 }
 
 function buildCategory(flow: CashFlow, accMap: Map<string, Account>, isAsset: boolean) {

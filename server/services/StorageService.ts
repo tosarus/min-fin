@@ -220,6 +220,7 @@ export class StorageService extends BaseService {
         amount: currency(rawTr.amount).format(),
         account_from: isIncome ? rawTr.category : rawTr.account,
         account_to: isIncome ? rawTr.account : rawTr.category,
+        pending: false,
       };
       transactions.push(trans);
     });
@@ -234,6 +235,7 @@ export class StorageService extends BaseService {
         amount: currency(rawFrom.amount).format(),
         account_from: rawFrom.account,
         account_to: rawTo.account,
+        pending: false,
       };
       transactions.push(trans);
     });

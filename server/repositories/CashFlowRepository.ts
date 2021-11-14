@@ -15,6 +15,7 @@ type DbCashFlow = {
   detail: string;
   order: number;
   balance_cent: number;
+  pending: boolean;
 };
 
 const convertCashFlow = ({ amount_cent, to_flow, balance_cent, date, ...cashFlow }: DbCashFlow): CashFlow => {
@@ -46,7 +47,8 @@ SELECT flows.workbook_id,
   trans.description,
   trans.detail,
   trans."order",
-  sum(flows.amount_cent) OVER (PARTITION BY flows.account_id ORDER BY trans.date, trans."order") AS balance_cent
+  sum(flows.amount_cent) OVER (PARTITION BY flows.account_id ORDER BY trans.pending, trans.date, trans."order") AS balance_cent,
+  trans.pending
 FROM flows JOIN trans ON flows.transaction_id = trans.id)
 select * from flows_balance`,
       values: [workbookId],
@@ -72,10 +74,11 @@ SELECT flows.workbook_id,
   trans.description,
   trans.detail,
   trans."order",
-  sum(flows.amount_cent) OVER (PARTITION BY flows.account_id ORDER BY trans.date, trans."order") AS balance_cent
+  sum(flows.amount_cent) OVER (PARTITION BY flows.account_id ORDER BY trans.pending, trans.date, trans."order") AS balance_cent,
+  trans.pending
 FROM flows JOIN trans ON flows.transaction_id = trans.id)
 select * from flows_balance
-where date >= $3`,
+where date >= $3 or pending = True`,
       values: [workbook_id, accountIds, date],
     });
     return rows.map(convertCashFlow);

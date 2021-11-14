@@ -13,6 +13,7 @@ type DbTransaction = {
   amount_cent: number;
   account_from_id: string;
   account_to_id: string;
+  pending: boolean;
 };
 
 const convertTransaction = ({ amount_cent, account_from_id, account_to_id, date, ...trans }: DbTransaction): Transaction => {
@@ -54,20 +55,20 @@ export class TransactionRepository extends AbstractRepository {
   }
 
   async create(workbookId: string, trans: Partial<Transaction>): Promise<Transaction> {
-    const { date, type, description, detail, amount, account_from, account_to } = trans;
+    const { date, type, description, detail, amount, account_from, account_to, pending } = trans;
     const { rows } = await this.qm().query<DbTransaction>({
       name: 'transactions-create',
       text: `
-insert into transactions(workbook_id, date, type, description, detail, amount_cent, account_from_id, account_to_id)
-values($1, $2, $3, $4, $5, $6, $7, $8)
+insert into transactions(workbook_id, date, type, description, detail, amount_cent, account_from_id, account_to_id, pending)
+values($1, $2, $3, $4, $5, $6, $7, $8, $9)
 returning *`,
-      values: [workbookId, date, type, description, detail, strToCents(amount || '0'), account_from, account_to],
+      values: [workbookId, date, type, description, detail, strToCents(amount || '0'), account_from, account_to, pending],
     });
     return convertTransaction(rows[0]);
   }
 
   async update(workbookId: string, trans: Partial<Transaction>): Promise<Transaction> {
-    const { id, date, type, description, detail, amount, account_from, account_to } = trans;
+    const { id, date, type, description, detail, amount, account_from, account_to, pending } = trans;
     const { rows } = await this.qm().query<DbTransaction>({
       text: `
 update transactions
@@ -77,10 +78,22 @@ set date = coalesce($3, date),
     detail = coalesce($6, detail),
     amount_cent = coalesce($7, amount_cent),
     account_from_id = coalesce($8, account_from_id),
-    account_to_id = coalesce($9, account_to_id)
+    account_to_id = coalesce($9, account_to_id),
+    pending = coalesce($10, pending)
 where workbook_id = $1 and id = $2
 returning *`,
-      values: [workbookId, id, date, type, description, detail, amount && strToCents(amount), account_from, account_to],
+      values: [
+        workbookId,
+        id,
+        date,
+        type,
+        description,
+        detail,
+        amount && strToCents(amount),
+        account_from,
+        account_to,
+        pending,
+      ],
     });
     return convertTransaction(rows[0]);
   }
