@@ -10,6 +10,7 @@ export interface Contract {
   amount: string;
   account: string;
   otherAccount: string;
+  pending: boolean;
 }
 
 export function fromTransaction(transaction: Partial<Transaction>): Contract {
@@ -22,6 +23,7 @@ export function fromTransaction(transaction: Partial<Transaction>): Contract {
     amount = '0',
     account_from = '',
     account_to = '',
+    pending = false,
   } = transaction;
   let account: string;
   let otherAccount: string;
@@ -52,6 +54,7 @@ export function fromTransaction(transaction: Partial<Transaction>): Contract {
     amount,
     account,
     otherAccount,
+    pending,
   };
 }
 
@@ -63,6 +66,7 @@ export function fromCashFlow(flow: Partial<CashFlow>): Contract {
     description = '',
     detail = '',
     direction = FlowDirection.From,
+    pending = false,
   } = flow;
   let amount = flow.amount ?? '0';
   let account = flow.account_id ?? '';
@@ -100,6 +104,7 @@ export function fromCashFlow(flow: Partial<CashFlow>): Contract {
     amount,
     account,
     otherAccount,
+    pending,
   };
 }
 

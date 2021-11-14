@@ -5,7 +5,7 @@ import { AmountSpan, makeStyledTable, RoundedLink, StyledColumn } from '../../co
 import { Selectors } from '../../store';
 import { Account, AccountType, BudgetAccount } from '../../types';
 import { Links } from '../listViews';
-import { fractionOfMonth } from '../utils';
+import { fractionOfMonth, positiveAmount } from '../utils';
 import { BudgetProgress } from './BudgetProgress';
 
 interface BudgetListProps {
@@ -68,7 +68,7 @@ function getBudgetProgress(budget: BudgetAccount, totals: Map<string, string>, a
 }
 
 function getBudgetDescription(budget: BudgetAccount, totals: Map<string, string>) {
-  const amount = totals.get(budget.account_id)?.replace('-', '') ?? '0';
+  const amount = positiveAmount(totals.get(budget.account_id) ?? '0');
   return (
     <>
       <AmountSpan noColor amount={amount} /> of <AmountSpan noColor amount={budget.amount} />

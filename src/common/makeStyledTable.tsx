@@ -19,7 +19,9 @@ interface Props<T> {
   pagination?: boolean;
   withHeader?: boolean;
   sx?: SxProps;
+  accentSx?: SxProps;
   detail?: (item: T) => any;
+  accent?: (item: T) => any;
   onEdit?: (item: T) => void;
   onRemove?: (item: T) => void;
 }
@@ -40,7 +42,9 @@ export function makeStyledTable<T>({
   pagination = true,
   withHeader = true,
   sx,
+  accentSx,
   detail = NOOP,
+  accent = NOOP,
   onEdit = NOOP,
   onRemove = NOOP,
 }: Props<T>) {
@@ -89,6 +93,7 @@ export function makeStyledTable<T>({
 
   const hasDetails = detail !== NOOP;
   const hasMenu = onEdit !== NOOP || onRemove !== NOOP;
+  const hasAccent = accent !== NOOP;
 
   // styles
   const headSx = (header: StyledColumn<T>): SxProps => {
@@ -115,6 +120,14 @@ export function makeStyledTable<T>({
       return {};
     }
   };
+  const firstRowSx = (item: T): SxProps => {
+    const accentProps = hasAccent && accent(item) ? accentSx : {};
+    return hasDetails ? { '& td': { borderBottomWidth: 0, pb: 0 }, ...accentProps } : { ...accentProps };
+  };
+  const secondRowSx = (item: T): SxProps => {
+    const accentProps = hasAccent && accent(item) ? accentSx : {};
+    return { '& td': { pt: 0, pb: 0.25 }, ...accentProps };
+  };
 
   return (
     <>
@@ -138,7 +151,7 @@ export function makeStyledTable<T>({
         <TableBody>
           {slicedItems.map((item, i) => (
             <React.Fragment key={i}>
-              <TableRow sx={hasDetails ? { '& td': { borderBottomWidth: 0, pb: 0 } } : {}}>
+              <TableRow sx={firstRowSx(item)}>
                 {headers.map((h, i) => (
                   <TableCell key={i} rowSpan={hasDetails && h.type === 'date' ? 2 : 1} sx={cellSx(h)}>
                     {h.type === 'amount' ? <AmountSpan amount={h.value(item)} /> : h.value(item)}
@@ -153,7 +166,7 @@ export function makeStyledTable<T>({
                 )}
               </TableRow>
               {hasDetails && (
-                <TableRow sx={{ '& td': { pt: 0, pb: 0.25 }, '&:hover button': { display: 'block' } }}>
+                <TableRow sx={secondRowSx(item)}>
                   <TableCell colSpan={headers.length - (hasMenu ? 0 : 1)}>{detail(item)}</TableCell>
                 </TableRow>
               )}

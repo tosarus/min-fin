@@ -47,6 +47,7 @@ export interface Transaction {
   amount: string;
   account_from: string;
   account_to: string;
+  pending: boolean;
 }
 
 export enum FlowDirection {
@@ -67,6 +68,7 @@ export interface CashFlow {
   order: number;
   amount: string;
   balance: string;
+  pending: boolean;
 }
 
 export type CashFlowId = [transaction_id: string, account_id: string];

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import { useSelector } from 'react-redux';
-import { TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Checkbox, FormControlLabel, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { AccountSelect, EditorDialog } from '../../common';
 import { Selectors } from '../../store';
 import { TransactionType } from '../../types';
@@ -46,6 +46,11 @@ export const ContractEditor = ({ contract, onClose, onSubmit }: ContractEditorPr
     formik.handleBlur(e);
   };
 
+  const updateFormik = (name: string, value: any) => {
+    formik.setFieldValue(name, value);
+    formik.setFieldTouched(name);
+  };
+
   const sxLeft = { mb: 2, mr: 2, flex: '1 0 350px' };
   const sxRight = { mb: 2, flex: '1 0 170px' };
 
@@ -65,7 +70,7 @@ export const ContractEditor = ({ contract, onClose, onSubmit }: ContractEditorPr
         sx={{ mb: 2, mt: 0.75 }}
         options={getAssetAccountIds(accounts)}
         value={formik.values.account}
-        onChange={(value) => formik.setFieldValue('account', value)}
+        onChange={(value) => updateFormik('account', value)}
         label="Account"
         error={formik.errors.account}
       />
@@ -90,18 +95,22 @@ export const ContractEditor = ({ contract, onClose, onSubmit }: ContractEditorPr
         sx={sxLeft}
         {...formik.getFieldProps('description')}
       />
-      <TextField id="contract-date" type="date" label="Date" sx={sxRight} {...formik.getFieldProps('date')} />
+      <TextField type="date" label="Date" sx={sxRight} {...formik.getFieldProps('date')} />
       <AccountSelect
         disabled={formik.values.type === TransactionType.Opening}
         sx={sxLeft}
         options={getAccountIdsByCategory(accounts, formik.values.account ?? 0, formik.values.type)}
         value={formik.values.otherAccount}
-        onChange={(value) => formik.setFieldValue('otherAccount', value)}
+        onChange={(value) => updateFormik('otherAccount', value)}
         label={formik.values.type === TransactionType.Transfer ? 'Destination Account' : 'Category'}
         error={formik.errors.otherAccount}
       />
       <TextField label="Amount" sx={sxRight} {...formik.getFieldProps('amount')} onBlur={handleAmoutBlur} />
       <TextField fullWidth multiline rows={2} label="Details" {...formik.getFieldProps('detail')} />
+      <FormControlLabel
+        control={<Checkbox checked={formik.values.pending} onChange={(e, checked) => updateFormik('pending', checked)} />}
+        label="Pending"
+      />
     </EditorDialog>
   );
 };

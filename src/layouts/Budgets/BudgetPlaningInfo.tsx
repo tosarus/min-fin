@@ -31,7 +31,7 @@ export const BudgetPlanningInfo = ({ budgets, month, onAdd }: Props) => {
             <span>Planned income </span>
             <AmountSpan amount={income} />
             <span> and spending </span>
-            <AmountSpan amount={expence} />
+            <AmountSpan amount={negateAmount(expence)} />
             <span> gives expected {balance.includes('-') ? 'losses' : 'profits'} of </span>
             <AmountSpan amount={balance} />
             <span> in {month}</span>
