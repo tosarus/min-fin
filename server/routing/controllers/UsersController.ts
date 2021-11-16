@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
-import { Body, Controller, Get, Put } from '@shared/routing-controllers';
 import { UserInfo } from '@shared/types';
+import { Body, Controller, Get, Put } from '@tosarus/routing-express';
 import { UsersService } from '../../services';
 import { CheckToken, Email } from '../middleware';
 

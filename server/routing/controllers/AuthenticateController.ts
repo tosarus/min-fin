@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { Inject, Service } from 'typedi';
-import { Controller, Get, Req } from '@shared/routing-controllers';
+import { Controller, Get, Req } from '@tosarus/routing-express';
 import { AuthConfig, tools } from '../../auth';
 import { UsersService } from '../../services';
 import { AUTH_CONFIG } from '../injectTokens';

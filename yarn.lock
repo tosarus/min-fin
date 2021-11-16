@@ -1980,6 +1980,15 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
+"@tosarus/routing-express@^0.5.5":
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/@tosarus/routing-express/-/routing-express-0.5.5.tgz#3605cd74f8b85f3d80c7a7d935baf6ef985a36c8"
+  integrity sha512-AXzgUamWkqh0KJ49u20sTCUBXjKXQDrYU+yfqpefcusTjoyrZnhavk7bT/KLAyJfDfOaYCL54iViEKfxnr+HnA==
+  dependencies:
+    express "^4.17.1"
+    multer "^1.4.3"
+    reflect-metadata "^0.1.13"
+
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/@tsconfig/node10/-/node10-1.0.8.tgz#c1e4e80d6f964fbecb3359c43bd48b40f7cadad9"
