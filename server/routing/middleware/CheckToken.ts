@@ -1,6 +1,6 @@
 import { NextFunction, Response, Request, RequestHandler } from 'express';
 import { Inject, Service } from 'typedi';
-import { Middleware } from '@shared/routing-controllers';
+import { Middleware } from '@tosarus/routing-express';
 import { AuthConfig, tools } from '../../auth';
 import { AUTH_CONFIG } from '../injectTokens';
 

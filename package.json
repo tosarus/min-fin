@@ -36,6 +36,7 @@
   "proxy": "http://localhost:3010",
   "dependencies": {
     "@fast-csv/parse": "^4.3.6",
+    "@tosarus/routing-express": "^0.5.5",
     "axios": "^0.22.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",

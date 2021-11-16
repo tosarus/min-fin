@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { Controller, Get } from '@shared/routing-controllers';
+import { Controller, Get } from '@tosarus/routing-express';
 import { Forecasts, Trans } from '../../demo';
 import { CheckToken } from '../middleware';
 

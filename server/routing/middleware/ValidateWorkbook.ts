@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Service } from 'typedi';
-import { Middleware } from '@shared/routing-controllers';
+import { Middleware } from '@tosarus/routing-express';
 import { WorkbooksService } from '../../services';
 
 @Service()

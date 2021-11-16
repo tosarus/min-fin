@@ -1,5 +1,5 @@
 import { Container } from 'typedi';
-import { useContainer, useRoutingControllers } from '@shared/routing-controllers';
+import { useContainer, useRoutingControllers } from '@tosarus/routing-express';
 import { Configuration } from '../config';
 import { controllers } from './controllers';
 import { AUTH_CONFIG } from './injectTokens';

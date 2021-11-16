@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
-import { Body, Controller, Delete, Get, Param, Post } from '@shared/routing-controllers';
 import { Workbook } from '@shared/types';
+import { Body, Controller, Delete, Get, Param, Post } from '@tosarus/routing-express';
 import { WorkbooksService } from '../../services';
 import { CheckToken, Email } from '../middleware';
 

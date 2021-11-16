@@ -1,4 +1,4 @@
-import { createParamDecorator } from '@shared/routing-controllers';
+import { createParamDecorator } from '@tosarus/routing-express';
 
 export function Email() {
   return createParamDecorator({
