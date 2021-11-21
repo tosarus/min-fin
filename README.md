@@ -26,6 +26,11 @@ Postgess heroku instance. Get connection string as:
 
 > heroku config | grep AUTH0
 
+### Credits
+
+- [CashCash Desktop](https://github.com/Winbee/cashcash-desktop) by Samuel Gagnepain <cashcash.help@gmail.com>
+- [routing-controllers](https://github.com/typestack/routing-controllers) by TypeStack
+
 [1]: https://github.com/facebook/create-react-app
 [2]: https://facebook.github.io/create-react-app/docs/getting-started
 [3]: https://www.heroku.com/

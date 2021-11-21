@@ -1,12 +1,11 @@
 import React from 'react';
-import styled from '@emotion/styled';
-import { colors } from '@mui/material';
+import { colors, styled } from '@mui/material';
 
 interface SpanProps {
   amount: string;
   noColor?: boolean;
 }
-const Span = styled.span(({ amount, noColor = false }: SpanProps) => ({
+const Span = styled('span')(({ amount, noColor = false }: SpanProps) => ({
   fontWeight: 'bolder',
   fontStyle: 'italic',
   color: noColor ? 'inherit' : amount.includes('-') ? colors.red[500] : colors.green[500],

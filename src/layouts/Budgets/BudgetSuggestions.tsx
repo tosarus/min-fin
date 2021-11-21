@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import styled from '@emotion/styled';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { IconButton, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+import { IconButton, styled, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import { AmountSpan, RoundedLink, StyledTable } from '../../common';
 import { Account, AccountType } from '../../types';
 import { Links } from '../listViews';
