@@ -2,6 +2,7 @@ import AppsIcon from '@mui/icons-material/Apps';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 // import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
+import SettingsIcon from '@mui/icons-material/Settings';
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
 // import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import { SvgIcon } from '@mui/material';
@@ -53,15 +54,18 @@ const createRoutablePage = (
   return { link, component, name, icon, route };
 };
 
+export type RoutablePage = ReturnType<typeof createRoutablePage>;
+
 const _newUserPages = [
   createRoutablePage(Links.home(), Routes.Home, NewUserWarning, 'Home', AppsIcon),
   // createRoutablePage(Links.demoForecast(), Routes.DemoForecast, DemoForecast, 'Forecast', WbSunnyOutlinedIcon),
 ];
 
-const _systemPages = [createRoutablePage(Links.settings(), Routes.Settings, Settings, 'Settings')];
+const _systemPages = [createRoutablePage(Links.settings(), Routes.Settings, Settings, 'Settings', SettingsIcon)];
+
+const _homePage = createRoutablePage(Links.home(), Routes.Home, Overview, 'Overview', AppsIcon);
 
 const _privatePages = [
-  createRoutablePage(Links.home(), Routes.Home, Overview, 'Overview', AppsIcon),
   createRoutablePage(Links.accounts(), Routes.Accounts, Accounts, 'Accounts', MenuBookIcon),
   createRoutablePage(Links.budgets(), Routes.Budgets, Budgets, 'Budgets', AssignmentOutlinedIcon),
   createRoutablePage(Links.transactions(), Routes.Transactions, Transactions, 'Transactions', StorageRoundedIcon),
@@ -90,6 +94,7 @@ export const listRoutedPages = (isAuthenticated: boolean, fullContent: boolean) 
   if (!isAuthenticated) {
     routedPages.push(..._publicPages);
   } else if (fullContent) {
+    routedPages.push(_homePage);
     routedPages.push(..._privatePages);
     routedPages.push(..._systemPages);
   } else {

@@ -1,7 +1,6 @@
 import React from 'react';
-import styled from '@emotion/styled';
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import { AppBar, styled, Toolbar, Typography, useMediaQuery } from '@mui/material';
 import { useAuth } from '../../auth';
 import { AjaxBackdrop, ButtonLink, FlexLink, LoginLogout } from '../../common';
 import { listSystemPages } from '../listViews';
@@ -16,6 +15,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ expanded, title }: HeaderProps) => {
+  const matches = useMediaQuery('(min-width:600px)');
   const { isAuthenticated, isReady } = useAuth();
   const sxStyle = {
     px: 4,
@@ -38,11 +38,12 @@ export const Header = ({ expanded, title }: HeaderProps) => {
             </Typography>
           )}
         </BrandLink>
-        {systemPages.map((page, i) => (
-          <ButtonLink key={i} href={page.link} sx={sxStyle}>
-            {page.name}
-          </ButtonLink>
-        ))}
+        {matches &&
+          systemPages.map((page, i) => (
+            <ButtonLink key={i} href={page.link} sx={sxStyle}>
+              {page.name}
+            </ButtonLink>
+          ))}
         {isReady && <LoginLogout sx={sxStyle} />}
       </Toolbar>
     </AppBar>

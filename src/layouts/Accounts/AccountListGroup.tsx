@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import styled from '@emotion/styled';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, styled, Typography } from '@mui/material';
 import { AmountSpan, RoundedLink } from '../../common';
 import { Account, AccountType, getAssetAccountTypes } from '../../types';
 import { Links } from '../listViews';

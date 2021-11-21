@@ -1,32 +1,30 @@
 import React from 'react';
 import { Link, LinkProps, useRoute } from 'wouter';
-import styled from '@emotion/styled';
+import { styled } from '@mui/material';
 
 interface ActiveProps {
   isActive?: boolean;
 }
 
-const StyledLink = styled(Link, { shouldForwardProp: (prop) => prop !== 'isActive' })<LinkProps & ActiveProps>(
-  ({ isActive }) => ({
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+const StyledLink = styled(Link)<LinkProps & ActiveProps>(({ isActive }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
 
-    cursor: 'pointer',
-    textDecoration: 'none',
+  cursor: 'pointer',
+  textDecoration: 'none',
 
-    background: isActive && 'rgb(0,0,0,0.06)',
+  background: isActive && 'rgb(0,0,0,0.06)',
 
+  color: 'inherit',
+  '&:visited': {
     color: 'inherit',
-    '&:visited': {
-      color: 'inherit',
-    },
+  },
 
-    '&:hover': {
-      background: isActive ? 'rgb(0,0,0,0.1)' : 'rgb(0,0,0,0.04)',
-    },
-  })
-);
+  '&:hover': {
+    background: isActive ? 'rgb(0,0,0,0.1)' : 'rgb(0,0,0,0.04)',
+  },
+}));
 
 interface FlexLinkProps {
   className?: string;
