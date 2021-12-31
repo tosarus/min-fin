@@ -17,3 +17,4 @@ export * from './StyledTable';
 export * from './Title';
 export * from './makeStyledTable';
 export * from './useDispatchedRender';
+export * from './useToggle';
