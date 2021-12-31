@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, BoxProps, Typography } from '@mui/material';
 import { AmountSpan } from '../../common';
 import { AccountType, BudgetAccount } from '../../types';
-import { calcucateSum } from '../utils';
+import { calculateSum } from '../utils';
 
 interface BudgetSummaryProps {
   type: AccountType;
@@ -11,11 +11,11 @@ interface BudgetSummaryProps {
 }
 
 export const BudgetSummary = ({ type, totals, budgets, ...props }: BudgetSummaryProps & BoxProps) => {
-  const planned = calcucateSum(budgets.map((b) => b.amount));
+  const planned = calculateSum(budgets.map((b) => b.amount));
   const plannedIds = new Set(budgets.map((b) => b.account_id));
-  const actual = calcucateSum([...totals.entries()].filter((entry) => plannedIds.has(entry[0])).map((entry) => entry[1]));
+  const actual = calculateSum([...totals.entries()].filter((entry) => plannedIds.has(entry[0])).map((entry) => entry[1]));
   const extraTotals = [...totals.entries()].filter((entry) => !plannedIds.has(entry[0]));
-  const extra = calcucateSum(extraTotals.map((entry) => entry[1]));
+  const extra = calculateSum(extraTotals.map((entry) => entry[1]));
 
   return (
     <Box {...props}>
