@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { IconButton, styled, TableBody, TableCell, TableRow, Typography } from '@mui/material';
-import { AmountSpan, RoundedLink, StyledTable } from '../../common';
+import { AmountSpan, RoundedLink, StyledTable, useToggle } from '../../common';
 import { Account, AccountType } from '../../types';
 import { Links } from '../listViews';
 import { sortAccounts } from '../utils';
@@ -19,8 +19,7 @@ const FitRoundedLink = styled(RoundedLink)({
 });
 
 export const BudgetSuggestions = ({ accounts, totals, type, month, onPlan }: BudgetSuggestionsProps) => {
-  const [open, setOpen] = useState(false);
-  const toggleOpen = () => setOpen(!open);
+  const [open, toggleOpen] = useToggle(false);
 
   return (
     <>

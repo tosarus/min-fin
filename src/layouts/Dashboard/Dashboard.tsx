@@ -6,6 +6,7 @@ import { AppBar as MuiAppBar, AppBarProps as MuiAppBarProps, Badge, Box, Contain
 import { Divider, Drawer as MuiDrawer, Grid, IconButton, Link, List, Paper, Toolbar } from '@mui/material';
 import { Typography, TypographyProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useToggle } from '../../common';
 import { Deposits } from './Deposits';
 import { Orders } from './Orders';
 import { mainListItems, secondaryListItems } from './listItems';
@@ -70,10 +71,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 }));
 
 export const Dashboard = () => {
-  const [open, setOpen] = React.useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+  const [open, toggleOpen] = useToggle(true);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -87,7 +85,7 @@ export const Dashboard = () => {
             edge="start"
             color="inherit"
             aria-label="open drawer"
-            onClick={toggleDrawer}
+            onClick={toggleOpen}
             sx={{
               marginRight: '36px',
               ...(open && { display: 'none' }),
@@ -113,7 +111,7 @@ export const Dashboard = () => {
             justifyContent: 'flex-end',
             px: [1],
           }}>
-          <IconButton onClick={toggleDrawer} size="large">
+          <IconButton onClick={toggleOpen} size="large">
             <ChevronLeftIcon />
           </IconButton>
         </Toolbar>

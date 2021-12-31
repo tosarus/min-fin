@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, CssBaseline, LinearProgress } from '@mui/material';
 import { useAuth } from '../../auth';
-import { Footer, ReportSnackbar } from '../../common';
+import { Footer, ReportSnackbar, useToggle } from '../../common';
 import { Header } from './Header';
 import { Navigation } from './Navigation';
 import { RoutedContent } from './RoutedContent';
 
 export const App = () => {
   const { isReady } = useAuth();
-  const [expanded, setExpanded] = useState(true);
-
-  const toggleExpanded = () => setExpanded(!expanded);
+  const [expanded, toggleExpanded] = useToggle(true);
 
   return (
     <Box sx={{ display: 'flex' }}>
