@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { useRoute } from 'wouter';
 import { Box, Button, Typography } from '@mui/material';
 import { AmountSpan, Title } from '../../common';
+import { Selectors } from '../../store';
 import { Account, getAssetAccountTypes } from '../../types';
 import { Routes } from '../listViews';
-import { formatMonth } from '../utils';
+import { calculatePending, formatMonth, subtractAmount } from '../utils';
 
 interface AccountDetailsProps {
   account: Account;
@@ -23,16 +25,31 @@ function formatTitle(name: string, month?: string) {
 export const AccountDetails = ({ account, onEdit, onRemove }: AccountDetailsProps) => {
   const [, params] = useRoute(Routes.AccountsView);
   const isAsset = getAssetAccountTypes().includes(account.type);
+  const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
+  const pendingBalance = useMemo(
+    () => (isAsset ? calculatePending(cashFlows, account) : '0'),
+    [account, cashFlows, isAsset]
+  );
 
   const handleEdit = () => onEdit(account);
   return (
     <Box sx={{ mb: 2 }}>
       <Title sx={{ textAlign: 'left', display: 'flex' }}>{formatTitle(account.name, params?.month)}</Title>
       {isAsset && (
-        <Box sx={{ display: 'flex' }}>
-          <Typography sx={{ mr: 2, width: 120 }}>Balance</Typography>
-          <AmountSpan amount={account.balance} />
-        </Box>
+        <>
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={{ mr: 2, width: 120 }}>Balance</Typography>
+            <AmountSpan amount={account.balance} />
+          </Box>
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={{ mr: 2, width: 120 }}>Posted</Typography>
+            <AmountSpan amount={subtractAmount(account.balance, pendingBalance)} />
+          </Box>
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={{ mr: 2, width: 120 }}>Pending</Typography>
+            <AmountSpan amount={pendingBalance} />
+          </Box>
+        </>
       )}
       <Box sx={{ display: 'flex' }}>
         <Button onClick={handleEdit}>Edit</Button>
