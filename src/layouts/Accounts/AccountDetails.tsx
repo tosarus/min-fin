@@ -6,7 +6,7 @@ import { AmountSpan, Title } from '../../common';
 import { Selectors } from '../../store';
 import { Account, getAssetAccountTypes } from '../../types';
 import { Routes } from '../listViews';
-import { calculatePending, formatMonth, subtractAmount } from '../utils';
+import { calculateExpenses, calculatePending, formatMonth, subtractAmount } from '../utils';
 
 interface AccountDetailsProps {
   account: Account;
@@ -30,12 +30,16 @@ export const AccountDetails = ({ account, onEdit, onRemove }: AccountDetailsProp
     () => (isAsset ? calculatePending(cashFlows, account) : '0'),
     [account, cashFlows, isAsset]
   );
+  const totalExpenses = useMemo(
+    () => (isAsset ? '0' : calculateExpenses(cashFlows, account, params?.month)),
+    [account, cashFlows, isAsset, params]
+  );
 
   const handleEdit = () => onEdit(account);
   return (
     <Box sx={{ mb: 2 }}>
       <Title sx={{ textAlign: 'left', display: 'flex' }}>{formatTitle(account.name, params?.month)}</Title>
-      {isAsset && (
+      {isAsset ? (
         <>
           <Box sx={{ display: 'flex' }}>
             <Typography sx={{ mr: 2, width: 120 }}>Balance</Typography>
@@ -50,6 +54,11 @@ export const AccountDetails = ({ account, onEdit, onRemove }: AccountDetailsProp
             <AmountSpan amount={pendingBalance} />
           </Box>
         </>
+      ) : (
+        <Box sx={{ display: 'flex' }}>
+          <Typography sx={{ mr: 2, width: 120 }}>Total</Typography>
+          <AmountSpan amount={totalExpenses} />
+        </Box>
       )}
       <Box sx={{ display: 'flex' }}>
         <Button onClick={handleEdit}>Edit</Button>
