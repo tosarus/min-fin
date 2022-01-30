@@ -64,7 +64,7 @@ const { saga, actions } = createSliceSaga({
     *copyFromPrevious({
       payload: { workbookId, type, month },
     }: PayloadAction<{ workbookId: string; type: AccountType; month: string }>) {
-      yield callPrivate(applyWorldUpdate, 'Removing budget', (auth) =>
+      yield callPrivate(applyWorldUpdate, 'Copying budgets from previous month', (auth) =>
         new BudgetsClient(auth).copyFromPrevious(workbookId, type, month)
       );
     },
