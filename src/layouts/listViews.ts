@@ -22,6 +22,7 @@ export const Links = {
   accountsView: (id: string) => `/accounts/${id}`,
   accountsViewMonth: (id: string, month: string) => `/accounts/${id}/${month}`,
   budgets: () => '/budgets',
+  budgetsForMonth: (month: string) => `/budgets/${month}`,
   demoForecast: () => '/demo/forecast',
   demoOrders: () => '/demo/orders',
   demoTrans: () => '/demo/trans',
@@ -34,7 +35,7 @@ export const Links = {
 export const Routes = {
   Accounts: '/accounts/:all*',
   AccountsView: '/accounts/:id/:month*',
-  Budgets: '/budgets',
+  Budgets: '/budgets/:month*',
   DemoForecast: Links.demoForecast(),
   DemoOrders: Links.demoOrders(),
   DemoTrans: Links.demoTrans(),
