@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useRoute } from 'wouter';
 import { Box } from '@mui/material';
 import { Title } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { AccountType, BudgetAccount } from '../../types';
+import { Links, Routes } from '../listViews';
 import { formatMonth, getCurrentMonth, sameMonthFilter, withinMonthFilter } from '../utils';
 import { BudgetEditor } from './BudgetEditor';
 import { BudgetGroup } from './BudgetGroup';
@@ -15,8 +17,10 @@ export const Budgets = () => {
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
   const workbook = useSelector(Selectors.activeWorkbook);
   const dispatch = useDispatch();
-  const [month, setMonth] = useState(getCurrentMonth());
   const [editable, setEditable] = useState<Partial<BudgetAccount>>();
+  const [, params] = useRoute(Routes.Budgets);
+  const [, setLocation] = useLocation();
+  const month = params?.month ?? getCurrentMonth();
 
   const monthBudgets = useMemo(() => budgets.filter(sameMonthFilter(month)), [budgets, month]);
   const monthFlows = useMemo(() => cashFlows.filter(withinMonthFilter(month)), [cashFlows, month]);
@@ -57,7 +61,14 @@ export const Budgets = () => {
     }
   };
 
-  const handleMonthChange = (m: string) => setMonth(m ?? getCurrentMonth());
+  const handleMonthChange = (m: string) => {
+    const currentMonth = getCurrentMonth();
+    if ((m ?? currentMonth) === currentMonth) {
+      setLocation(Links.budgets());
+    } else {
+      setLocation(Links.budgetsForMonth(m));
+    }
+  };
 
   return (
     <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'auto', pr: 3 }}>
