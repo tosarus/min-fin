@@ -5,6 +5,20 @@ import createDb from './database';
 
 const config = createConfig();
 
+const shutdownWithMessage = (signal: any) =>
+  (err: any) => {
+    console.log(`${signal}...`);
+    if (err) {
+      console.error(err.stack || err);
+    }
+    process.exit(err ? 1 : 0);
+  };
+
+process
+  .on('SIGTERM', shutdownWithMessage('SIGTERM'))
+  .on('SIGINT', shutdownWithMessage('SIGINT'))
+  .on('uncaughtException', shutdownWithMessage('uncaughtException'));
+
 createDb(config)
   .then((info) => {
     const app = createApp(config);
@@ -16,8 +30,4 @@ createDb(config)
         info
       );
     });
-  })
-  .catch((err) => {
-    console.error(err.stack);
-    process.exit(1);
   });
