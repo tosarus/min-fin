@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Request } from 'express';
-import jwt from 'express-jwt';
+import { expressjwt, GetVerificationKey } from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 import { AuthConfig } from './config';
 import { AuthUser } from './types';
@@ -9,10 +9,10 @@ export { checkToken, getEmailFromRequest, fetchAuthUser };
 
 function getEmailFromRequest(config: AuthConfig, req: Request) {
   const emailField = config.audience + 'email';
-  interface RequestWithUser extends Request {
-    user: { [key: string]: string };
+  interface RequestWithAuth extends Request {
+    auth: { [key: string]: string };
   }
-  return (req as RequestWithUser).user[emailField];
+  return (req as RequestWithAuth).auth[emailField];
 }
 
 async function fetchAuthUser(config: AuthConfig, req: Request) {
@@ -23,13 +23,13 @@ async function fetchAuthUser(config: AuthConfig, req: Request) {
 }
 
 function checkToken(config: AuthConfig) {
-  return jwt({
+  return expressjwt({
     secret: jwksRsa.expressJwtSecret({
       cache: true,
       rateLimit: true,
       jwksRequestsPerMinute: 5,
       jwksUri: `${config.domain}.well-known/jwks.json`,
-    }),
+    }) as GetVerificationKey,
 
     audience: config.audience,
     issuer: config.domain,
