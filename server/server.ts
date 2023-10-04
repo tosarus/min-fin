@@ -5,9 +5,9 @@ import createDb from './database';
 
 const config = createConfig();
 
-const shutdownWithMessage = (signal) =>
-  (err) => {
-    console.log(`${ signal }...`);
+const shutdownWithMessage = (signal: any) =>
+  (err: any) => {
+    console.log(`${signal}...`);
     if (err) {
       console.error(err.stack || err);
     }
