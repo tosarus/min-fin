@@ -1,6 +1,6 @@
 {
   "name": "min-fin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "engines": {
     "node": "16.x",
@@ -12,7 +12,6 @@
     "build": "run-s clean build:*",
     "build:client": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=dist/build react-app-rewired build",
     "build:server": "tsc --build server",
-    "build:assets": "cp -R assets dist/",
     "dev": "run-p server client",
     "client": "react-app-rewired start",
     "server": "nodemon server/index.ts 3010 500",

@@ -2,11 +2,7 @@ import React from 'react';
 import { Link, LinkProps, useRoute } from 'wouter';
 import { styled } from '@mui/material';
 
-interface ActiveProps {
-  isActive?: boolean;
-}
-
-const StyledLink = styled(Link)<LinkProps & ActiveProps>(({ isActive }) => ({
+const StyledLink = styled(Link, { shouldForwardProp: (prop) => prop !== 'isActive' })<{ isActive: boolean }>(({ isActive }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',

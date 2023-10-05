@@ -3,6 +3,8 @@ import isBetween from 'dayjs/plugin/isBetween';
 
 dayjs.extend(isBetween);
 
+const yearAgo = dayjs().subtract(1, 'year');
+
 export function withinMonthFilter(month: string) {
   const from = dayjs(month);
   const to = from.add(1, 'month');
@@ -40,7 +42,8 @@ export function formatDate(date?: string) {
 }
 
 export function formatShortDate(date?: string) {
-  return dayjs(date).format('MMM D');
+  const dd = dayjs(date);
+  return dd.isAfter(yearAgo) ? dd.format('MMM D') : dd.format('MMM D (YYYY)');
 }
 
 export function calculateMonthRange(count: number) {

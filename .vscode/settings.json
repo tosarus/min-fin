@@ -6,5 +6,8 @@
   "[svg]": {
     "editor.formatOnSave": false
   },
-  "typescript.preferences.importModuleSpecifier": "relative"
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "cSpell.words": [
+    "wouter"
+  ]
 }

@@ -8,7 +8,7 @@ import { FlexLink } from '../../common';
 import { Selectors } from '../../store';
 import { listSystemPages, listViewPages, RoutablePage } from '../listViews';
 
-const NavigationBox = styled(Box)<{ expanded: boolean }>(({ expanded }) => ({
+const NavigationBox = styled(Box, { shouldForwardProp: (prop) => prop != 'expanded' })<{ expanded: boolean }>(({ expanded }) => ({
   display: 'flex',
   flexDirection: 'column',
   flexShrink: 0,
