@@ -1,4 +1,4 @@
-import { ClientBase, QueryConfig } from 'pg';
+import { ClientBase, QueryConfig, QueryResultRow } from 'pg';
 import { Service } from 'typedi';
 import { getPool } from './db';
 
@@ -16,7 +16,7 @@ export class QueryManager {
     return new c(this);
   }
 
-  query<Row>(config: QueryConfig | string) {
+  query<Row extends QueryResultRow>(config: QueryConfig | string) {
     return this.client().query<Row>(config);
   }
 

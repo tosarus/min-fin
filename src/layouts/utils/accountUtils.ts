@@ -1,6 +1,6 @@
 import { Account, AccountType, getAssetAccountTypes, getBudgetAccountTypes, TransactionType } from '../../types';
 
-export function accountTypeName(type: AccountType, plural?: boolean): string {
+export function accountTypeName(type?: AccountType, plural?: boolean): string {
   switch (type) {
     case AccountType.Banking:
       return plural ? 'Bank Accounts' : 'Bank Account';
@@ -82,4 +82,9 @@ export function getFlowAccountFilter(type: AccountType, accountId: string) {
   return isAsset
     ? (flow: { account_id: string; other_account_id: string }) => accountId === flow.account_id
     : (flow: { account_id: string; other_account_id: string }) => accountId === flow.other_account_id;
+}
+
+export function getAccountType(accounts: Account[], id: string) {
+  const account = accounts.find((acc) => acc.id === id);
+  return account?.type;
 }

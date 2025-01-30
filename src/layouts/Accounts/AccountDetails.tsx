@@ -11,7 +11,6 @@ import { calculateExpenses, calculatePending, formatMonth, subtractAmount } from
 interface AccountDetailsProps {
   account: Account;
   onEdit: (account: Account) => void;
-  onRemove: () => void;
 }
 
 function formatTitle(name: string, month?: string) {
@@ -22,7 +21,7 @@ function formatTitle(name: string, month?: string) {
   return `${name} in ${formatMonth(month)}`;
 }
 
-export const AccountDetails = ({ account, onEdit, onRemove }: AccountDetailsProps) => {
+export const AccountDetails = ({ account, onEdit }: AccountDetailsProps) => {
   const [, params] = useRoute(Routes.AccountsView);
   const isAsset = getAssetAccountTypes().includes(account.type);
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
@@ -38,7 +37,10 @@ export const AccountDetails = ({ account, onEdit, onRemove }: AccountDetailsProp
   const handleEdit = () => onEdit(account);
   return (
     <Box sx={{ mb: 2 }}>
-      <Title sx={{ textAlign: 'left', display: 'flex' }}>{formatTitle(account.name, params?.month)}</Title>
+      <Title sx={{ display: 'flex', alignItems: 'baseline' }}>
+        <span>{formatTitle(account.name, params?.month)}</span>
+        <Button onClick={handleEdit}>Edit</Button>
+      </Title>
       {isAsset ? (
         <>
           <Box sx={{ display: 'flex' }}>
@@ -60,10 +62,6 @@ export const AccountDetails = ({ account, onEdit, onRemove }: AccountDetailsProp
           <AmountSpan amount={totalExpenses} />
         </Box>
       )}
-      <Box sx={{ display: 'flex' }}>
-        <Button onClick={handleEdit}>Edit</Button>
-        <Button onClick={onRemove}>Remove</Button>
-      </Box>
     </Box>
   );
 };

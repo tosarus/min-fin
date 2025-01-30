@@ -1,6 +1,6 @@
 import React from 'react';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { IconButton, Menu, MenuItem, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import { IconButton, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { SxProps } from '@mui/system';
 import { AmountSpan } from './AmountSpan';
 import { StyledTable } from './StyledTable';
@@ -23,7 +23,6 @@ interface Props<T> {
   detail?: (item: T) => any;
   accent?: (item: T) => any;
   onEdit?: (item: T) => void;
-  onRemove?: (item: T) => void;
 }
 
 const NOOP = () => undefined;
@@ -46,29 +45,7 @@ export function makeStyledTable<T>({
   detail = NOOP,
   accent = NOOP,
   onEdit = NOOP,
-  onRemove = NOOP,
 }: Props<T>) {
-  // edit menu
-  const [menuAnchor, setMenuAnchor] = React.useState<[HTMLElement, T]>();
-  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, item: T) => {
-    setMenuAnchor([event.currentTarget, item]);
-  };
-  const handleMenuClose = () => {
-    setMenuAnchor(undefined);
-  };
-  const handleEdit = () => {
-    if (menuAnchor) {
-      onEdit(menuAnchor[1]);
-    }
-    handleMenuClose();
-  };
-  const handleRemove = () => {
-    if (menuAnchor) {
-      onRemove(menuAnchor[1]);
-    }
-    handleMenuClose();
-  };
-
   // pagination
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
@@ -92,7 +69,7 @@ export function makeStyledTable<T>({
   const slicedItems = pagination ? items.slice(page * rowsPerPage, (page + 1) * rowsPerPage) : items;
 
   const hasDetails = detail !== NOOP;
-  const hasMenu = onEdit !== NOOP || onRemove !== NOOP;
+  const hasMenu = onEdit !== NOOP;
   const hasAccent = accent !== NOOP;
 
   // styles
@@ -130,50 +107,47 @@ export function makeStyledTable<T>({
   };
 
   return (
-    <>
-      <Menu id="basic-menu" anchorEl={menuAnchor ? menuAnchor[0] : undefined} open={!!menuAnchor} onClose={handleMenuClose}>
-        <MenuItem onClick={handleEdit}>Edit</MenuItem>
-        <MenuItem onClick={handleRemove}>Remove</MenuItem>
-      </Menu>
-      <StyledTable pagination={paginationProps} sx={sx}>
-        {withHeader && (
-          <TableHead>
-            <TableRow>
+    <StyledTable pagination={paginationProps} sx={sx}>
+      {withHeader && (
+        <TableHead>
+          <TableRow>
+            {headers.map((h, i) => (
+              <TableCell key={i} sx={headSx(h)}>
+                {h.name}
+              </TableCell>
+            ))}
+            {hasMenu && <TableCell />}
+          </TableRow>
+        </TableHead>
+      )}
+      <TableBody>
+        {slicedItems.map((item, i) => (
+          <React.Fragment key={i}>
+            <TableRow sx={firstRowSx(item)}>
               {headers.map((h, i) => (
-                <TableCell key={i} sx={headSx(h)}>
-                  {h.name}
+                <TableCell key={i} rowSpan={hasDetails && h.type === 'date' ? 2 : 1} sx={cellSx(h)}>
+                  {h.type === 'amount' ? <AmountSpan amount={h.value(item)} /> : h.value(item)}
                 </TableCell>
               ))}
-              {hasMenu && <TableCell />}
-            </TableRow>
-          </TableHead>
-        )}
-        <TableBody>
-          {slicedItems.map((item, i) => (
-            <React.Fragment key={i}>
-              <TableRow sx={firstRowSx(item)}>
-                {headers.map((h, i) => (
-                  <TableCell key={i} rowSpan={hasDetails && h.type === 'date' ? 2 : 1} sx={cellSx(h)}>
-                    {h.type === 'amount' ? <AmountSpan amount={h.value(item)} /> : h.value(item)}
-                  </TableCell>
-                ))}
-                {hasMenu && (
-                  <TableCell sx={{ width: 30 }}>
-                    <IconButton size="small" sx={{ m: 0, p: 0 }} onClick={(e) => handleMenuOpen(e, item)}>
-                      <MoreVertIcon fontSize="small" />
-                    </IconButton>
-                  </TableCell>
-                )}
-              </TableRow>
-              {hasDetails && (
-                <TableRow sx={secondRowSx(item)}>
-                  <TableCell colSpan={headers.length - (hasMenu ? 0 : 1)}>{detail(item)}</TableCell>
-                </TableRow>
+              {hasMenu && (
+                <TableCell sx={{ width: 30 }}>
+                  <IconButton
+                    size="small"
+                    sx={{ m: 0, p: 0, '& .MuiSvgIcon-root:hover': { color: 'primary.light' } }}
+                    onClick={() => onEdit(item)}>
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </TableCell>
               )}
-            </React.Fragment>
-          ))}
-        </TableBody>
-      </StyledTable>
-    </>
+            </TableRow>
+            {hasDetails && (
+              <TableRow sx={secondRowSx(item)}>
+                <TableCell colSpan={headers.length - (hasMenu ? 0 : 1)}>{detail(item)}</TableCell>
+              </TableRow>
+            )}
+          </React.Fragment>
+        ))}
+      </TableBody>
+    </StyledTable>
   );
 }

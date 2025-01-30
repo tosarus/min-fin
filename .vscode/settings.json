@@ -1,13 +1,10 @@
 {
-  "editor.formatOnSave": true,
-  "files.exclude": {
-    // "**/node_modules": false
-  },
   "[svg]": {
     "editor.formatOnSave": false
   },
-  "typescript.preferences.importModuleSpecifier": "relative",
   "cSpell.words": [
+    "tosarus",
+    "typedi",
     "wouter"
   ]
 }

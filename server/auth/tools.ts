@@ -5,24 +5,22 @@ import jwksRsa from 'jwks-rsa';
 import { AuthConfig } from './config';
 import { AuthUser } from './types';
 
-export { checkToken, getEmailFromRequest, fetchAuthUser };
-
-function getEmailFromRequest(config: AuthConfig, req: Request) {
+export const getEmailFromRequest = (config: AuthConfig, req: Request) => {
   const emailField = config.audience + 'email';
   interface RequestWithAuth extends Request {
     auth: { [key: string]: string };
   }
   return (req as RequestWithAuth).auth[emailField];
-}
+};
 
-async function fetchAuthUser(config: AuthConfig, req: Request) {
+export const fetchAuthUser = async (config: AuthConfig, req: Request) => {
   const res = await axios.get<AuthUser>(`${config.domain}userinfo`, {
     headers: { Authorization: req.headers.authorization || '' },
   });
   return res.data;
-}
+};
 
-function checkToken(config: AuthConfig) {
+export const checkToken = (config: AuthConfig) => {
   return expressjwt({
     secret: jwksRsa.expressJwtSecret({
       cache: true,
@@ -35,4 +33,4 @@ function checkToken(config: AuthConfig) {
     issuer: config.domain,
     algorithms: ['RS256'],
   });
-}
+};

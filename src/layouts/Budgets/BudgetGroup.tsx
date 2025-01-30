@@ -14,12 +14,11 @@ interface BudgetGroupProps {
   type: AccountType;
   month: string;
   onEdit: (budget: BudgetAccount) => void;
-  onRemove: (budget: BudgetAccount) => void;
   onPlan: (accountId: string, amount: string) => void;
   onCopy: (type: AccountType) => void;
 }
 
-export const BudgetGroup = ({ budgets, cashFlows, type, month, onEdit, onRemove, onPlan, onCopy }: BudgetGroupProps) => {
+export const BudgetGroup = ({ budgets, cashFlows, type, month, onEdit, onPlan, onCopy }: BudgetGroupProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const planned = budgets.filter((b) => accountMap.get(b.account_id)?.type === type);
   const totals = useMemo(() => {
@@ -34,7 +33,7 @@ export const BudgetGroup = ({ budgets, cashFlows, type, month, onEdit, onRemove,
     <Box sx={{ display: 'flex', flexFlow: 'row', mb: 3 }}>
       <BudgetSummary sx={{ flex: '1 0 20%', textAlign: 'right', pr: 3 }} type={type} budgets={planned} totals={totals} />
       <Box sx={{ flex: '1 0 80%' }}>
-        <BudgetList budgets={planned} month={month} totals={totals} onEdit={onEdit} onRemove={onRemove} />
+        <BudgetList budgets={planned} month={month} totals={totals} onEdit={onEdit} />
         {planned.length === 0 && <Button onClick={() => onCopy(type)}>Copy budgets from previous month?</Button>}
         {unplanned.length > 0 && (
           <BudgetSuggestions accounts={unplanned} month={month} totals={totals} type={type} onPlan={onPlan} />

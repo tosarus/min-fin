@@ -5,7 +5,7 @@ import { Box } from '@mui/material';
 import { SxProps } from '@mui/system';
 import { Actions, Selectors } from '../../store';
 import { Account, getPublicAccountTypes } from '../../types';
-import { Transactions } from '../Transactions';
+import { TransactionList } from '../Transactions';
 import { Links, Routes } from '../listViews';
 import { AccountList } from './AccountList';
 import { AccountPage } from './AccountPage';
@@ -47,7 +47,7 @@ export const Accounts = () => {
               }}
             </Route>
             <Route path={Routes.Accounts}>
-              <Transactions />
+              <TransactionList />
             </Route>
           </Switch>
         </Box>

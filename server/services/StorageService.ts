@@ -108,15 +108,17 @@ export class StorageService extends BaseService {
     }
 
     const transactions = [] as Transaction[];
-    for (const trans of imported.transactions!) {
-      if (!accNameToId.has(trans.account_from)) {
+    for (const trans of imported.transactions || []) {
+      const account_from = accNameToId.get(trans.account_from);
+      const account_to = accNameToId.get(trans.account_to);
+      if (!account_from) {
         throw `unexpected account name ${trans.account_from}`;
       }
-      if (!accNameToId.has(trans.account_to)) {
+      if (!account_to) {
         throw `unexpected account name ${trans.account_to}`;
       }
-      trans.account_from = accNameToId.get(trans.account_from)!;
-      trans.account_to = accNameToId.get(trans.account_to)!;
+      trans.account_from = account_from;
+      trans.account_to = account_to;
       transactions.push(await transactionRepo.create(workbookId, trans));
     }
 

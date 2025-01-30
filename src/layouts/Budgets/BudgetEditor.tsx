@@ -12,9 +12,10 @@ interface BudgetEditorProps {
   planned: BudgetAccount[];
   onClose: () => void;
   onSubmit: (budget: Partial<BudgetAccount>) => void;
+  onRemove: (budgetId?: string) => void;
 }
 
-export const BudgetEditor = ({ budget, planned, onClose, onSubmit }: BudgetEditorProps) => {
+export const BudgetEditor = ({ budget, planned, onClose, onSubmit, onRemove }: BudgetEditorProps) => {
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const accountMap = useSelector(Selectors.currentAccountMap);
 
@@ -30,10 +31,12 @@ export const BudgetEditor = ({ budget, planned, onClose, onSubmit }: BudgetEdito
     },
   });
 
-  const handleAmoutBlur = (e: React.FocusEvent) => {
+  const handleAmountBlur = (e: React.FocusEvent) => {
     formik.setFieldValue('amount', amountOrZero(formik.values.amount));
     formik.handleBlur(e);
   };
+
+  const handleRemove = budget.id ? () => onRemove(budget.id) : undefined;
 
   const idToAccount = (id: string) => accountMap.get(id)?.name ?? '';
 
@@ -50,7 +53,8 @@ export const BudgetEditor = ({ budget, planned, onClose, onSubmit }: BudgetEdito
       sx={{ display: 'flex', flexFlow: 'column' }}
       canSubmit={canSubmit}
       onClose={onClose}
-      onSubmit={() => formik.handleSubmit()}>
+      onSubmit={() => formik.handleSubmit()}
+      onRemove={handleRemove}>
       <AccountSelect
         fullWidth
         disabled={!!budget.account_id}
@@ -64,7 +68,7 @@ export const BudgetEditor = ({ budget, planned, onClose, onSubmit }: BudgetEdito
         label="Category"
         error={formik.errors.account_id}
       />
-      <TextField sx={{ mb: 2 }} label="Amount" {...formik.getFieldProps('amount')} onBlur={handleAmoutBlur} />
+      <TextField label="Amount" {...formik.getFieldProps('amount')} onBlur={handleAmountBlur} />
       {!budget.id && budget.amount && (
         <Typography>
           <span>{budget.amount.includes('-') ? 'Spent ' : 'Earned '}</span>

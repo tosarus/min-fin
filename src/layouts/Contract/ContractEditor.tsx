@@ -1,21 +1,39 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useFormik } from 'formik';
 import { useSelector } from 'react-redux';
 import { Checkbox, FormControlLabel, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { AccountSelect, EditorDialog } from '../../common';
 import { Selectors } from '../../store';
-import { TransactionType } from '../../types';
-import { amountOrZero, getAccountIdsByCategory, getAssetAccountIds, transactionTypes } from '../utils';
+import { AccountType, CashFlow, dateOrderCompare, TransactionType } from '../../types';
+import { amountOrZero, getAccountIdsByCategory, getAccountType, getAssetAccountIds, transactionTypes } from '../utils';
 import { Contract } from './Contract';
 
 interface ContractEditorProps {
   contract: Contract;
   onClose: () => void;
   onSubmit: (contract: Contract) => void;
+  onRemove: (id?: string) => void;
 }
 
-export const ContractEditor = ({ contract, onClose, onSubmit }: ContractEditorProps) => {
+const buildCategorySuggestions = (cashFlows: CashFlow[]) => {
+  const suggestions = new Map<string, { account: string; type: TransactionType }>();
+  for (const flow of [...cashFlows].sort(dateOrderCompare)) {
+    if (flow.type === TransactionType.Opening || suggestions.has(flow.description)) {
+      continue;
+    }
+    if (flow.type === TransactionType.Transfer) {
+      suggestions.set(flow.description, { account: flow.account_id, type: flow.type });
+    } else {
+      suggestions.set(flow.description, { account: flow.other_account_id, type: flow.type });
+    }
+  }
+  return suggestions;
+};
+
+export const ContractEditor = ({ contract, onClose, onSubmit, onRemove }: ContractEditorProps) => {
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
+  const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
+  const categorySuggestions = useMemo(() => buildCategorySuggestions(cashFlows), [cashFlows]);
 
   const formik = useFormik({
     initialValues: contract,
@@ -41,10 +59,36 @@ export const ContractEditor = ({ contract, onClose, onSubmit }: ContractEditorPr
     formik.setFieldValue('type', newType);
   };
 
-  const handleAmoutBlur = (e: React.FocusEvent) => {
+  const handleAmountBlur = (e: React.FocusEvent) => {
     formik.setFieldValue('amount', amountOrZero(formik.values.amount));
     formik.handleBlur(e);
   };
+
+  const handleDescriptionBlur = (e: React.FocusEvent) => {
+    if (formik.values.type === TransactionType.Opening || !formik.values.description || formik.values.otherAccount) {
+      return;
+    }
+
+    const suggestion = categorySuggestions.get(formik.values.description);
+    if (suggestion) {
+      formik.setFieldValue('type', suggestion.type);
+      if (
+        suggestion.type !== TransactionType.Transfer ||
+        getAccountType(accounts, formik.values.account) === AccountType.Banking
+      ) {
+        formik.setFieldValue('otherAccount', suggestion.account);
+      } else if (formik.values.account !== suggestion.account) {
+        // swap accounts for transfers to credit account
+        const myAccount = formik.values.account;
+        formik.setFieldValue('account', suggestion.account);
+        formik.setFieldValue('otherAccount', myAccount);
+      }
+    }
+
+    formik.handleBlur(e);
+  };
+
+  const handleRemove = contract.id ? () => onRemove(contract.id) : undefined;
 
   const updateFormik = (name: string, value: any) => {
     formik.setFieldValue(name, value);
@@ -64,7 +108,8 @@ export const ContractEditor = ({ contract, onClose, onSubmit }: ContractEditorPr
       sx={{ display: 'flex', flexFlow: 'row wrap', pb: 1 }}
       canSubmit={canSubmit}
       onClose={onClose}
-      onSubmit={() => formik.handleSubmit()}>
+      onSubmit={() => formik.handleSubmit()}
+      onRemove={handleRemove}>
       <AccountSelect
         fullWidth
         sx={{ mb: 2, mt: 0.75 }}
@@ -94,22 +139,24 @@ export const ContractEditor = ({ contract, onClose, onSubmit }: ContractEditorPr
         error={!!formik.errors.description}
         sx={sxLeft}
         {...formik.getFieldProps('description')}
+        onBlur={handleDescriptionBlur}
       />
       <TextField type="date" label="Date" sx={sxRight} {...formik.getFieldProps('date')} />
       <AccountSelect
         disabled={formik.values.type === TransactionType.Opening}
         sx={sxLeft}
-        options={getAccountIdsByCategory(accounts, formik.values.account ?? 0, formik.values.type)}
+        options={getAccountIdsByCategory(accounts, formik.values.account ?? '', formik.values.type)}
         value={formik.values.otherAccount}
         onChange={(value) => updateFormik('otherAccount', value)}
         label={formik.values.type === TransactionType.Transfer ? 'Destination Account' : 'Category'}
         error={formik.errors.otherAccount}
       />
-      <TextField label="Amount" sx={sxRight} {...formik.getFieldProps('amount')} onBlur={handleAmoutBlur} />
+      <TextField label="Amount" sx={sxRight} {...formik.getFieldProps('amount')} onBlur={handleAmountBlur} />
       <TextField fullWidth multiline rows={2} label="Details" {...formik.getFieldProps('detail')} />
       <FormControlLabel
         control={<Checkbox checked={formik.values.pending} onChange={(e, checked) => updateFormik('pending', checked)} />}
         label="Pending"
+        sx={{ ml: 'auto' }}
       />
     </EditorDialog>
   );

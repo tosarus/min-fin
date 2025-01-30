@@ -3,33 +3,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@mui/material';
 import { Title } from '../../common';
 import { Actions, Selectors } from '../../store';
-import { Account, AccountType, CashFlow, getAssetAccountTypes, TransactionType } from '../../types';
-import { Contract, ContractEditor, fromCashFlow, fromContract } from '../Contract';
-import { CashFlowTable } from './CashFlowTable';
+import { Transaction } from '../../types';
+import { Contract, ContractEditor, fromContract, fromTransaction } from '../Contract';
+import { TransactionTable } from './TransactionTable';
 
-interface CashFlowListProps {
-  account: Account;
-}
-
-export const CashFlowList = ({ account }: CashFlowListProps) => {
+export const TransactionList = () => {
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const workbook = useSelector(Selectors.activeWorkbook);
   const dispatch = useDispatch();
-  const [editable, setEditable] = useState<Partial<CashFlow>>();
-  const isAsset = getAssetAccountTypes().includes(account.type);
+  const [editable, setEditable] = useState<Partial<Transaction>>();
 
-  const handleEdit = (flow: CashFlow) => {
-    setEditable(flow);
+  const handleEdit = (tr: Transaction) => {
+    setEditable(tr);
   };
 
   const handleAdd = () => {
-    if (isAsset) {
-      setEditable({ account_id: account.id });
-    } else if (account.type === AccountType.Income) {
-      setEditable({ other_account_id: account.id, type: TransactionType.Income });
-    } else {
-      setEditable({ other_account_id: account.id, type: TransactionType.Expence });
-    }
+    setEditable({});
   };
 
   const handleClose = () => {
@@ -57,13 +46,13 @@ export const CashFlowList = ({ account }: CashFlowListProps) => {
       </Title>
       {editable && (
         <ContractEditor
-          contract={fromCashFlow(editable)}
+          contract={fromTransaction(editable)}
           onClose={handleClose}
           onSubmit={handleSubmit}
           onRemove={handleRemove}
         />
       )}
-      <CashFlowTable account={account} onEdit={handleEdit} />
+      <TransactionTable onEdit={handleEdit} />
     </>
   );
 };

@@ -9,9 +9,10 @@ interface AccountEditorProps {
   account: Partial<Account>;
   onClose: () => void;
   onSubmit: (account: Partial<Account>) => void;
+  onRemove?: () => void;
 }
 
-export const AccountEditor = ({ account: { id, name = '', type }, onClose, onSubmit }: AccountEditorProps) => {
+export const AccountEditor = ({ account: { id, name = '', type }, onClose, onSubmit, onRemove }: AccountEditorProps) => {
   const formik = useFormik({
     initialValues: { id, name, type },
     onSubmit,
@@ -34,11 +35,12 @@ export const AccountEditor = ({ account: { id, name = '', type }, onClose, onSub
 
   return (
     <EditorDialog
-      title={`${id ? 'Edit' : 'Add'}  ${accountTypeName(formik.values.type!)}`}
+      title={`${id ? 'Edit' : 'Add'}  ${accountTypeName(formik.values.type)}`}
       sx={{ display: 'flex', flexFlow: 'column', pb: 1 }}
       canSubmit={canSubmit}
       onClose={onClose}
-      onSubmit={() => formik.handleSubmit()}>
+      onSubmit={() => formik.handleSubmit()}
+      onRemove={onRemove}>
       <ToggleButtonGroup
         fullWidth
         exclusive
