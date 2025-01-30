@@ -3,6 +3,7 @@
 /dist/*
 /build/*
 /node_modules/*
+node_modules
 
 # data definition files
 **/*.d.ts

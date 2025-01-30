@@ -27,7 +27,7 @@ export const checkToken = (config: AuthConfig) => {
       rateLimit: true,
       jwksRequestsPerMinute: 5,
       jwksUri: `${config.domain}.well-known/jwks.json`,
-    }) as GetVerificationKey,
+    }) as unknown as GetVerificationKey,
 
     audience: config.audience,
     issuer: config.domain,

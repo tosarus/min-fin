@@ -35,10 +35,6 @@ const createApp = (config: Configuration) => {
     })
   );
 
-  if (config.delay.ms) {
-    app.use((req, res, next) => setTimeout(next, config.delay.ms));
-  }
-
   app.use(bodyParser.json(config.bodyParser.json));
 
   app.use(morgan(config.morgan.format));

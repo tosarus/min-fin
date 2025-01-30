@@ -9,27 +9,14 @@
   "scripts": {
     "start": "node dist/server",
     "build": "run-s clean build:*",
-    "build:client": "cross-env INLINE_RUNTIME_CHUNK=false BUILD_PATH=dist/build react-app-rewired build",
+    "build:client": "vite build",
     "build:server": "tsc --build server",
     "dev": "run-p server client",
-    "client": "react-app-rewired start",
-    "server": "nodemon server/index.ts 3010 500",
+    "client": "vite --port 3000",
+    "server": "nodemon server/index.ts 3010",
     "clean": "rimraf -rf build dist",
-    "eject": "react-scripts eject",
     "migrate": "cross-env TS_NODE_PROJECT=server/tsconfig.json ts-node node_modules/.bin/node-pg-migrate -j ts -m server/database/migrations",
     "lint": "eslint \"{src,server,shared}/**/*.{ts,tsx}\""
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   },
   "proxy": "http://localhost:3010",
   "dependencies": {
@@ -43,7 +30,7 @@
     "dayjs": "^1.11.6",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "express-jwt": "^7.7.7",
+    "express-jwt": "^8.5.1",
     "helmet": "^6.0.0",
     "jwks-rsa": "^3.0.0",
     "module-alias": "^2.2.2",
@@ -73,7 +60,7 @@
     "@types/redux-logger": "^3.0.9",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
-    "clsx": "^1.1.1",
+    "@vitejs/plugin-react": "^4.3.4",
     "cross-env": "^7.0.3",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
@@ -85,18 +72,16 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^2.4.0",
     "react": "^18.2.0",
-    "react-app-rewire-alias": "^1.1.7",
-    "react-app-rewired": "^2.2.1",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
-    "react-scripts": "5.0.1",
     "redux": "^4.2.0",
     "redux-logger": "^3.0.6",
     "redux-saga": "^1.2.1",
     "redux-toolkit-saga": "^1.2.0",
     "rimraf": "^5.0.0",
     "ts-node": "^10.9.1",
-    "typescript": "4.6.x",
+    "typescript": "^5.7.3",
+    "vite": "^4.0.0",
     "wouter": "^2.8.0"
   }
 }
