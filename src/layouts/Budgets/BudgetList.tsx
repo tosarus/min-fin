@@ -13,14 +13,13 @@ interface BudgetListProps {
   totals: Map<string, string>;
   month: string;
   onEdit: (budget: BudgetAccount) => void;
-  onRemove: (budget: BudgetAccount) => void;
 }
 
 const FitRoundedLink = styled(RoundedLink)({
   marginBottom: 2,
 });
 
-export const BudgetList = ({ budgets, totals, month, onEdit, onRemove }: BudgetListProps) => {
+export const BudgetList = ({ budgets, totals, month, onEdit }: BudgetListProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const sortedBudgets = useMemo(() => sortBudgets(budgets, accountMap), [budgets, accountMap]);
 
@@ -32,7 +31,6 @@ export const BudgetList = ({ budgets, totals, month, onEdit, onRemove }: BudgetL
     headers,
     detail: (b) => getBudgetProgress(b, totals, accountMap),
     onEdit,
-    onRemove,
     sx: { '& td': { px: 1, py: 0.25, borderBottomColor: 'white' } },
     pagination: false,
     withHeader: false,

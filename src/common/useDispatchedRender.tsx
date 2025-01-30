@@ -17,13 +17,13 @@ export function useDispatchedRender<Store, State>(
   loader: React.ReactElement = <LinearProgress />
 ): DispatchedRenderFn<State> {
   const state = useSelector(selector);
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (falsifier(state)) {
-      dispath(action());
+      dispatch(action());
     }
-  }, [state, action, falsifier, dispath]);
+  }, [state, action, falsifier, dispatch]);
 
   return (render: RenderStateFn<State>) => (falsifier(state) ? loader : render(state!));
 }

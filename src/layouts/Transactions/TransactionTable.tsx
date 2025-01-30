@@ -5,12 +5,11 @@ import { Selectors } from '../../store';
 import { Account, Transaction, dateOrderCompare, TransactionType } from '../../types';
 import { formatShortDate, getDisplayName, negateAmount } from '../utils';
 
-interface TransactionsTableProps {
-  onRemove: (tr: Transaction) => void;
+interface TransactionTableProps {
   onEdit: (tr: Transaction) => void;
 }
 
-export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) => {
+export const TransactionTable = ({ onEdit }: TransactionTableProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const transactions = useSelector(Selectors.currentTransactions) ?? [];
   const sortedTransactions = useMemo(() => sortTransactions(transactions), [transactions]);
@@ -27,7 +26,6 @@ export const TransactionsTable = ({ onRemove, onEdit }: TransactionsTableProps) 
     headers,
     detail: (tr) => renderDetails(tr.detail || ''),
     onEdit,
-    onRemove,
   });
 };
 

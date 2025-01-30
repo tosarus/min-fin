@@ -49,9 +49,9 @@ export const Budgets = () => {
     setEditable(undefined);
   };
 
-  const handleRemove = (budget: BudgetAccount) => {
-    if (workbook) {
-      dispatch(Actions.removeBudget({ workbookId: workbook.id, id: budget.id }));
+  const handleRemove = (budgetId?: string) => {
+    if (workbook && budgetId) {
+      dispatch(Actions.removeBudget({ workbookId: workbook.id, id: budgetId }));
     }
   };
 
@@ -71,31 +71,39 @@ export const Budgets = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'auto', pr: 3 }}>
+    <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'hidden', pr: 3 }}>
       <Title sx={{ pl: '20%' }}>Budgets</Title>
       <MonthSelection sx={{ pl: '20%', mb: 3 }} value={month} onChange={handleMonthChange} />
-      {editable && <BudgetEditor budget={editable} planned={monthBudgets} onClose={handleClose} onSubmit={handleSubmit} />}
+      {editable && (
+        <BudgetEditor
+          budget={editable}
+          planned={monthBudgets}
+          onClose={handleClose}
+          onSubmit={handleSubmit}
+          onRemove={handleRemove}
+        />
+      )}
       <BudgetPlanningInfo budgets={monthBudgets} month={formatMonth(month)} onAdd={handleAdd} />
-      <BudgetGroup
-        budgets={monthBudgets}
-        cashFlows={monthFlows}
-        type={AccountType.Income}
-        month={month}
-        onEdit={handleEdit}
-        onRemove={handleRemove}
-        onPlan={handlePlan}
-        onCopy={handleCopy}
-      />
-      <BudgetGroup
-        budgets={monthBudgets}
-        cashFlows={monthFlows}
-        type={AccountType.Expence}
-        month={month}
-        onEdit={handleEdit}
-        onRemove={handleRemove}
-        onPlan={handlePlan}
-        onCopy={handleCopy}
-      />
+      <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'auto' }}>
+        <BudgetGroup
+          budgets={monthBudgets}
+          cashFlows={monthFlows}
+          type={AccountType.Income}
+          month={month}
+          onEdit={handleEdit}
+          onPlan={handlePlan}
+          onCopy={handleCopy}
+        />
+        <BudgetGroup
+          budgets={monthBudgets}
+          cashFlows={monthFlows}
+          type={AccountType.Expence}
+          month={month}
+          onEdit={handleEdit}
+          onPlan={handlePlan}
+          onCopy={handleCopy}
+        />
+      </Box>
     </Box>
   );
 };

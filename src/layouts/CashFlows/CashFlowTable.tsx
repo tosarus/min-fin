@@ -9,11 +9,10 @@ import { formatShortDate, getDisplayName, getFlowAccountFilter, withinMonthFilte
 
 interface CashFlowTableProps {
   account: Account;
-  onRemove: (flow: CashFlow) => void;
   onEdit: (flow: CashFlow) => void;
 }
 
-export const CashFlowTable = ({ account, onRemove, onEdit }: CashFlowTableProps) => {
+export const CashFlowTable = ({ account, onEdit }: CashFlowTableProps) => {
   const [, params] = useRoute(Routes.AccountsView);
   const accountMap = useSelector(Selectors.currentAccountMap);
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
@@ -36,7 +35,6 @@ export const CashFlowTable = ({ account, onRemove, onEdit }: CashFlowTableProps)
     accent: (flow) => flow.pending,
     accentSx: { fontStyle: 'italic', bgcolor: 'rgba(0,0,0,0.03)' },
     onEdit,
-    onRemove,
   });
 };
 

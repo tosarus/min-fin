@@ -33,18 +33,20 @@ export const AccountList = ({ sx, accounts, onSubmit }: AccountListProps) => {
 
   return (
     <Box sx={{ ...sx, display: 'flex', flexDirection: 'column', borderRight: '1px solid rgb(0, 0, 0, 0.1)' }}>
-      <Title>Accounts</Title>
+      <Title sx={{ textAlign: 'left' }}>Accounts</Title>
       {editable && <AccountEditor account={editable} onClose={handleClose} onSubmit={handleSubmit} />}
       <RoundedLink href={Links.accounts()} route="">
         <span>Net Worth</span>
         <AmountSpan amount={total} />
       </RoundedLink>
-      {getPublicAccountTypes().map((type, i) => (
-        <React.Fragment key={i}>
-          <Divider sx={{ mb: 1 }} />
-          <AccountListGroup accounts={accounts} type={type} onAdd={handleAdd} />
-        </React.Fragment>
-      ))}
+      <Box sx={{ overflowY: 'auto', flex: '1 1 auto' }}>
+        {getPublicAccountTypes().map((type, i) => (
+          <React.Fragment key={i}>
+            <Divider sx={{ mb: 1 }} />
+            <AccountListGroup accounts={accounts} type={type} onAdd={handleAdd} />
+          </React.Fragment>
+        ))}
+      </Box>
     </Box>
   );
 };

@@ -8,19 +8,21 @@ import { FlexLink } from '../../common';
 import { Selectors } from '../../store';
 import { listSystemPages, listViewPages, RoutablePage } from '../listViews';
 
-const NavigationBox = styled(Box, { shouldForwardProp: (prop) => prop != 'expanded' })<{ expanded: boolean }>(({ expanded }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  flexShrink: 0,
-  alignItems: 'stretch',
-  background: 'rgba(0, 0, 0, 0.08)',
-  borderRight: '1px solid rgba(0, 0, 0, 0.04)',
-  transition: 'width 200ms',
-  whiteSpace: 'nowrap',
-  width: expanded ? 260 : 64,
-  paddingTop: 64,
-  overflowX: 'hidden',
-}));
+const NavigationBox = styled(Box, { shouldForwardProp: (prop) => prop != 'expanded' })<{ expanded: boolean }>(
+  ({ expanded }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    flexShrink: 0,
+    alignItems: 'stretch',
+    background: 'rgba(0, 0, 0, 0.08)',
+    borderRight: '1px solid rgba(0, 0, 0, 0.04)',
+    transition: 'width 200ms',
+    whiteSpace: 'nowrap',
+    width: expanded ? 260 : 64,
+    paddingTop: 64,
+    overflowX: 'hidden',
+  })
+);
 
 interface NavigationProps {
   expanded: boolean;

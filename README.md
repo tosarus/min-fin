@@ -16,7 +16,7 @@ This project was bootstrapped with [Create React App][1]. You can learn more in 
 
 ### Database
 
-Postgess heroku instance. Get connection string as:
+Postgres heroku instance. Get connection string as:
 
 > heroku config | grep DATABASE_URL
 

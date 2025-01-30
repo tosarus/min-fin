@@ -1,6 +1,6 @@
 import { Account, AccountType, getAssetAccountTypes, getBudgetAccountTypes, TransactionType } from '../../types';
 
-export function accountTypeName(type: AccountType, plural?: boolean): string {
+export function accountTypeName(type?: AccountType, plural?: boolean): string {
   switch (type) {
     case AccountType.Banking:
       return plural ? 'Bank Accounts' : 'Bank Account';

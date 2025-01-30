@@ -9,9 +9,11 @@ interface EditorDialogProps {
   children: React.ReactNode;
   onClose: () => void;
   onSubmit: () => void;
+  onRemove?: () => void;
 }
+
 export const EditorDialog = (props: EditorDialogProps) => {
-  const { canSubmit, title, children, sx, onClose, onSubmit } = props;
+  const { canSubmit, title, children, sx, onClose, onSubmit, onRemove } = props;
   const [open, setOpen] = useState(true);
   const handleCancel = () => {
     setOpen(false);
@@ -23,12 +25,24 @@ export const EditorDialog = (props: EditorDialogProps) => {
     onSubmit();
   };
 
+  const handleRemove = () => {
+    setOpen(false);
+    if (onRemove) {
+      onRemove();
+    }
+  };
+
   return (
     <Dialog open={open} onClose={handleCancel} fullWidth sx={{ pb: '10%' }}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent sx={sx}>{children}</DialogContent>
-      <DialogActions>
-        <Button disabled={!canSubmit} onClick={handleSubmit}>
+      <DialogActions sx={{ pl: 2, pr: 2 }}>
+        {onRemove && (
+          <Button sx={{ mr: 'auto' }} onClick={handleRemove}>
+            Remove
+          </Button>
+        )}
+        <Button disabled={!canSubmit} onClick={handleSubmit} type="submit">
           Save
         </Button>
         <Button onClick={handleCancel}>Cancel</Button>
