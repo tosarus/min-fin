@@ -39,7 +39,7 @@ export const AccountDetails = ({ account, onEdit }: AccountDetailsProps) => {
     <Box sx={{ mb: 2 }}>
       <Title sx={{ display: 'flex', alignItems: 'baseline' }}>
         <span>{formatTitle(account.name, params?.month)}</span>
-        <Button onClick={handleEdit}>Edit</Button>
+        {!params?.month && <Button onClick={handleEdit}>Edit</Button>}
       </Title>
       {isAsset ? (
         <>

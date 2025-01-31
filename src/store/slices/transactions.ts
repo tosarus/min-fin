@@ -14,26 +14,29 @@ const { name, reducer: transactionsReducer } = createSlice({
   name: 'transactions',
   initialState: initialState.transactions,
   reducers: {},
-  extraReducers: {
-    [applyWorldUpdate.type]: (state, { payload: { transactions = [], removedTrans = [] } }: PayloadAction<WorldUpdate>) => {
-      if (!state) {
-        return transactions;
+  extraReducers: (builder) => {
+    builder.addCase(
+      applyWorldUpdate.type,
+      (state, { payload: { transactions = [], removedTrans = [] } }: PayloadAction<WorldUpdate>) => {
+        if (!state) {
+          return transactions;
+        }
+        transactions.forEach((update) => {
+          const index = state.findIndex((trans) => trans.id === update.id);
+          if (index > -1) {
+            state.splice(index, 1, update);
+          } else {
+            state.push(update);
+          }
+        });
+        removedTrans.forEach((id) => {
+          const index = state.findIndex((trans) => trans.id === id);
+          if (index > -1) {
+            state.splice(index, 1);
+          }
+        });
       }
-      transactions.forEach((update) => {
-        const index = state.findIndex((trans) => trans.id === update.id);
-        if (index > -1) {
-          state.splice(index, 1, update);
-        } else {
-          state.push(update);
-        }
-      });
-      removedTrans.forEach((id) => {
-        const index = state.findIndex((trans) => trans.id === id);
-        if (index > -1) {
-          state.splice(index, 1);
-        }
-      });
-    },
+    );
   },
 });
 
@@ -73,37 +76,37 @@ const { reducer: cashFlowsReducer } = createSlice({
   name: 'cashFlows',
   initialState: initialState.cashFlows,
   reducers: {},
-  extraReducers: {
-    [applyWorldUpdate.type]: (
-      state,
-      { payload: { cashFlows = [], removedTrans = [], removedFlows = [] } }: PayloadAction<WorldUpdate>
-    ) => {
-      if (!state) {
-        return cashFlows;
+  extraReducers: (builder) => {
+    builder.addCase(
+      applyWorldUpdate.type,
+      (state, { payload: { cashFlows = [], removedTrans = [], removedFlows = [] } }: PayloadAction<WorldUpdate>) => {
+        if (!state) {
+          return cashFlows;
+        }
+        removedTrans.forEach((id) => {
+          const index = state.findIndex((flow) => flow.transaction_id === id);
+          if (index > -1) {
+            state.splice(index, 1);
+          }
+        });
+        removedFlows.forEach(([transaction_id, account_id]) => {
+          const index = state.findIndex((flow) => flow.transaction_id === transaction_id && flow.account_id === account_id);
+          if (index > -1) {
+            state.splice(index, 1);
+          }
+        });
+        cashFlows.forEach((update) => {
+          const index = state.findIndex(
+            (flow) => flow.transaction_id === update.transaction_id && flow.account_id == update.account_id
+          );
+          if (index > -1) {
+            state.splice(index, 1, update);
+          } else {
+            state.push(update);
+          }
+        });
       }
-      removedTrans.forEach((id) => {
-        const index = state.findIndex((flow) => flow.transaction_id === id);
-        if (index > -1) {
-          state.splice(index, 1);
-        }
-      });
-      removedFlows.forEach(([transaction_id, account_id]) => {
-        const index = state.findIndex((flow) => flow.transaction_id === transaction_id && flow.account_id === account_id);
-        if (index > -1) {
-          state.splice(index, 1);
-        }
-      });
-      cashFlows.forEach((update) => {
-        const index = state.findIndex(
-          (flow) => flow.transaction_id === update.transaction_id && flow.account_id == update.account_id
-        );
-        if (index > -1) {
-          state.splice(index, 1, update);
-        } else {
-          state.push(update);
-        }
-      });
-    },
+    );
   },
 });
 

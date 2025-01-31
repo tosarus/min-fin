@@ -9,7 +9,10 @@ import { CheckToken, Email } from '../middleware';
 @Controller('/userinfo', [CheckToken])
 @Service()
 export class AuthenticateController {
-  constructor(@Inject(AUTH_CONFIG) private config_: AuthConfig, private users_: UsersService) {}
+  constructor(
+    @Inject(AUTH_CONFIG) private config_: AuthConfig,
+    private users_: UsersService
+  ) {}
 
   @Get()
   async authenticate(@Req() req: Request, @Email() email: string) {

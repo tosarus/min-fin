@@ -35,8 +35,8 @@ const {
       }
     },
   },
-  extraReducers: {
-    [applyWorldUpdate.type]: (state, { payload: { budgets = [] } }: PayloadAction<WorldUpdate>) => {
+  extraReducers: (builder) => {
+    builder.addCase(applyWorldUpdate.type, (state, { payload: { budgets = [] } }: PayloadAction<WorldUpdate>) => {
       if (!state) {
         return budgets;
       }
@@ -48,7 +48,7 @@ const {
           state.push(update);
         }
       });
-    },
+    });
   },
 });
 

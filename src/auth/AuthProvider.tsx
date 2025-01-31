@@ -1,14 +1,13 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import { Auth0ClientOptions } from '@auth0/auth0-spa-js';
 import { UsersClient } from '../store';
-import { Auth } from './Auth';
+import { Auth, AuthOptions } from './Auth';
 import { authDone, authError, initialState, reducer } from './AuthState';
 import { hasAuthParams } from './utils';
 
 const AuthContext = React.createContext({ auth: new Auth(), ...initialState });
 export const useAuth = () => React.useContext(AuthContext);
 
-interface AuthProviderProps extends Auth0ClientOptions {
+interface AuthProviderProps extends AuthOptions {
   children: React.ReactNode;
   onRedirectCallback?: (returnUrl?: string) => void;
 }

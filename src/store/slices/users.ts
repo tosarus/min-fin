@@ -17,15 +17,15 @@ const {
       return userList;
     },
   },
-  extraReducers: {
-    [applyWorldUpdate.type]: (state, { payload: { profile } }: PayloadAction<WorldUpdate>) => {
+  extraReducers: (builder) => {
+    builder.addCase(applyWorldUpdate.type, (state, { payload: { profile } }: PayloadAction<WorldUpdate>) => {
       if (profile) {
         const index = state.findIndex((u) => u.email === profile.email);
         if (index > -1) {
           state.splice(index, 1, profile);
         }
       }
-    },
+    });
   },
 });
 
@@ -46,16 +46,16 @@ const { reducer: profileReducer } = createSlice({
   name: 'profile',
   initialState: null as UserInfo | null,
   reducers: {},
-  extraReducers: {
-    [loadUserListDone.type]: (state, { payload: userList }: PayloadAction<UserInfo[]>) => {
+  extraReducers: (builder) => {
+    builder.addCase(loadUserListDone.type as string, (state, { payload: userList }: PayloadAction<UserInfo[]>) => {
       const profile = userList.find((user) => user.email === state?.email);
       return profile ? { ...profile } : state;
-    },
-    [applyWorldUpdate.type]: (state, { payload: { profile } }: PayloadAction<WorldUpdate>) => {
+    });
+    builder.addCase(applyWorldUpdate.type, (state, { payload: { profile } }: PayloadAction<WorldUpdate>) => {
       if (profile && (!state || state.email === profile.email)) {
         return { ...profile };
       }
-    },
+    });
   },
 });
 

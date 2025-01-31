@@ -1,7 +1,6 @@
 export * from './AccountSelect';
 export * from './AjaxBackdrop';
 export * from './AmountSpan';
-export * from './ButtonLink';
 export * from './DownloadButton';
 export * from './DownloadTarget';
 export * from './EditableString';

@@ -33,9 +33,9 @@ export const Links = {
 } as const;
 
 export const Routes = {
-  Accounts: '/accounts/:all*',
-  AccountsView: '/accounts/:id/:month*',
-  Budgets: '/budgets/:month*',
+  Accounts: '/accounts/*?',
+  AccountsView: '/accounts/:id/:month?',
+  Budgets: '/budgets/:month?',
   DemoForecast: Links.demoForecast(),
   DemoOrders: Links.demoOrders(),
   DemoTrans: Links.demoTrans(),

@@ -1,16 +1,12 @@
 import axios from 'axios';
-import { Request } from 'express';
-import { expressjwt, GetVerificationKey } from 'express-jwt';
+import { expressjwt, GetVerificationKey, Request } from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 import { AuthConfig } from './config';
 import { AuthUser } from './types';
 
 export const getEmailFromRequest = (config: AuthConfig, req: Request) => {
   const emailField = config.audience + 'email';
-  interface RequestWithAuth extends Request {
-    auth: { [key: string]: string };
-  }
-  return (req as RequestWithAuth).auth[emailField];
+  return req.auth![emailField];
 };
 
 export const fetchAuthUser = async (config: AuthConfig, req: Request) => {

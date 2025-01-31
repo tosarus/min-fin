@@ -7,7 +7,10 @@ import { CheckToken, ValidateWorkbook } from '../middleware';
 @Controller('/transactions/:workbookId', [CheckToken, ValidateWorkbook])
 @Service()
 export class TransactionsController {
-  constructor(private service_: TransactionsService, private store_: StorageService) {}
+  constructor(
+    private service_: TransactionsService,
+    private store_: StorageService
+  ) {}
 
   @Get()
   getAll(@Param('workbookId') workbookId: string) {

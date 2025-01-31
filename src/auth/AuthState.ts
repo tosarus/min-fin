@@ -15,8 +15,8 @@ export const initialState: AuthState = {
 const AUTH_DONE = '@@auth/AUTH_DONE';
 const AUTH_ERROR = '@@auth/AUTH_ERROR';
 
-export const authDone = (world?: WorldUpdate) => ({ type: AUTH_DONE, world } as const);
-export const authError = (error: Error) => ({ type: AUTH_ERROR, error } as const);
+export const authDone = (world?: WorldUpdate) => ({ type: AUTH_DONE, world }) as const;
+export const authError = (error: Error) => ({ type: AUTH_ERROR, error }) as const;
 
 type Actions = ReturnType<typeof authDone> | ReturnType<typeof authError>;
 
