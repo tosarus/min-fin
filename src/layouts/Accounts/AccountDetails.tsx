@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useRoute } from 'wouter';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { AmountSpan, Title } from '../../common';
 import { Selectors } from '../../store';
 import { Account, getAssetAccountTypes } from '../../types';
 import { Routes } from '../listViews';
 import { calculateExpenses, calculatePending, formatMonth, subtractAmount } from '../utils';
+import { AccountDetailsButtons } from './AccountDetailsButtons';
 
 interface AccountDetailsProps {
   account: Account;
@@ -34,12 +35,11 @@ export const AccountDetails = ({ account, onEdit }: AccountDetailsProps) => {
     [account, cashFlows, isAsset, params]
   );
 
-  const handleEdit = () => onEdit(account);
   return (
     <Box sx={{ mb: 2 }}>
-      <Title sx={{ display: 'flex', alignItems: 'baseline' }}>
+      <Title sx={{ display: 'flex', alignItems: 'center' }}>
         <span>{formatTitle(account.name, params?.month)}</span>
-        {!params?.month && <Button onClick={handleEdit}>Edit</Button>}
+        <AccountDetailsButtons account={account} month={params?.month} onEdit={onEdit} />
       </Title>
       {isAsset ? (
         <>

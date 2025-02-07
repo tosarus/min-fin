@@ -6,7 +6,7 @@ import { Title } from '../../common';
 import { Actions, Selectors } from '../../store';
 import { AccountType, BudgetAccount } from '../../types';
 import { Links, Routes } from '../listViews';
-import { formatMonth, getCurrentMonth, sameMonthFilter, withinMonthFilter } from '../utils';
+import { getCurrentMonth, sameMonthFilter, withinMonthFilter } from '../utils';
 import { BudgetEditor } from './BudgetEditor';
 import { BudgetGroup } from './BudgetGroup';
 import { BudgetPlanningInfo } from './BudgetPlaningInfo';
@@ -70,10 +70,17 @@ export const Budgets = () => {
     }
   };
 
+  const leftWidth = '20%';
+
+  const rightBlock = {
+    pl: `calc(${leftWidth} + 16px)`,
+    pr: '16px',
+  };
+
   return (
     <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'hidden', pr: 3 }}>
-      <Title sx={{ pl: '20%' }}>Budgets</Title>
-      <MonthSelection sx={{ pl: '20%', mb: 3 }} value={month} onChange={handleMonthChange} />
+      <Title sx={rightBlock}>Budgets</Title>
+      <MonthSelection sx={{ ...rightBlock, mb: 3 }} value={month} onChange={handleMonthChange} />
       {editable && (
         <BudgetEditor
           budget={editable}
@@ -83,13 +90,14 @@ export const Budgets = () => {
           onRemove={handleRemove}
         />
       )}
-      <BudgetPlanningInfo budgets={monthBudgets} month={formatMonth(month)} onAdd={handleAdd} />
+      <BudgetPlanningInfo sx={rightBlock} budgets={monthBudgets} month={month} onAdd={handleAdd} />
       <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'auto' }}>
         <BudgetGroup
           budgets={monthBudgets}
           cashFlows={monthFlows}
           type={AccountType.Income}
           month={month}
+          width={leftWidth}
           onEdit={handleEdit}
           onPlan={handlePlan}
           onCopy={handleCopy}
@@ -99,6 +107,7 @@ export const Budgets = () => {
           cashFlows={monthFlows}
           type={AccountType.Expence}
           month={month}
+          width={leftWidth}
           onEdit={handleEdit}
           onPlan={handlePlan}
           onCopy={handleCopy}

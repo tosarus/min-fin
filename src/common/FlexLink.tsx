@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, LinkProps, useRoute } from 'wouter';
-import { styled } from '@mui/material';
+import { styled, SxProps } from '@mui/material';
 
 const StyledLink = styled(Link, { shouldForwardProp: (prop) => prop !== 'isActive' })<{ isActive: boolean }>(
   ({ isActive }) => ({
@@ -29,6 +29,7 @@ interface FlexLinkProps {
   children: React.ReactNode;
   noActive?: boolean;
   route?: string;
+  sx?: SxProps;
 }
 
 export const FlexLink = ({ children, noActive, route, ...props }: FlexLinkProps & LinkProps) => {

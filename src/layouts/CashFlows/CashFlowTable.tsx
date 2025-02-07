@@ -16,7 +16,7 @@ export const CashFlowTable = ({ account, onEdit }: CashFlowTableProps) => {
   const [, params] = useRoute(Routes.AccountsView);
   const accountMap = useSelector(Selectors.currentAccountMap);
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
-  const sortedCashFlows = useMemo(() => sortCashFlows(cashFlows, account, params?.month), [account, cashFlows]);
+  const sortedCashFlows = useMemo(() => sortCashFlows(cashFlows, account, params?.month), [account, cashFlows, params]);
   const isAsset = getAssetAccountTypes().includes(account.type);
 
   const headers = [] as StyledColumn<CashFlow>[];

@@ -16,6 +16,18 @@ export function sameMonthFilter(month: string) {
   return (v: { month: string }) => m.isSame(v.month, 'month');
 }
 
+export function getPreviousMonth(month: string) {
+  return dayjs(month).subtract(1, 'month').startOf('month').format('YYYY-MM-DD');
+}
+
+export function getNextMonth(month: string) {
+  const now = dayjs().startOf('month');
+  if (now.isBefore(month, 'month')) {
+    return '';
+  }
+  return dayjs(month).add(1, 'month').startOf('month').format('YYYY-MM-DD');
+}
+
 export function getCurrentMonth() {
   return dayjs().startOf('month').format('YYYY-MM-DD');
 }
@@ -46,9 +58,9 @@ export function formatShortDate(date?: string) {
   return dd.isAfter(yearAgo) ? dd.format('MMM D') : dd.format('MMM D (YYYY)');
 }
 
-export function calculateMonthRange(count: number) {
+export function calculateMonthRange(count: number, month?: string) {
   return [...Array(count).keys()].map((i) =>
-    dayjs()
+    dayjs(month)
       .startOf('month')
       .subtract(count - i - 1, 'month')
       .format('YYYY-MM-DD')
