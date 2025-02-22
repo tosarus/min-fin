@@ -90,7 +90,7 @@ export const Budgets = () => {
           onRemove={handleRemove}
         />
       )}
-      <BudgetPlanningInfo sx={rightBlock} budgets={monthBudgets} month={month} onAdd={handleAdd} />
+      <BudgetPlanningInfo sx={{ ...rightBlock, mb: 1 }} budgets={monthBudgets} month={month} onAdd={handleAdd} />
       <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'auto' }}>
         <BudgetGroup
           budgets={monthBudgets}

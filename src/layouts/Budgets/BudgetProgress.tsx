@@ -42,12 +42,12 @@ export const BudgetProgress = ({ current, budgeted, fraction = 0, income = false
     <Box
       sx={{
         height,
-        width: '100%',
+        width: 'calc(100% - 16px)',
         backgroundColor,
         borderRadius: height / 16,
         border: `1px solid ${borderColor}`,
         position: 'relative',
-        ml: 1,
+        ml: 1.25,
         mb: 0.5,
       }}>
       <Box
