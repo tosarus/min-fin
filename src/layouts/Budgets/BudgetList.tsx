@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { styled } from '@mui/material';
+import { Box, SxProps } from '@mui/material';
 import { AmountSpan, makeStyledTable, RoundedLink, StyledColumn } from '../../common';
 import { Selectors } from '../../store';
 import { Account, AccountType, BudgetAccount } from '../../types';
@@ -15,22 +15,17 @@ interface BudgetListProps {
   onEdit: (budget: BudgetAccount) => void;
 }
 
-const FitRoundedLink = styled(RoundedLink)({
-  marginBottom: 2,
-});
-
 export const BudgetList = ({ budgets, totals, month, onEdit }: BudgetListProps) => {
   const accountMap = useSelector(Selectors.currentAccountMap);
   const sortedBudgets = useMemo(() => sortBudgets(budgets, accountMap), [budgets, accountMap]);
 
   const headers = [] as StyledColumn<BudgetAccount>[];
-  headers.push({ value: (b) => getBudgetNameLink(b, accountMap, month) });
-  headers.push({ sx: { textAlign: 'right' }, value: (b) => getBudgetDescription(b, totals) });
+  headers.push({ sx: { width: '50%' }, value: (b) => getBudgetNameLink(b, accountMap, month) });
+  headers.push({ sx: { width: '50%' }, value: (b) => getBudgetDescription(b, totals, onEdit) });
   return makeStyledTable({
     items: sortedBudgets,
     headers,
     detail: (b) => getBudgetProgress(b, totals, accountMap),
-    onEdit,
     sx: { '& td': { px: 1, py: 0.25, borderBottomColor: 'white' } },
     pagination: false,
     withHeader: false,
@@ -47,10 +42,10 @@ function getBudgetName(budget: BudgetAccount, accMap: Map<string, Account>) {
 
 function getBudgetNameLink(budget: BudgetAccount, accMap: Map<string, Account>, month: string) {
   return (
-    <FitRoundedLink href={Links.accountsViewMonth(budget.account_id, month)}>
+    <RoundedLink sx={{ mb: 0.25 }} href={Links.accountsViewMonth(budget.account_id, month)}>
       <span>{getBudgetName(budget, accMap)}</span>
       <></>
-    </FitRoundedLink>
+    </RoundedLink>
   );
 }
 
@@ -65,11 +60,34 @@ function getBudgetProgress(budget: BudgetAccount, totals: Map<string, string>, a
   );
 }
 
-function getBudgetDescription(budget: BudgetAccount, totals: Map<string, string>) {
+const RoundedButton = ({ children, onClick }: { children: React.ReactNode; onClick: () => void }) => {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
+        borderRadius: 4,
+        justifyContent: 'flex-end',
+        mb: 0.25,
+        px: 1.5,
+        '&:hover': {
+          background: 'rgb(0,0,0,0.04)',
+        },
+      }}
+      onClick={onClick}>
+      {children}
+    </Box>
+  );
+};
+
+function getBudgetDescription(budget: BudgetAccount, totals: Map<string, string>, onEdit: (budget: BudgetAccount) => void) {
   const amount = positiveAmount(totals.get(budget.account_id) ?? '0');
   return (
-    <>
-      <AmountSpan noColor amount={amount} /> of <AmountSpan noColor amount={budget.amount} />
-    </>
+    <RoundedButton onClick={() => onEdit(budget)}>
+      <AmountSpan noColor amount={amount} />
+      &nbsp;of&nbsp;
+      <AmountSpan noColor amount={budget.amount} />
+    </RoundedButton>
   );
 }

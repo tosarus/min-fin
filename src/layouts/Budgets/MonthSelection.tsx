@@ -16,8 +16,9 @@ export const MonthSelection = ({ count = 12, value, onChange, sx }: MonthSelecti
   const [month, setMonth] = useState(getCurrentMonth());
   const monthRange = useMemo(() => calculateMonthRange(count, month), [count, month]);
 
-  const prevMonth = getPreviousMonth(monthRange[0]);
-  const nextMonth = getNextMonth(month);
+  const prevMonth = getPreviousMonth(value ?? month);
+  const nextMonth = getNextMonth(value ?? month);
+  const hasNextMonth = !!getNextMonth(month);
 
   return (
     <ToggleButtonGroup fullWidth exclusive color="primary" value={value} sx={sx} onChange={(e, m) => onChange(m)}>
@@ -29,8 +30,8 @@ export const MonthSelection = ({ count = 12, value, onChange, sx }: MonthSelecti
           {formatShortMonth(month)}
         </ToggleButton>
       ))}
-      {nextMonth && (
-        <ToggleButton size="small" value={nextMonth} sx={{ width: 30 }} onClick={() => setMonth(nextMonth)}>
+      {hasNextMonth && (
+        <ToggleButton size="small" value={nextMonth} sx={{ width: 30 }} onClick={() => setMonth(getNextMonth(month))}>
           <KeyboardDoubleArrowRightIcon />
         </ToggleButton>
       )}

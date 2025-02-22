@@ -1,6 +1,5 @@
 import React from 'react';
-import EditIcon from '@mui/icons-material/Edit';
-import { IconButton, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { SxProps } from '@mui/system';
 import { AmountSpan } from './AmountSpan';
 import { StyledTable } from './StyledTable';
@@ -69,7 +68,7 @@ export function makeStyledTable<T>({
   const slicedItems = pagination ? items.slice(page * rowsPerPage, (page + 1) * rowsPerPage) : items;
 
   const hasDetails = detail !== NOOP;
-  const hasMenu = onEdit !== NOOP;
+  const hasEdit = onEdit !== NOOP;
   const hasAccent = accent !== NOOP;
 
   // styles
@@ -105,6 +104,7 @@ export function makeStyledTable<T>({
     const accentProps = hasAccent && accent(item) ? accentSx : {};
     return { '& td': { pt: 0, pb: 0.25 }, ...accentProps };
   };
+  const bodySx = hasEdit ? { '&:hover': { bgcolor: 'rgba(25,118,210,0.04)', cursor: 'pointer' } } : undefined;
 
   return (
     <StyledTable pagination={paginationProps} sx={sx}>
@@ -116,38 +116,25 @@ export function makeStyledTable<T>({
                 {h.name}
               </TableCell>
             ))}
-            {hasMenu && <TableCell />}
           </TableRow>
         </TableHead>
       )}
-      <TableBody>
-        {slicedItems.map((item, i) => (
-          <React.Fragment key={i}>
-            <TableRow sx={firstRowSx(item)}>
-              {headers.map((h, i) => (
-                <TableCell key={i} rowSpan={hasDetails && h.type === 'date' ? 2 : 1} sx={cellSx(h)}>
-                  {h.type === 'amount' ? <AmountSpan amount={h.value(item)} /> : h.value(item)}
-                </TableCell>
-              ))}
-              {hasMenu && (
-                <TableCell sx={{ width: 30 }}>
-                  <IconButton
-                    size="small"
-                    sx={{ m: 0, p: 0, '& .MuiSvgIcon-root:hover': { color: 'primary.light' } }}
-                    onClick={() => onEdit(item)}>
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              )}
+      {slicedItems.map((item, i) => (
+        <TableBody key={i} sx={bodySx} onClick={() => onEdit(item)}>
+          <TableRow sx={firstRowSx(item)}>
+            {headers.map((h, i) => (
+              <TableCell key={i} rowSpan={hasDetails && h.type === 'date' ? 2 : 1} sx={cellSx(h)}>
+                {h.type === 'amount' ? <AmountSpan amount={h.value(item)} /> : h.value(item)}
+              </TableCell>
+            ))}
+          </TableRow>
+          {hasDetails && (
+            <TableRow sx={secondRowSx(item)}>
+              <TableCell colSpan={headers.length}>{detail(item)}</TableCell>
             </TableRow>
-            {hasDetails && (
-              <TableRow sx={secondRowSx(item)}>
-                <TableCell colSpan={headers.length - (hasMenu ? 0 : 1)}>{detail(item)}</TableCell>
-              </TableRow>
-            )}
-          </React.Fragment>
-        ))}
-      </TableBody>
+          )}
+        </TableBody>
+      ))}
     </StyledTable>
   );
 }

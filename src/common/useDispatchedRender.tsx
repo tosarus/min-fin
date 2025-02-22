@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AnyAction } from 'redux';
+import { Action } from 'redux';
 import { LinearProgress } from '@mui/material';
 
 type RenderStateFn<State> = (state: NonNullable<State>) => React.ReactElement;
@@ -12,7 +12,7 @@ function defaultFalsifier<State>(state: State) {
 
 export function useDispatchedRender<Store, State>(
   selector: (store: Store) => State,
-  action: () => AnyAction,
+  action: () => Action,
   falsifier: (state: State) => boolean = defaultFalsifier,
   loader: React.ReactElement = <LinearProgress />
 ): DispatchedRenderFn<State> {
