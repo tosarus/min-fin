@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
+import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { Configuration } from './config';
@@ -38,6 +39,8 @@ const createApp = (config: Configuration) => {
   app.use(bodyParser.json(config.bodyParser.json));
 
   app.use(morgan(config.morgan.format));
+
+  app.use(rateLimit(config.rateLimit));
 
   app.use(express.static(path.resolve(__dirname, config.client.root)));
 

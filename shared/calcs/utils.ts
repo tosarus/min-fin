@@ -37,6 +37,6 @@ export function isValidMonth(month: string) {
   return dayjs(month).startOf('month').isSame(month);
 }
 
-export function previuosMonth(month: string) {
+export function previousMonth(month: string) {
   return dayjs(month).subtract(1, 'month').format('YYYY-MM-DD');
 }

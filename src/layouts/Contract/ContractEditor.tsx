@@ -81,6 +81,7 @@ export const ContractEditor = ({ contract, onClose, onSubmit, onRemove }: Contra
     if (suggestion) {
       if (suggestion.amount) {
         formik.setFieldValue('amount', suggestion.amount);
+        formik.setFieldValue('recurring', true);
       }
       formik.setFieldValue('type', suggestion.type);
       if (
