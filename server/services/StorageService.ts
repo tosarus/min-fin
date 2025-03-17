@@ -223,6 +223,7 @@ export class StorageService extends BaseService {
         account_from: isIncome ? rawTr.category : rawTr.account,
         account_to: isIncome ? rawTr.account : rawTr.category,
         pending: false,
+        recurring: false,
       };
       transactions.push(trans);
     });
@@ -238,6 +239,7 @@ export class StorageService extends BaseService {
         account_from: rawFrom.account,
         account_to: rawTo.account,
         pending: false,
+        recurring: false,
       };
       transactions.push(trans);
     });

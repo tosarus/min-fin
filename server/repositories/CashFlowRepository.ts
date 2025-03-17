@@ -16,6 +16,7 @@ type DbCashFlow = {
   order: number;
   balance_cent: number;
   pending: boolean;
+  recurring: boolean;
 };
 
 const convertCashFlow = ({ amount_cent, to_flow, balance_cent, date, ...cashFlow }: DbCashFlow): CashFlow => {
@@ -48,7 +49,8 @@ SELECT flows.workbook_id,
   trans.detail,
   trans."order",
   sum(flows.amount_cent) OVER (PARTITION BY flows.account_id ORDER BY trans.pending, trans.date, trans."order") AS balance_cent,
-  trans.pending
+  trans.pending,
+  trans.recurring
 FROM flows JOIN trans ON flows.transaction_id = trans.id)
 select * from flows_balance`,
       values: [workbookId],
@@ -75,7 +77,8 @@ SELECT flows.workbook_id,
   trans.detail,
   trans."order",
   sum(flows.amount_cent) OVER (PARTITION BY flows.account_id ORDER BY trans.pending, trans.date, trans."order") AS balance_cent,
-  trans.pending
+  trans.pending,
+  trans.recurring
 FROM flows JOIN trans ON flows.transaction_id = trans.id)
 select * from flows_balance
 where date >= $3 or pending = True`,

@@ -5,7 +5,14 @@ import { Checkbox, FormControlLabel, TextField, ToggleButton, ToggleButtonGroup 
 import { AccountSelect, EditorDialog } from '../../common';
 import { Selectors } from '../../store';
 import { AccountType, CashFlow, dateOrderCompare, TransactionType } from '../../types';
-import { amountOrZero, getAccountIdsByCategory, getAccountType, getAssetAccountIds, transactionTypes } from '../utils';
+import {
+  amountOrZero,
+  getAccountIdsByCategory,
+  getAccountType,
+  getAssetAccountIds,
+  positiveAmount,
+  transactionTypes,
+} from '../utils';
 import { Contract } from './Contract';
 
 interface ContractEditorProps {
@@ -16,15 +23,16 @@ interface ContractEditorProps {
 }
 
 const buildCategorySuggestions = (cashFlows: CashFlow[]) => {
-  const suggestions = new Map<string, { account: string; type: TransactionType }>();
+  const suggestions = new Map<string, { account: string; type: TransactionType; amount?: string }>();
   for (const flow of [...cashFlows].sort(dateOrderCompare)) {
     if (flow.type === TransactionType.Opening || suggestions.has(flow.description)) {
       continue;
     }
+    const amount = flow.recurring ? positiveAmount(flow.amount) : undefined;
     if (flow.type === TransactionType.Transfer) {
-      suggestions.set(flow.description, { account: flow.account_id, type: flow.type });
+      suggestions.set(flow.description, { account: flow.account_id, type: flow.type, amount });
     } else {
-      suggestions.set(flow.description, { account: flow.other_account_id, type: flow.type });
+      suggestions.set(flow.description, { account: flow.other_account_id, type: flow.type, amount });
     }
   }
   return suggestions;
@@ -71,6 +79,9 @@ export const ContractEditor = ({ contract, onClose, onSubmit, onRemove }: Contra
 
     const suggestion = categorySuggestions.get(formik.values.description);
     if (suggestion) {
+      if (suggestion.amount) {
+        formik.setFieldValue('amount', suggestion.amount);
+      }
       formik.setFieldValue('type', suggestion.type);
       if (
         suggestion.type !== TransactionType.Transfer ||
@@ -154,9 +165,15 @@ export const ContractEditor = ({ contract, onClose, onSubmit, onRemove }: Contra
       <TextField label="Amount" sx={sxRight} {...formik.getFieldProps('amount')} onBlur={handleAmountBlur} />
       <TextField fullWidth multiline rows={2} label="Details" {...formik.getFieldProps('detail')} />
       <FormControlLabel
+        control={
+          <Checkbox checked={formik.values.recurring} onChange={(e, checked) => updateFormik('recurring', checked)} />
+        }
+        label="Recurring"
+        sx={{ ml: 'auto' }}
+      />
+      <FormControlLabel
         control={<Checkbox checked={formik.values.pending} onChange={(e, checked) => updateFormik('pending', checked)} />}
         label="Pending"
-        sx={{ ml: 'auto' }}
       />
     </EditorDialog>
   );

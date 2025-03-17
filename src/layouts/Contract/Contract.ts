@@ -11,6 +11,7 @@ export interface Contract {
   account: string;
   otherAccount: string;
   pending: boolean;
+  recurring: boolean;
 }
 
 export function fromTransaction(transaction: Partial<Transaction>): Contract {
@@ -24,6 +25,7 @@ export function fromTransaction(transaction: Partial<Transaction>): Contract {
     account_from = '',
     account_to = '',
     pending = false,
+    recurring = false,
   } = transaction;
   let account: string;
   let otherAccount: string;
@@ -55,6 +57,7 @@ export function fromTransaction(transaction: Partial<Transaction>): Contract {
     account,
     otherAccount,
     pending,
+    recurring,
   };
 }
 
@@ -67,6 +70,7 @@ export function fromCashFlow(flow: Partial<CashFlow>): Contract {
     detail = '',
     direction = FlowDirection.From,
     pending = false,
+    recurring = false,
   } = flow;
   let amount = flow.amount ?? '0';
   let account = flow.account_id ?? '';
@@ -105,6 +109,7 @@ export function fromCashFlow(flow: Partial<CashFlow>): Contract {
     account,
     otherAccount,
     pending,
+    recurring,
   };
 }
 
