@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Checkbox, FormControlLabel, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { AccountSelect, EditorDialog } from '../../common';
 import { Selectors } from '../../store';
-import { AccountType, CashFlow, dateOrderCompare, TransactionType } from '../../types';
+import { AccountType, CashFlow, dateOrderCompare, rpn, TransactionType } from '../../types';
 import {
   amountOrZero,
   getAccountIdsByCategory,
@@ -68,7 +68,16 @@ export const ContractEditor = ({ contract, onClose, onSubmit, onRemove }: Contra
   };
 
   const handleAmountBlur = (e: React.FocusEvent) => {
-    formik.setFieldValue('amount', amountOrZero(formik.values.amount));
+    const amount = formik.values.amount ?? '0';
+    try {
+      const amountRPN = rpn.parse(amount);
+      formik.setFieldValue('amount', rpn.eval(amountRPN));
+      if (amountRPN.length > 1 && !formik.values.detail) {
+        formik.setFieldValue('detail', rpn.stringify(amountRPN));
+      }
+    } catch {
+      formik.setFieldValue('amount', amountOrZero(amount));
+    }
     formik.handleBlur(e);
   };
 
