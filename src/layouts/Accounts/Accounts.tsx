@@ -31,27 +31,25 @@ export const Accounts = () => {
   const sxRight: SxProps = { pl: 2, flex: '1 1 77.5%', display: 'flex', flexFlow: 'column' };
 
   return (
-    <>
-      <Box sx={{ display: 'flex', flexDirection: 'row', overflow: 'hidden' }}>
-        <AccountList sx={sxLeft} accounts={accounts} onSubmit={handleSubmit} />
-        <Box sx={sxRight}>
-          <Switch>
-            <Route path={Routes.AccountsView}>
-              {(params) => {
-                const account = accounts.find((acc) => acc.id === params.id);
-                if (!account || !getPublicAccountTypes().includes(account.type)) {
-                  return <Redirect to={Links.accounts()} />;
-                } else {
-                  return <AccountPage account={account} onRemove={handleRemove} onSubmit={handleSubmit} />;
-                }
-              }}
-            </Route>
-            <Route path={Routes.Accounts}>
-              <TransactionList />
-            </Route>
-          </Switch>
-        </Box>
+    <Box sx={{ display: 'flex', flexDirection: 'row', overflow: 'hidden', pr: 2 }}>
+      <AccountList sx={sxLeft} accounts={accounts} onSubmit={handleSubmit} />
+      <Box sx={sxRight}>
+        <Switch>
+          <Route path={Routes.AccountsView}>
+            {(params) => {
+              const account = accounts.find((acc) => acc.id === params.id);
+              if (!account || !getPublicAccountTypes().includes(account.type)) {
+                return <Redirect to={Links.accounts()} />;
+              } else {
+                return <AccountPage account={account} onRemove={handleRemove} onSubmit={handleSubmit} />;
+              }
+            }}
+          </Route>
+          <Route path={Routes.Accounts}>
+            <TransactionList />
+          </Route>
+        </Switch>
       </Box>
-    </>
+    </Box>
   );
 };

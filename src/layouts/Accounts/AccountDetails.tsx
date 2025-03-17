@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import { useRoute } from 'wouter';
-import { Box, Typography } from '@mui/material';
-import { AmountSpan, Title } from '../../common';
-import { Selectors } from '../../store';
+import { Box } from '@mui/material';
+import { Title } from '../../common';
 import { Account, getAssetAccountTypes } from '../../types';
 import { Routes } from '../listViews';
-import { calculateExpenses, calculatePending, formatMonth, subtractAmount } from '../utils';
+import { formatMonth } from '../utils';
+import { AccountAssetDetails } from './AccountAssetDetails';
+import { AccountBudgetDetails } from './AccountBudgetDetails';
 import { AccountDetailsButtons } from './AccountDetailsButtons';
 
 interface AccountDetailsProps {
@@ -25,15 +25,6 @@ function formatTitle(name: string, month?: string) {
 export const AccountDetails = ({ account, onEdit }: AccountDetailsProps) => {
   const [, params] = useRoute(Routes.AccountsView);
   const isAsset = getAssetAccountTypes().includes(account.type);
-  const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
-  const pendingBalance = useMemo(
-    () => (isAsset ? calculatePending(cashFlows, account) : '0'),
-    [account, cashFlows, isAsset]
-  );
-  const totalExpenses = useMemo(
-    () => (isAsset ? '0' : calculateExpenses(cashFlows, account, params?.month)),
-    [account, cashFlows, isAsset, params]
-  );
 
   return (
     <Box sx={{ mb: 2 }}>
@@ -42,25 +33,9 @@ export const AccountDetails = ({ account, onEdit }: AccountDetailsProps) => {
         <AccountDetailsButtons account={account} month={params?.month} onEdit={onEdit} />
       </Title>
       {isAsset ? (
-        <>
-          <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ mr: 2, width: 120 }}>Balance</Typography>
-            <AmountSpan amount={account.balance} />
-          </Box>
-          <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ mr: 2, width: 120 }}>Posted</Typography>
-            <AmountSpan amount={subtractAmount(account.balance, pendingBalance)} />
-          </Box>
-          <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ mr: 2, width: 120 }}>Pending</Typography>
-            <AmountSpan amount={pendingBalance} />
-          </Box>
-        </>
+        <AccountAssetDetails account={account} />
       ) : (
-        <Box sx={{ display: 'flex' }}>
-          <Typography sx={{ mr: 2, width: 120 }}>Total</Typography>
-          <AmountSpan amount={totalExpenses} />
-        </Box>
+        <AccountBudgetDetails account={account} month={params?.month} />
       )}
     </Box>
   );

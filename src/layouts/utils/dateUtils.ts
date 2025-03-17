@@ -11,7 +11,12 @@ export function withinMonthFilter(month: string) {
   return ({ date }: { date: string }) => dayjs(date).isBetween(from, to, 'day', '[)');
 }
 
-export function sameMonthFilter(month: string) {
+export function sameYearFilter() {
+  const y = dayjs();
+  return ({ date }: { date: string }) => dayjs(date).isSame(y, 'year');
+}
+
+export function sameMonthFilter(month?: string) {
   const m = dayjs(month);
   return (v: { month: string }) => m.isSame(v.month, 'month');
 }

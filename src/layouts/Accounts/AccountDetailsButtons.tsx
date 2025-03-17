@@ -16,7 +16,11 @@ interface AccountDetailsButtonsProps {
 export const AccountDetailsButtons = ({ account, month, onEdit }: AccountDetailsButtonsProps) => {
   if (!month) {
     const handleEdit = () => onEdit(account);
-    return <Button onClick={handleEdit}>Edit</Button>;
+    return (
+      <Button sx={{ py: 0 }} onClick={handleEdit}>
+        Edit
+      </Button>
+    );
   }
 
   const prevMonth = getPreviousMonth(month);

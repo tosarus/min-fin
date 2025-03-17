@@ -1,7 +1,7 @@
 import currency from 'currency.js';
 import { Account, AccountType, CashFlow, TransactionType } from '../../types';
 import { getFlowAccountFilter } from './accountUtils';
-import { withinMonthFilter } from './dateUtils';
+import { sameYearFilter, withinMonthFilter } from './dateUtils';
 
 export function getTotalForAccounts(accounts: Account[], ...types: AccountType[]) {
   return calculateSum(accounts.filter((acc) => types.includes(acc.type)).map((acc) => acc.balance));
@@ -47,6 +47,6 @@ export const positiveAmount = (amount: string | number) => {
 export const negateAmount = (amount: string | number) => currency(amount).multiply(-1).format();
 
 export function calculateExpenses(cashFlows: CashFlow[], account: Account, month?: string) {
-  cashFlows = month ? cashFlows.filter(withinMonthFilter(month)) : cashFlows;
+  cashFlows = month ? cashFlows.filter(withinMonthFilter(month)) : cashFlows.filter(sameYearFilter());
   return calculateSum(cashFlows.filter(getFlowAccountFilter(account.type, account.id)).map((flow) => flow.amount));
 }

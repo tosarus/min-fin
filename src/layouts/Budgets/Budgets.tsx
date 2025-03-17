@@ -78,7 +78,7 @@ export const Budgets = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'hidden', pr: 3 }}>
+    <Box sx={{ display: 'flex', flexFlow: 'column', overflow: 'hidden', pr: 2 }}>
       <Title sx={rightBlock}>Budgets</Title>
       <MonthSelection sx={{ ...rightBlock, mb: 3 }} value={month} onChange={handleMonthChange} />
       {editable && (
