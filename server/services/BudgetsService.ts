@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { isValidMonth, previuosMonth } from '@shared/calcs';
+import { isValidMonth, previousMonth } from '@shared/calcs';
 import { AccountType, BudgetAccount, WorldUpdate } from '@shared/types';
 import { BudgetRepository } from '../repositories';
 import { BaseService } from './BaseService';
@@ -18,7 +18,7 @@ export class BudgetsService extends BaseService {
     }
 
     const repo = this.resolve(BudgetRepository);
-    const prevMonth = previuosMonth(month);
+    const prevMonth = previousMonth(month);
 
     const previous = await repo.getAllByMonth(workbookId, type, prevMonth);
     const budgets = [] as BudgetAccount[];

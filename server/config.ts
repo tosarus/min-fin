@@ -29,6 +29,11 @@ export type Configuration = {
     table: string;
     folder: string;
   };
+  rateLimit: {
+    windowMs: number;
+    limit: number;
+    [x: string]: any;
+  };
 };
 
 const createConfig = (): Configuration => {
@@ -74,6 +79,9 @@ const createConfig = (): Configuration => {
   const migrationsTable = 'pgmigrations';
   const migrationsFolder = path.resolve(__dirname, 'database/migrations');
 
+  const rateLimitWindowMs = 15 * 60 * 1000; // 15 minutes
+  const rateLimitLimit = 100; // 100 requests per windowMs
+
   return {
     isProd,
     admins: adminList,
@@ -85,6 +93,7 @@ const createConfig = (): Configuration => {
     bodyParser: { json: bodyParserJson },
     pg: { database: pgDatabase, ssl: pgSsl },
     migrations: { table: migrationsTable, folder: migrationsFolder },
+    rateLimit: { windowMs: rateLimitWindowMs, limit: rateLimitLimit, standardHeaders: 'draft-8', legacyHeaders: false },
   };
 };
 
