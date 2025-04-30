@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Box, SxProps } from '@mui/material';
+import { Box } from '@mui/material';
 import { AmountSpan, makeStyledTable, RoundedLink, StyledColumn } from '../../common';
 import { Selectors } from '../../store';
 import { Account, AccountType, BudgetAccount } from '../../types';

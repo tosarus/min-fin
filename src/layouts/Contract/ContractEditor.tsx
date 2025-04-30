@@ -22,17 +22,25 @@ interface ContractEditorProps {
   onRemove: (id?: string) => void;
 }
 
+interface CategorySuggestion {
+  account: string;
+  type: TransactionType;
+  amount?: string;
+  detail?: string;
+}
+
 const buildCategorySuggestions = (cashFlows: CashFlow[]) => {
-  const suggestions = new Map<string, { account: string; type: TransactionType; amount?: string }>();
+  const suggestions = new Map<string, CategorySuggestion>();
   for (const flow of [...cashFlows].sort(dateOrderCompare)) {
     if (flow.type === TransactionType.Opening || suggestions.has(flow.description)) {
       continue;
     }
     const amount = flow.recurring ? positiveAmount(flow.amount) : undefined;
+    const detail = flow.recurring ? flow.detail : undefined;
     if (flow.type === TransactionType.Transfer) {
-      suggestions.set(flow.description, { account: flow.account_id, type: flow.type, amount });
+      suggestions.set(flow.description, { account: flow.account_id, type: flow.type, amount, detail });
     } else {
-      suggestions.set(flow.description, { account: flow.other_account_id, type: flow.type, amount });
+      suggestions.set(flow.description, { account: flow.other_account_id, type: flow.type, amount, detail });
     }
   }
   return suggestions;
@@ -90,6 +98,7 @@ export const ContractEditor = ({ contract, onClose, onSubmit, onRemove }: Contra
     if (suggestion) {
       if (suggestion.amount) {
         formik.setFieldValue('amount', suggestion.amount);
+        formik.setFieldValue('detail', suggestion.detail ?? '');
         formik.setFieldValue('recurring', true);
       }
       formik.setFieldValue('type', suggestion.type);
