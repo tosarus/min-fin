@@ -106,6 +106,13 @@ export function makeStyledTable<T>({
   };
   const bodySx = hasEdit ? { '&:hover': { bgcolor: 'rgba(25,118,210,0.04)', cursor: 'pointer' } } : undefined;
 
+  const handleEdit = (event: React.MouseEvent<HTMLTableSectionElement>) => {
+    const key = event.currentTarget.dataset.id;
+    if (key) {
+      onEdit(slicedItems[+key]);
+    }
+  };
+
   return (
     <StyledTable pagination={paginationProps} sx={sx}>
       {withHeader && (
@@ -120,7 +127,7 @@ export function makeStyledTable<T>({
         </TableHead>
       )}
       {slicedItems.map((item, i) => (
-        <TableBody key={i} sx={bodySx} onClick={() => onEdit(item)}>
+        <TableBody data-id={i} key={i} sx={bodySx} onClick={handleEdit}>
           <TableRow sx={firstRowSx(item)}>
             {headers.map((h, i) => (
               <TableCell key={i} rowSpan={hasDetails && h.type === 'date' ? 2 : 1} sx={cellSx(h)}>
