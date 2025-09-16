@@ -20,6 +20,8 @@ Postgres heroku instance. Get connection string as:
 
 > heroku config | grep DATABASE_URL
 
+Add `PGSSLMODE=no-verify ` to .env
+
 ### Authentication
 
 [Auth0][4]. Get settings as:
