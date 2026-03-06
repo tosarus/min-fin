@@ -47,6 +47,7 @@ export const CashFlowList = ({ account }: CashFlowListProps) => {
     if (workbook && tranId) {
       dispatch(Actions.removeTransaction({ workbookId: workbook.id, id: tranId }));
     }
+    setEditable(undefined);
   };
 
   return (

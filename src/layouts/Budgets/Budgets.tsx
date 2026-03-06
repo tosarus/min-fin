@@ -45,7 +45,6 @@ export const Budgets = () => {
     if (workbook) {
       dispatch(Actions.saveBudget({ workbookId: workbook.id, budget }));
     }
-
     setEditable(undefined);
   };
 
@@ -53,6 +52,7 @@ export const Budgets = () => {
     if (workbook && budgetId) {
       dispatch(Actions.removeBudget({ workbookId: workbook.id, id: budgetId }));
     }
+    setEditable(undefined);
   };
 
   const handleCopy = (type: AccountType) => {

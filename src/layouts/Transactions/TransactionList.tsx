@@ -36,6 +36,7 @@ export const TransactionList = () => {
     if (workbook && tranId) {
       dispatch(Actions.removeTransaction({ workbookId: workbook.id, id: tranId }));
     }
+    setEditable(undefined);
   };
 
   return (
