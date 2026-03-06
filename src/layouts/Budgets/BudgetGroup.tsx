@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Box, Button } from '@mui/material';
 import { Selectors } from '../../store';
 import { AccountType, BudgetAccount, CashFlow, TransactionType } from '../../types';
-import { calculateTotals } from '../utils';
+import { calculateTotals, calculateTagged } from '../utils';
 import { BudgetList } from './BudgetList';
 import { BudgetSuggestions } from './BudgetSuggestions';
 import { BudgetSummary } from './BudgetSummary';
@@ -24,7 +24,11 @@ export const BudgetGroup = ({ budgets, cashFlows, type, month, width, onEdit, on
   const planned = budgets.filter((b) => accountMap.get(b.account_id)?.type === type);
   const totals = useMemo(() => {
     const transType = type === AccountType.Income ? TransactionType.Income : TransactionType.Expence;
-    return calculateTotals(cashFlows, transType);
+    return calculateTotals(cashFlows.filter((flow) => flow.type === transType));
+  }, [cashFlows, type]);
+  const tagged = useMemo(() => {
+    const transType = type === AccountType.Income ? TransactionType.Income : TransactionType.Expence;
+    return calculateTagged(cashFlows.filter((flow) => flow.type === transType));
   }, [cashFlows, type]);
 
   const plannedIds = new Set(planned.map((b) => b.account_id));
@@ -37,6 +41,7 @@ export const BudgetGroup = ({ budgets, cashFlows, type, month, width, onEdit, on
         type={type}
         budgets={planned}
         totals={totals}
+        tagged={tagged}
       />
       <Box sx={{ flex: `1 0 calc(100% - ${width})` }}>
         <BudgetList budgets={planned} month={month} totals={totals} onEdit={onEdit} />

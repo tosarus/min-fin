@@ -15,6 +15,7 @@ type DbTransaction = {
   account_to_id: string;
   pending: boolean;
   recurring: boolean;
+  tag: string;
 };
 
 const convertTransaction = ({ amount_cent, account_from_id, account_to_id, date, ...trans }: DbTransaction): Transaction => {
@@ -56,12 +57,12 @@ export class TransactionRepository extends AbstractRepository {
   }
 
   async create(workbookId: string, trans: Partial<Transaction>): Promise<Transaction> {
-    const { date, type, description, detail, amount, account_from, account_to, pending, recurring } = trans;
+    const { date, type, description, detail, amount, account_from, account_to, pending, recurring, tag } = trans;
     const { rows } = await this.qm().query<DbTransaction>({
       name: 'transactions-create',
       text: `
-insert into transactions(workbook_id, date, type, description, detail, amount_cent, account_from_id, account_to_id, pending, recurring)
-values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+insert into transactions(workbook_id, date, type, description, detail, amount_cent, account_from_id, account_to_id, pending, recurring, tag)
+values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 returning *`,
       values: [
         workbookId,
@@ -74,13 +75,14 @@ returning *`,
         account_to,
         pending,
         recurring,
+        tag ?? '',
       ],
     });
     return convertTransaction(rows[0]);
   }
 
   async update(workbookId: string, trans: Partial<Transaction>): Promise<Transaction> {
-    const { id, date, type, description, detail, amount, account_from, account_to, pending, recurring } = trans;
+    const { id, date, type, description, detail, amount, account_from, account_to, pending, recurring, tag } = trans;
     const { rows } = await this.qm().query<DbTransaction>({
       text: `
 update transactions
@@ -92,7 +94,8 @@ set date = coalesce($3, date),
     account_from_id = coalesce($8, account_from_id),
     account_to_id = coalesce($9, account_to_id),
     pending = coalesce($10, pending),
-    recurring = coalesce($11, recurring)
+    recurring = coalesce($11, recurring),
+    tag = coalesce($12, tag)
 where workbook_id = $1 and id = $2
 returning *`,
       values: [
@@ -107,6 +110,7 @@ returning *`,
         account_to,
         pending,
         recurring,
+        tag,
       ],
     });
     return convertTransaction(rows[0]);

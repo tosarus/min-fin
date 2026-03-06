@@ -1,4 +1,5 @@
 export * from './AccountSelect';
+export * from './ArrayAutocomplete';
 export * from './AjaxBackdrop';
 export * from './AmountSpan';
 export * from './DownloadButton';

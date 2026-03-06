@@ -17,6 +17,7 @@ type DbCashFlow = {
   balance_cent: number;
   pending: boolean;
   recurring: boolean;
+  tag: string;
 };
 
 const convertCashFlow = ({ amount_cent, to_flow, balance_cent, date, ...cashFlow }: DbCashFlow): CashFlow => {
@@ -47,6 +48,7 @@ SELECT flows.workbook_id,
   trans.type,
   trans.description,
   trans.detail,
+  trans.tag,
   trans."order",
   sum(flows.amount_cent) OVER (PARTITION BY flows.account_id ORDER BY trans.pending, trans.date, trans."order") AS balance_cent,
   trans.pending,
@@ -75,6 +77,7 @@ SELECT flows.workbook_id,
   trans.type,
   trans.description,
   trans.detail,
+  trans.tag,
   trans."order",
   sum(flows.amount_cent) OVER (PARTITION BY flows.account_id ORDER BY trans.pending, trans.date, trans."order") AS balance_cent,
   trans.pending,

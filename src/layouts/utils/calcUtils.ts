@@ -1,5 +1,6 @@
 import currency from 'currency.js';
-import { Account, AccountType, CashFlow, TransactionType } from '../../types';
+import { Account, AccountType, CashFlow } from '../../types';
+import { parseTags } from '../Contract';
 import { getFlowAccountFilter } from './accountUtils';
 import { sameYearFilter, withinMonthFilter } from './dateUtils';
 
@@ -7,12 +8,23 @@ export function getTotalForAccounts(accounts: Account[], ...types: AccountType[]
   return calculateSum(accounts.filter((acc) => types.includes(acc.type)).map((acc) => acc.balance));
 }
 
-export function calculateTotals(cashFlows: CashFlow[], type: TransactionType) {
+export function calculateTotals(cashFlows: CashFlow[]) {
   const totals = new Map<string, currency>();
   const updateTotals = (id: string, amount: string) => totals.set(id, (totals.get(id) ?? currency(0)).add(amount));
 
-  cashFlows.filter((flow) => flow.type === type).forEach((flow) => updateTotals(flow.other_account_id, flow.amount));
+  cashFlows.forEach((flow) => updateTotals(flow.other_account_id, flow.amount));
   return new Map<string, string>(Array.from(totals.entries(), (v) => [v[0], v[1].format()]));
+}
+
+export function calculateTagged(cashFlows: CashFlow[]) {
+  const tagged = new Map<string, currency>();
+  const updateTagged = (tag: string, amount: string) => {
+    const tags = parseTags(tag);
+    tags.forEach((t) => tagged.set(t, (tagged.get(t) ?? currency(0)).add(amount)));
+  };
+
+  cashFlows.filter((flow) => flow.tag).forEach((flow) => updateTagged(flow.tag, flow.amount));
+  return new Map<string, string>(Array.from(tagged.entries(), (v) => [v[0], v[1].format()]));
 }
 
 export function calculateSum(values: string[]) {
@@ -46,7 +58,15 @@ export const positiveAmount = (amount: string | number) => {
 
 export const negateAmount = (amount: string | number) => currency(amount).multiply(-1).format();
 
-export function calculateExpenses(cashFlows: CashFlow[], account: Account, month?: string) {
+export function filterMonthCashFlows(cashFlows: CashFlow[], account: Account, month?: string) {
   cashFlows = month ? cashFlows.filter(withinMonthFilter(month)) : cashFlows.filter(sameYearFilter());
-  return calculateSum(cashFlows.filter(getFlowAccountFilter(account.type, account.id)).map((flow) => flow.amount));
+  return cashFlows.filter(getFlowAccountFilter(account.type, account.id));
+}
+
+export function calculateExpenses(cashFlows: CashFlow[], account: Account, month?: string) {
+  return calculateSum(filterMonthCashFlows(cashFlows, account, month).map((flow) => flow.amount));
+}
+
+export function calculateTaggedExpenses(cashFlows: CashFlow[], account: Account, month?: string) {
+  return calculateTagged(filterMonthCashFlows(cashFlows, account, month));
 }

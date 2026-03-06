@@ -12,7 +12,22 @@ export interface Contract {
   otherAccount: string;
   pending: boolean;
   recurring: boolean;
+  tags: string[];
 }
+
+export const parseTags = (tag?: string): string[] => {
+  if (!tag) {
+    return [];
+  }
+  return tag
+    .split(',')
+    .map((t) => t.trim())
+    .filter(Boolean);
+};
+
+export const serializeTags = (tags: string[]): string => {
+  return tags.join(',');
+};
 
 export function fromTransaction(transaction: Partial<Transaction>): Contract {
   const {
@@ -26,6 +41,7 @@ export function fromTransaction(transaction: Partial<Transaction>): Contract {
     account_to = '',
     pending = false,
     recurring = false,
+    tag = '',
   } = transaction;
   let account: string;
   let otherAccount: string;
@@ -58,6 +74,7 @@ export function fromTransaction(transaction: Partial<Transaction>): Contract {
     otherAccount,
     pending,
     recurring,
+    tags: parseTags(tag),
   };
 }
 
@@ -71,6 +88,7 @@ export function fromCashFlow(flow: Partial<CashFlow>): Contract {
     direction = FlowDirection.From,
     pending = false,
     recurring = false,
+    tag = '',
   } = flow;
   let amount = flow.amount ?? '0';
   let account = flow.account_id ?? '';
@@ -110,6 +128,7 @@ export function fromCashFlow(flow: Partial<CashFlow>): Contract {
     otherAccount,
     pending,
     recurring,
+    tags: parseTags(tag),
   };
 }
 
@@ -134,5 +153,6 @@ export function fromContract(accounts: Account[], { account, otherAccount, ...co
       account_to = account;
       break;
   }
-  return { ...contract, account_from, account_to };
+  const { tags, ...rest } = contract;
+  return { ...rest, account_from, account_to, tag: serializeTags(tags) };
 }

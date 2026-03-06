@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useFormik } from 'formik';
 import { useSelector } from 'react-redux';
 import { Checkbox, FormControlLabel, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { AccountSelect, EditorDialog } from '../../common';
+import { AccountSelect, ArrayAutocomplete, EditorDialog } from '../../common';
 import { Selectors } from '../../store';
 import { AccountType, CashFlow, dateOrderCompare, rpn, TransactionType } from '../../types';
 import {
@@ -13,7 +13,7 @@ import {
   positiveAmount,
   transactionTypes,
 } from '../utils';
-import { Contract } from './Contract';
+import { Contract, parseTags } from './Contract';
 
 interface ContractEditorProps {
   contract: Contract;
@@ -27,6 +27,7 @@ interface CategorySuggestion {
   type: TransactionType;
   amount?: string;
   detail?: string;
+  tags?: string[];
 }
 
 const buildCategorySuggestions = (cashFlows: CashFlow[]) => {
@@ -37,19 +38,27 @@ const buildCategorySuggestions = (cashFlows: CashFlow[]) => {
     }
     const amount = flow.recurring ? positiveAmount(flow.amount) : undefined;
     const detail = flow.recurring ? flow.detail : undefined;
+    const tags = flow.recurring ? parseTags(flow.tag) : undefined;
     if (flow.type === TransactionType.Transfer) {
-      suggestions.set(flow.description, { account: flow.account_id, type: flow.type, amount, detail });
+      suggestions.set(flow.description, { account: flow.account_id, type: flow.type, amount, detail, tags });
     } else {
-      suggestions.set(flow.description, { account: flow.other_account_id, type: flow.type, amount, detail });
+      suggestions.set(flow.description, { account: flow.other_account_id, type: flow.type, amount, detail, tags });
     }
   }
   return suggestions;
+};
+
+const buildTagOptions = (cashFlows: CashFlow[]) => {
+  const tags = new Set<string>();
+  cashFlows.forEach((f) => parseTags(f.tag).forEach((t) => tags.add(t)));
+  return [...tags];
 };
 
 export const ContractEditor = ({ contract, onClose, onSubmit, onRemove }: ContractEditorProps) => {
   const accounts = useSelector(Selectors.currentAccounts) ?? [];
   const cashFlows = useSelector(Selectors.currentCashFlows) ?? [];
   const categorySuggestions = useMemo(() => buildCategorySuggestions(cashFlows), [cashFlows]);
+  const tagOptions = useMemo(() => buildTagOptions(cashFlows), [cashFlows]);
 
   const formik = useFormik({
     initialValues: contract,
@@ -99,6 +108,7 @@ export const ContractEditor = ({ contract, onClose, onSubmit, onRemove }: Contra
       if (suggestion.amount) {
         formik.setFieldValue('amount', suggestion.amount);
         formik.setFieldValue('detail', suggestion.detail ?? '');
+        formik.setFieldValue('tags', suggestion.tags ?? []);
         formik.setFieldValue('recurring', true);
       }
       formik.setFieldValue('type', suggestion.type);
@@ -142,7 +152,7 @@ export const ContractEditor = ({ contract, onClose, onSubmit, onRemove }: Contra
       onRemove={handleRemove}>
       <AccountSelect
         fullWidth
-        sx={{ mb: 2, mt: 0.75 }}
+        sx={{ mb: 2, mt: 1 }}
         options={getAssetAccountIds(accounts)}
         value={formik.values.account}
         onChange={(value) => updateFormik('account', value)}
@@ -182,7 +192,14 @@ export const ContractEditor = ({ contract, onClose, onSubmit, onRemove }: Contra
         error={formik.errors.otherAccount}
       />
       <TextField label="Amount" sx={sxRight} {...formik.getFieldProps('amount')} onBlur={handleAmountBlur} />
-      <TextField fullWidth multiline rows={2} label="Details" {...formik.getFieldProps('detail')} />
+      <TextField fullWidth multiline rows={2} label="Details" sx={{ mb: 2 }} {...formik.getFieldProps('detail')} />
+      <ArrayAutocomplete
+        fullWidth
+        value={formik.values.tags}
+        onChange={(value) => updateFormik('tags', value)}
+        options={tagOptions}
+        label="Tags"
+      />
       <FormControlLabel
         control={
           <Checkbox checked={formik.values.recurring} onChange={(e, checked) => updateFormik('recurring', checked)} />
